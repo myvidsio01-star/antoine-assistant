@@ -851,15 +851,15 @@
     </p>
 
     <div class="hero-btns">
-      <a href="https://github.com/myvidsio01-star/antoine-assistant/releases/download/v1.0/ANTOINE-V1.0.zip" class="btn btn-primary">⬇ Télécharger V1.0</a>
+      <a href="telecharger.html" class="btn btn-primary">⬇ Télécharger V1.0</a>
       <a href="https://discord.gg/JP9yF3VWQ" target="_blank" class="btn btn-outline">💬 Discord</a>
     </div>
 
     <div class="stats-row">
-      <div class="stat"><span class="stat-num">+40</span><span class="stat-label">Commandes vocales</span></div>
-      <div class="stat"><span class="stat-num">3</span><span class="stat-label">Moteurs IA</span></div>
-      <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Gratuit</span></div>
-      <div class="stat"><span class="stat-num">V1.0</span><span class="stat-label">Version actuelle</span></div>
+      <div class="stat"><span class="stat-num stat-number">40+</span><span class="stat-label">Commandes vocales</span></div>
+      <div class="stat"><span class="stat-num stat-number">3</span><span class="stat-label">Moteurs IA</span></div>
+      <div class="stat"><span class="stat-num stat-number">100%</span><span class="stat-label">Gratuit</span></div>
+      <div class="stat"><span class="stat-num stat-number">V1.0</span><span class="stat-label">Version actuelle</span></div>
     </div>
   </div>
 
@@ -895,7 +895,7 @@
         <h3>macOS <span class="tag" style="border-color:rgba(100,116,139,.4); color:var(--muted); background:rgba(100,116,139,.1);">Bientôt</span></h3>
         <p>Guide d'installation macOS en cours de rédaction. Compatible Apple Silicon (M1/M2/M3) et Intel. Homebrew recommandé pour les dépendances audio.</p>
         <div class="code-block" style="opacity:.5;">pip3 install -r requirements.txt<br/>python3 antoine.py</div>
-        <p style="margin-top:.75rem; font-size:.8rem; color:var(--muted);">En attendant : suivez le guide d'installation manuelle sur notre <a href="https://github.com/myvidsio01-star/antoine-assistant" target="_blank" style="color:var(--cyan);">GitHub</a>.</p>
+        <p style="margin-top:.75rem; font-size:.8rem; color:var(--muted);">📖 <strong style="color:var(--text);">Guide manuel disponible sur Discord</strong> — rejoignez le serveur pour obtenir les instructions complètes : <a href="https://discord.gg/JP9yF3VWQ" target="_blank" style="color:var(--cyan);">discord.gg/JP9yF3VWQ</a></p>
       </div>
       <!-- LINUX -->
       <div class="card animate-on-scroll" style="opacity:.7;">
@@ -903,7 +903,7 @@
         <h3>Linux <span class="tag" style="border-color:rgba(100,116,139,.4); color:var(--muted); background:rgba(100,116,139,.1);">Bientôt</span></h3>
         <p>Guide d'installation Linux en cours de rédaction. Compatibilité testée sur Ubuntu 22.04+ et Debian. Portaudio requis pour le micro.</p>
         <div class="code-block" style="opacity:.5;">sudo apt install portaudio19-dev<br/>pip install -r requirements.txt<br/>python antoine.py</div>
-        <p style="margin-top:.75rem; font-size:.8rem; color:var(--muted);">En attendant : suivez le guide d'installation manuelle sur notre <a href="https://github.com/myvidsio01-star/antoine-assistant" target="_blank" style="color:var(--cyan);">GitHub</a>.</p>
+        <p style="margin-top:.75rem; font-size:.8rem; color:var(--muted);">📖 <strong style="color:var(--text);">Guide manuel disponible sur Discord</strong> — rejoignez le serveur pour obtenir les instructions complètes : <a href="https://discord.gg/JP9yF3VWQ" target="_blank" style="color:var(--cyan);">discord.gg/JP9yF3VWQ</a></p>
       </div>
     </div>
 
@@ -1165,28 +1165,31 @@
     <p class="section-desc">Guides pas-à-pas pour générer vos clés sur chaque plateforme. Tout est gratuit sauf mention contraire.</p>
 
     <div class="accordion">
-      <div class="acc-item animate-on-scroll" id="acc-gemini">
-        <div class="acc-header" onclick="toggleAcc('acc-gemini')">🤖 Gemini AI — Créer une clé API <span class="chevron">▼</span></div>
-        <div class="acc-body"><div class="acc-content"><ol>
-          <li>Rendez-vous sur <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a></li>
-          <li>Connectez-vous avec votre compte Google</li>
-          <li>Cliquez sur <strong>"Get API key"</strong> en haut à gauche</li>
-          <li>Cliquez sur <strong>"Create API key"</strong></li>
-          <li>Copiez la clé dans votre <code>.env</code> sous <code>GEMINI_API_KEY=</code></li>
-        </ol></div></div>
+      <div class="acc-item animate-on-scroll" id="acc-groq">
+        <div class="acc-header" onclick="toggleAcc('acc-groq')">⚡ Groq Cloud — Génération de clé API <span style="font-size:.72rem; background:linear-gradient(135deg,var(--cyan),var(--blue)); color:#000; border-radius:100px; padding:.2rem .65rem; margin-left:.6rem; font-weight:800; letter-spacing:.06em;">RECOMMANDÉ — MOTEUR PRINCIPAL</span> <span class="chevron">▼</span></div>
+        <div class="acc-body"><div class="acc-content">
+          <p style="margin-bottom:.75rem; color:#22c55e;">✅ 100% gratuit, aucune carte bancaire requise. C'est le moteur principal d'A.N.T.O.I.N.E — commencez impérativement par celui-ci.</p>
+          <ol>
+            <li>Allez sur <a href="https://console.groq.com" target="_blank">console.groq.com</a> et cliquez sur <strong>"Sign Up"</strong> pour créer un compte gratuit (vous pouvez aussi vous connecter directement avec Google).</li>
+            <li>Une fois sur le tableau de bord, dans le menu de navigation à gauche, cliquez sur <strong>"API Keys"</strong>.</li>
+            <li>Cliquez sur le bouton <strong>"Create API Key"</strong>, donnez-lui un nom reconnaissable (par exemple : <em>antoine</em>), puis confirmez.</li>
+            <li>Copiez la clé affichée — elle commence par <code>gsk_</code>. <strong>Attention :</strong> elle n'est visible qu'une seule fois, notez-la immédiatement.</li>
+            <li>Ouvrez votre fichier <code>.env</code> dans le dossier A.N.T.O.I.N.E et collez la clé après : <code>GROQ_API_KEY=</code></li>
+            <li>Sauvegardez le fichier et lancez A.N.T.O.I.N.E. Le moteur Groq est opérationnel, aucune autre action n'est requise.</li>
+          </ol>
+        </div></div>
       </div>
 
-      <div class="acc-item animate-on-scroll" id="acc-groq">
-        <div class="acc-header" onclick="toggleAcc('acc-groq')">⚡ Groq Cloud — Génération de clé API <span style="font-size:.72rem; background:rgba(0,200,255,.15); color:var(--cyan); border:1px solid rgba(0,200,255,.3); border-radius:100px; padding:.1rem .55rem; margin-left:.5rem; font-weight:700;">RECOMMANDÉ EN PREMIER</span> <span class="chevron">▼</span></div>
+      <div class="acc-item animate-on-scroll" id="acc-gemini">
+        <div class="acc-header" onclick="toggleAcc('acc-gemini')">🤖 Gemini AI — Créer une clé API <span class="chevron">▼</span></div>
         <div class="acc-body"><div class="acc-content">
-          <p style="margin-bottom:.75rem; color:#22c55e;">✅ 100% gratuit, aucune carte bancaire requise. C'est le moteur principal d'A.N.T.O.I.N.E — commencez par celui-ci.</p>
+          <p style="margin-bottom:.75rem; color:var(--muted);">Moteur de secours (fallback 1) — gratuit sur le tier standard. Utilisé automatiquement si Groq est indisponible.</p>
           <ol>
-            <li>Allez sur <a href="https://console.groq.com" target="_blank">console.groq.com</a></li>
-            <li>Cliquez sur <strong>"Sign Up"</strong> et créez un compte gratuit (ou connectez-vous avec Google)</li>
-            <li>Une fois connecté, dans le menu de gauche, cliquez sur <strong>"API Keys"</strong></li>
-            <li>Cliquez sur <strong>"Create API Key"</strong>, donnez-lui un nom (ex: "antoine")</li>
-            <li>Copiez la clé affichée (commence par <code>gsk_</code>) — elle n'apparaît qu'une seule fois</li>
-            <li>Dans votre fichier <code>.env</code>, collez-la après : <code>GROQ_API_KEY=</code></li>
+            <li>Rendez-vous sur <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a> et connectez-vous avec votre compte Google.</li>
+            <li>Cliquez sur <strong>"Get API key"</strong> en haut à gauche de l'interface.</li>
+            <li>Cliquez sur <strong>"Create API key"</strong> et sélectionnez un projet Google Cloud (ou créez-en un nouveau).</li>
+            <li>Copiez la clé générée et collez-la dans votre <code>.env</code> sous <code>GEMINI_API_KEY=</code></li>
+            <li>Sauvegardez le fichier. A.N.T.O.I.N.E basculera automatiquement sur Gemini si Groq est indisponible.</li>
           </ol>
         </div></div>
       </div>
@@ -1194,12 +1197,13 @@
       <div class="acc-item animate-on-scroll" id="acc-claude">
         <div class="acc-header" onclick="toggleAcc('acc-claude')">🧠 Claude (Anthropic) — Clé API <span class="chevron">▼</span></div>
         <div class="acc-body"><div class="acc-content">
-          <p style="margin-bottom:.5rem; color:#f59e0b;">⚠️ Nécessite un crédit minimum de 5$ pour activer l'API.</p>
+          <p style="margin-bottom:.5rem; color:#f59e0b;">⚠️ Les nouveaux comptes sur <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> reçoivent <strong>5$ de crédits gratuits</strong> à l'inscription — profitez-en pour tester Claude sans payer.</p>
           <ol>
-            <li>Allez sur <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></li>
-            <li>Créez un compte et ajoutez 5$ de crédit (carte bancaire)</li>
-            <li>Cliquez sur <strong>"API Keys"</strong> dans le menu</li>
-            <li>Créez une nouvelle clé et copiez-la dans <code>ANTHROPIC_API_KEY=</code></li>
+            <li>Allez sur <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> et créez un compte. Les nouveaux utilisateurs reçoivent automatiquement <strong>5$ de crédits offerts</strong> pour débuter.</li>
+            <li>Une fois connecté, rendez-vous dans la section <strong>"API Keys"</strong> depuis le menu de navigation.</li>
+            <li>Cliquez sur <strong>"Create Key"</strong>, donnez-lui un nom (ex : <em>antoine</em>) et confirmez la création.</li>
+            <li>Copiez la clé (commence par <code>sk-ant-</code>) et collez-la dans votre fichier <code>.env</code> sous <code>ANTHROPIC_API_KEY=</code></li>
+            <li>Sauvegardez. Claude sera utilisé en fallback secondaire si Groq et Gemini sont indisponibles.</li>
           </ol>
         </div></div>
       </div>
