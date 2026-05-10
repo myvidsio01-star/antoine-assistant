@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — AssistantVocal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #06070d; --bg2: #0d0f1a; --border: rgba(0,200,255,.12);
+      --cyan: #00c8ff; --blue: #3b82f6; --text: #e2e8f0; --muted: #64748b;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+    nav {
+      background: rgba(6,7,13,.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border); padding: 0 2rem;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; height: 60px;
+    }
+    .logo { font-size: 1.1rem; font-weight: 800; color: var(--cyan); text-decoration: none; }
+    .back { font-size: .85rem; color: var(--muted); text-decoration: none; transition: color .2s; }
+    .back:hover { color: var(--cyan); }
+    main { max-width: 640px; margin: 0 auto; padding: 4rem 2rem 6rem; }
+    .page-tag {
+      display: inline-block; font-size: .72rem; font-weight: 700;
+      letter-spacing: .18em; color: var(--cyan); text-transform: uppercase; margin-bottom: .75rem;
+    }
+    h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: .75rem; }
+    .subtitle { color: var(--muted); margin-bottom: 2.5rem; }
+    .form-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 16px; padding: 2rem;
+    }
+    .field { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1.25rem; }
+    label { font-size: .85rem; font-weight: 600; color: var(--text); }
+    input, textarea, select {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: .75rem 1rem;
+      font-family: 'Inter', sans-serif; font-size: .9rem;
+      color: var(--text); outline: none; transition: border-color .2s;
+      width: 100%;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--cyan); }
+    textarea { resize: vertical; min-height: 140px; }
+    select option { background: var(--bg2); }
+    .btn-submit {
+      width: 100%; padding: .9rem;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      color: #000; font-weight: 700; font-size: .95rem;
+      border: none; border-radius: 10px; cursor: pointer;
+      transition: all .25s; letter-spacing: .02em;
+    }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(0,200,255,.4); }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+    .alt-contact {
+      display: flex; flex-direction: column; gap: .75rem; margin-top: 1.5rem;
+    }
+    .alt-item {
+      display: flex; align-items: center; gap: .75rem;
+      font-size: .875rem; color: var(--muted);
+    }
+    .alt-item span { font-size: 1.25rem; }
+    .alt-item a { color: var(--cyan); text-decoration: none; }
+    .alt-item a:hover { text-decoration: underline; }
+    .success-msg {
+      display: none; background: rgba(34,197,94,.08);
+      border: 1px solid rgba(34,197,94,.25); border-radius: 10px;
+      padding: 1rem 1.25rem; color: #22c55e; font-size: .9rem;
+      margin-top: 1rem; text-align: center;
+    }
+    footer {
+      border-top: 1px solid var(--border); padding: 2rem;
+      text-align: center; color: var(--muted); font-size: .83rem;
+    }
+  </style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">AssistantVocal</a>
+    <a href="index.html" class="back">← Retour au site</a>
+  </div>
+</nav>
+
+<main>
+  <div class="page-tag">Support</div>
+  <h1>Nous contacter</h1>
+  <p class="subtitle">Une question, un bug, une suggestion ? On répond dans les 48h.</p>
+
+  <div class="form-card">
+    <!-- Remplacer TODO_FORMSPREE_ID par ton ID Formspree (gratuit sur formspree.io) -->
+    <form id="contact-form" action="https://formspree.io/f/TODO_FORMSPREE_ID" method="POST">
+      <input type="hidden" name="_subject" value="Message depuis AssistantVocal" />
+      <input type="hidden" name="_next" value="contact.html?sent=1" />
+      <div class="field">
+        <label for="name">Votre prénom</label>
+        <input type="text" id="name" name="name" placeholder="Antoine" required />
+      </div>
+      <div class="field">
+        <label for="email">Votre email</label>
+        <input type="email" id="email" name="email" placeholder="votre@email.com" required />
+      </div>
+      <div class="field">
+        <label for="subject">Sujet</label>
+        <select id="subject" name="subject">
+          <option value="bug">🐛 Signaler un bug</option>
+          <option value="question">❓ Question sur l'installation</option>
+          <option value="suggestion">💡 Suggestion de fonctionnalité</option>
+          <option value="partenariat">🤝 Partenariat</option>
+          <option value="autre">📬 Autre</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="message">Votre message</label>
+        <textarea id="message" name="message" placeholder="Décrivez votre problème ou votre question..." required></textarea>
+      </div>
+      <button type="submit" class="btn-submit">Envoyer le message →</button>
+      <div class="success-msg" id="success">
+        ✅ Message envoyé ! On revient vers vous dans les 48h.
+      </div>
+    </form>
+  </div>
+
+  <hr class="divider" />
+
+  <p style="font-size:.875rem; color:var(--muted); margin-bottom:1rem;">Ou retrouvez-nous directement ici :</p>
+  <div class="alt-contact">
+    <div class="alt-item"><span>💬</span> Discord : <a href="https://discord.gg/JP9yF3VWQ">Rejoindre le serveur</a></div>
+    <div class="alt-item"><span>🐙</span> GitHub : <span style="color:var(--muted);">Bientôt disponible</span></div>
+    <div class="alt-item"><span>📧</span> Email : <a href="mailto:contact@assistantvocal.fr">contact@assistantvocal.fr</a></div>
+  </div>
+</main>
+
+<footer>© 2026 AssistantVocal — A.N.T.O.I.N.E</footer>
+
+<script>
+  if (window.location.search.includes('sent=1')) {
+    document.getElementById('success').style.display = 'block';
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Politique de Confidentialité — AssistantVocal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #06070d; --bg2: #0d0f1a; --border: rgba(0,200,255,.12);
+      --cyan: #00c8ff; --text: #e2e8f0; --muted: #64748b;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+    nav {
+      background: rgba(6,7,13,.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border); padding: 0 2rem;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; height: 60px;
+    }
+    .logo { font-size: 1.1rem; font-weight: 800; color: var(--cyan); text-decoration: none; }
+    .back { font-size: .85rem; color: var(--muted); text-decoration: none; transition: color .2s; }
+    .back:hover { color: var(--cyan); }
+    main { max-width: 780px; margin: 0 auto; padding: 4rem 2rem 6rem; }
+    .page-tag {
+      display: inline-block; font-size: .72rem; font-weight: 700;
+      letter-spacing: .18em; color: var(--cyan); text-transform: uppercase; margin-bottom: .75rem;
+    }
+    h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 2.5rem; line-height: 1.2; }
+    h2 { font-size: 1.15rem; font-weight: 700; color: var(--cyan); margin: 2rem 0 .75rem; }
+    p { color: var(--muted); margin-bottom: .75rem; }
+    ul { color: var(--muted); padding-left: 1.5rem; margin-bottom: .75rem; }
+    ul li { margin-bottom: .35rem; }
+    strong { color: var(--text); }
+    .card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem;
+    }
+    .badge-ok {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.25);
+      border-radius: 8px; padding: .5rem 1rem; font-size: .85rem;
+      color: #22c55e; margin-bottom: 1.5rem;
+    }
+    footer {
+      border-top: 1px solid var(--border); padding: 2rem;
+      text-align: center; color: var(--muted); font-size: .83rem;
+    }
+  </style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">AssistantVocal</a>
+    <a href="index.html" class="back">← Retour au site</a>
+  </div>
+</nav>
+
+<main>
+  <div class="page-tag">Légal</div>
+  <h1>Politique de Confidentialité</h1>
+
+  <div class="badge-ok">✅ Ce site ne vend aucune donnée personnelle</div>
+
+  <div class="card">
+    <h2>Données collectées</h2>
+    <p>Ce site web ne collecte <strong>aucune donnée personnelle</strong> automatiquement. Aucun cookie de tracking, aucune analytics, aucun formulaire d'inscription n'est présent sur ce site.</p>
+  </div>
+
+  <div class="card">
+    <h2>Le logiciel A.N.T.O.I.N.E</h2>
+    <p>Le logiciel A.N.T.O.I.N.E fonctionne <strong>localement sur votre machine</strong>. Il ne transmet aucune donnée à nos serveurs. Les données envoyées aux services IA tiers (Gemini, Groq, Claude, etc.) sont régies par leurs propres politiques de confidentialité :</p>
+    <ul>
+      <li><a href="https://policies.google.com/privacy" target="_blank" style="color:var(--cyan);">Google / Gemini</a></li>
+      <li><a href="https://groq.com/privacy-policy/" target="_blank" style="color:var(--cyan);">Groq</a></li>
+      <li><a href="https://www.anthropic.com/privacy" target="_blank" style="color:var(--cyan);">Anthropic / Claude</a></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Hébergement</h2>
+    <p>Ce site est hébergé sur <strong>GitHub Pages</strong>. GitHub peut collecter certaines données techniques (adresse IP, navigateur) dans ses logs serveur. Consultez la <a href="https://docs.github.com/fr/site-policy/privacy-policies/github-privacy-statement" target="_blank" style="color:var(--cyan);">politique de confidentialité de GitHub</a>.</p>
+  </div>
+
+  <div class="card">
+    <h2>Vos droits</h2>
+    <p>Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Puisque nous ne collectons aucune donnée, aucune action n'est nécessaire de votre part.</p>
+    <p>Pour toute question : <a href="contact.html" style="color:var(--cyan);">page contact</a>.</p>
+  </div>
+
+  <p style="margin-top:2rem; font-size:.82rem;">Dernière mise à jour : mai 2026</p>
+</main>
+
+<footer>© 2026 AssistantVocal — A.N.T.O.I.N.E</footer>
+</body>
+</html>

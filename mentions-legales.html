@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mentions Légales — AssistantVocal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #06070d; --bg2: #0d0f1a; --border: rgba(0,200,255,.12);
+      --cyan: #00c8ff; --text: #e2e8f0; --muted: #64748b;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+    nav {
+      background: rgba(6,7,13,.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border); padding: 0 2rem;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; height: 60px;
+    }
+    .logo { font-size: 1.1rem; font-weight: 800; color: var(--cyan); text-decoration: none; }
+    .back { font-size: .85rem; color: var(--muted); text-decoration: none; transition: color .2s; }
+    .back:hover { color: var(--cyan); }
+    main { max-width: 780px; margin: 0 auto; padding: 4rem 2rem 6rem; }
+    .page-tag {
+      display: inline-block; font-size: .72rem; font-weight: 700;
+      letter-spacing: .18em; color: var(--cyan); text-transform: uppercase; margin-bottom: .75rem;
+    }
+    h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 2.5rem; line-height: 1.2; }
+    h2 { font-size: 1.15rem; font-weight: 700; color: var(--cyan); margin: 2rem 0 .75rem; }
+    p { color: var(--muted); margin-bottom: .75rem; }
+    strong { color: var(--text); }
+    .card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem;
+    }
+    footer {
+      border-top: 1px solid var(--border); padding: 2rem;
+      text-align: center; color: var(--muted); font-size: .83rem;
+    }
+  </style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">AssistantVocal</a>
+    <a href="index.html" class="back">← Retour au site</a>
+  </div>
+</nav>
+
+<main>
+  <div class="page-tag">Légal</div>
+  <h1>Mentions Légales</h1>
+
+  <div class="card">
+    <h2>Éditeur du site</h2>
+    <p><strong>Nom :</strong> AssistantVocal</p>
+    <p><strong>Email :</strong> contact@assistantvocal.fr</p>
+    <p><strong>Site web :</strong> AssistantVocal — A.N.T.O.I.N.E</p>
+  </div>
+
+  <div class="card">
+    <h2>Hébergement</h2>
+    <p><strong>Hébergeur :</strong> GitHub Pages</p>
+    <p><strong>Société :</strong> GitHub Inc., 88 Colin P Kelly Jr St, San Francisco, CA 94107, États-Unis</p>
+    <p><strong>Site :</strong> github.com</p>
+  </div>
+
+  <div class="card">
+    <h2>Propriété intellectuelle</h2>
+    <p>L'ensemble du contenu de ce site (textes, code, design, animations) est la propriété de l'éditeur. Toute reproduction partielle ou totale est interdite sans autorisation préalable.</p>
+  </div>
+
+  <div class="card">
+    <h2>Responsabilité</h2>
+    <p>L'éditeur ne peut être tenu responsable des dommages directs ou indirects liés à l'utilisation du logiciel A.N.T.O.I.N.E. L'utilisation se fait sous la responsabilité de l'utilisateur.</p>
+    <p>Les liens externes présents sur ce site ne sont pas sous notre contrôle. Nous déclinons toute responsabilité quant à leur contenu.</p>
+  </div>
+
+  <div class="card">
+    <h2>Données personnelles</h2>
+    <p>Ce site ne collecte aucune donnée personnelle à votre insu. Consultez notre <a href="confidentialite.html" style="color:var(--cyan);">Politique de confidentialité</a> pour plus d'informations.</p>
+  </div>
+
+  <p style="margin-top:2rem; font-size:.82rem;">Dernière mise à jour : mai 2026</p>
+</main>
+
+<footer>© 2026 AssistantVocal — A.N.T.O.I.N.E</footer>
+</body>
+</html>

@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A.N.T.O.I.N.E — Système I.A Autonome 100% Gratuit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #06070d;
+      --bg2: #0d0f1a;
+      --border: rgba(0, 200, 255, 0.12);
+      --cyan: #00c8ff;
+      --blue: #3b82f6;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --glow: 0 0 30px rgba(0, 200, 255, 0.4);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── CANVAS FOND GLOBAL ─── */
+    #canvas-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Tout le contenu au-dessus du canvas */
+    nav, section, footer, .hero { position: relative; z-index: 1; }
+
+    /* ─── NAV ─── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(6, 7, 13, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      gap: 2rem;
+    }
+
+    .logo {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--cyan);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      text-shadow: var(--glow);
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: color .2s;
+    }
+
+    .nav-links a:hover { color: var(--cyan); }
+
+    @media(max-width: 600px) { .nav-links { display: none; } }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 0 6%;
+      gap: 2rem;
+      overflow: hidden;
+    }
+
+    @media(max-width: 900px) {
+      .hero { grid-template-columns: 1fr; text-align: center; padding: 5rem 6% 2rem; }
+      #canvas-hero { width: 100%; height: 280px; }
+      .hero-btns { justify-content: center; }
+    }
+
+    .hero-left { position: relative; z-index: 2; }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: rgba(0,200,255,.08);
+      border: 1px solid rgba(0,200,255,.3);
+      border-radius: 100px;
+      padding: .35rem 1rem;
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--cyan);
+      margin-bottom: 1.5rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .hero-badge .dot {
+      width: 7px; height: 7px;
+      background: var(--cyan);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+      display: inline-block;
+    }
+
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(0,200,255,.5); }
+      50% { opacity: .5; transform: scale(1.3); box-shadow: 0 0 0 6px rgba(0,200,255,0); }
+    }
+
+    /* ─── TITRE GÉANT ─── */
+    .hero-title-small {
+      font-size: clamp(.85rem, 1.5vw, 1rem);
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      margin-bottom: .25rem;
+    }
+
+    .hero-name {
+      font-size: clamp(4rem, 10vw, 9rem);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -.02em;
+      background: linear-gradient(135deg, #ffffff 0%, var(--cyan) 50%, var(--blue) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 40px rgba(0,200,255,.35));
+      margin-bottom: .5rem;
+    }
+
+    .hero-subtitle-line {
+      font-size: clamp(1rem, 2vw, 1.35rem);
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+      letter-spacing: .02em;
+    }
+
+    .hero-sub {
+      font-size: .95rem;
+      color: var(--muted);
+      max-width: 480px;
+      margin-bottom: 2.5rem;
+      line-height: 1.8;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .85rem 2rem;
+      border-radius: 10px;
+      font-size: .9rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all .25s;
+      letter-spacing: .02em;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      color: #000;
+      box-shadow: 0 0 30px rgba(0,200,255,.4);
+    }
+
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 0 50px rgba(0,200,255,.65); }
+
+    .btn-outline {
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      color: var(--text);
+      backdrop-filter: blur(4px);
+    }
+
+    .btn-outline:hover { border-color: var(--cyan); color: var(--cyan); transform: translateY(-3px); }
+
+    /* ─── CANVAS HERO ─── */
+    #canvas-hero {
+      width: 100%;
+      height: 560px;
+      display: block;
+    }
+
+    /* ─── SECTIONS ─── */
+    section { padding: 5rem 2rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    .section-tag {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .18em;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: .75rem;
+    }
+
+    h2 {
+      font-size: clamp(1.75rem, 4vw, 2.75rem);
+      font-weight: 800;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .section-desc {
+      color: var(--muted);
+      font-size: .95rem;
+      max-width: 600px;
+      margin-bottom: 3rem;
+    }
+
+    /* ─── STEP ─── */
+    .step-label {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .85rem;
+      font-weight: 700;
+      color: var(--cyan);
+      margin-bottom: 2rem;
+    }
+
+    .step-num {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .8rem;
+      color: #000;
+      font-weight: 800;
+    }
+
+    /* ─── CARDS ─── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: rgba(13, 15, 26, 0.75);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.75rem;
+      transition: all .3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--blue));
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .card:hover { border-color: rgba(0,200,255,.35); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,.4); }
+    .card:hover::before { opacity: 1; }
+
+    .card-icon { font-size: 2rem; margin-bottom: 1rem; }
+    .card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: .5rem; }
+    .card p { font-size: .875rem; color: var(--muted); line-height: 1.65; }
+
+    .code-block {
+      background: rgba(6,7,13,.9);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .75rem 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: var(--cyan);
+      margin-top: .75rem;
+      overflow-x: auto;
+    }
+
+    /* ─── CAPABILITIES ─── */
+    .caps-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media(max-width: 768px) { .caps-grid { grid-template-columns: 1fr; } }
+
+    .caps-col {
+      background: rgba(13,15,26,.75);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 2rem;
+    }
+
+    .caps-col h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--cyan);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      flex-wrap: wrap;
+    }
+
+    .cap-item {
+      display: flex;
+      align-items: flex-start;
+      gap: .75rem;
+      padding: .6rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: .875rem;
+    }
+
+    .cap-item:last-child { border-bottom: none; }
+
+    .cap-dot {
+      width: 6px; height: 6px;
+      background: var(--cyan);
+      border-radius: 50%;
+      margin-top: .45rem;
+      flex-shrink: 0;
+      box-shadow: 0 0 6px var(--cyan);
+    }
+
+    .cap-example {
+      font-size: .78rem;
+      color: var(--muted);
+      font-style: italic;
+      margin-top: .2rem;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: .7rem;
+      font-weight: 700;
+      background: rgba(0,200,255,.1);
+      border: 1px solid rgba(0,200,255,.25);
+      color: var(--cyan);
+      border-radius: 100px;
+      padding: .15rem .6rem;
+      margin-left: .25rem;
+    }
+
+    /* ─── COMMUNITY ─── */
+    .community-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .social-card {
+      background: rgba(13,15,26,.75);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.75rem;
+      text-decoration: none;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: .75rem;
+      transition: all .3s;
+    }
+
+    .social-card:hover { border-color: rgba(0,200,255,.35); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,.4); }
+
+    .social-icon { font-size: 1.75rem; }
+    .social-name { font-weight: 700; font-size: 1rem; }
+    .social-desc { font-size: .83rem; color: var(--muted); }
+
+    /* ─── DOWNLOAD ─── */
+    .download-box {
+      background: rgba(13,15,26,.8);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(0,200,255,.2);
+      border-radius: 20px;
+      padding: 3.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .download-box::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(0,200,255,.1) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .download-box h2 { margin-bottom: .75rem; }
+    .download-box .section-desc { margin: 0 auto 2rem; }
+
+    .payment-status {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: rgba(0,200,255,.06);
+      border: 1px solid rgba(0,200,255,.2);
+      border-radius: 8px;
+      padding: .5rem 1.25rem;
+      font-size: .83rem;
+      color: var(--cyan);
+      margin-bottom: 2rem;
+    }
+
+    .status-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; animation: pulse 1.5s infinite; flex-shrink: 0; }
+
+    /* ─── UPDATE ─── */
+    .update-header {
+      background: linear-gradient(135deg, rgba(0,200,255,.08), rgba(59,130,246,.08));
+      border: 1px solid rgba(0,200,255,.25);
+      border-radius: 14px;
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      margin-bottom: 1.5rem;
+      transition: border-color .2s;
+    }
+
+    .update-header:hover { border-color: rgba(0,200,255,.45); }
+
+    .update-badge {
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      color: #000;
+      font-size: .75rem;
+      font-weight: 800;
+      padding: .3rem .8rem;
+      border-radius: 100px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .feature-card {
+      background: rgba(13,15,26,.75);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      transition: border-color .2s;
+    }
+
+    .feature-card:hover { border-color: rgba(0,200,255,.3); }
+
+    .feature-card h4 { font-size: .9rem; font-weight: 700; margin-bottom: .4rem; color: var(--cyan); }
+    .feature-card p { font-size: .82rem; color: var(--muted); }
+
+    /* ─── ACCORDION ─── */
+    .accordion { display: flex; flex-direction: column; gap: .75rem; }
+
+    .acc-item {
+      background: rgba(13,15,26,.75);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: border-color .2s;
+    }
+
+    .acc-item.open { border-color: rgba(0,200,255,.3); }
+
+    .acc-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 1.5rem;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: .95rem;
+      transition: background .2s;
+    }
+
+    .acc-header:hover { background: rgba(0,200,255,.05); }
+
+    .acc-header .chevron {
+      color: var(--cyan);
+      transition: transform .3s;
+    }
+
+    .acc-item.open .chevron { transform: rotate(180deg); }
+
+    .acc-body { max-height: 0; overflow: hidden; transition: max-height .4s ease; }
+    .acc-item.open .acc-body { max-height: 500px; }
+
+    .acc-content { padding: 0 1.5rem 1.5rem; color: var(--muted); font-size: .875rem; }
+    .acc-content ol { padding-left: 1.25rem; margin-top: .5rem; display: flex; flex-direction: column; gap: .4rem; }
+    .acc-content a { color: var(--cyan); text-decoration: none; }
+    .acc-content a:hover { text-decoration: underline; }
+
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: .83rem;
+      position: relative;
+      z-index: 1;
+      background: rgba(6,7,13,.7);
+      backdrop-filter: blur(8px);
+    }
+
+    footer a { color: var(--muted); text-decoration: none; margin: 0 .75rem; }
+    footer a:hover { color: var(--cyan); }
+
+    /* ─── DIVIDER ─── */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; position: relative; z-index: 1; }
+
+    /* ─── BG SECTIONS ─── */
+    .bg-dark { background: rgba(10, 12, 20, 0.6); backdrop-filter: blur(2px); }
+
+    /* ─── STATS ROW ─── */
+    .stats-row {
+      display: flex;
+      gap: 2.5rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .stat { display: flex; flex-direction: column; }
+    .stat-num {
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: var(--cyan);
+      line-height: 1;
+      text-shadow: 0 0 20px rgba(0,200,255,.4);
+    }
+    .stat-label { font-size: .75rem; color: var(--muted); margin-top: .2rem; text-transform: uppercase; letter-spacing: .1em; }
+
+    @media(max-width: 900px) { .stats-row { justify-content: center; } }
+
+    /* ════════════════════════════════════════════════
+       AMÉLIORATIONS FUTURISTES — AJOUT CSS
+    ════════════════════════════════════════════════ */
+
+    /* ─── VARIABLES SUPPLÉMENTAIRES ─── */
+    :root {
+      --purple: #7c3aed;
+      --green: #10b981;
+      --glow-strong: 0 0 60px rgba(0,200,255,.6);
+    }
+
+    /* ─── EFFET SCANLINE CRT ─── */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,200,255,0.01) 2px,
+        rgba(0,200,255,0.01) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ─── CARDS HOVER AMÉLIORÉ + ANIMATION SCAN ─── */
+    .card:hover {
+      box-shadow:
+        0 0 0 1px rgba(0,200,255,.15),
+        0 20px 60px rgba(0,0,0,.5),
+        inset 0 1px 0 rgba(0,200,255,.1);
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(0,200,255,.6), transparent);
+      transition: none;
+      pointer-events: none;
+    }
+
+    .card:hover::after {
+      animation: card-scan .6s ease forwards;
+    }
+
+    @keyframes card-scan {
+      0%   { top: -5%; }
+      100% { top: 105%; }
+    }
+
+    /* ─── TITRE ANTOINE — FLICKER ─── */
+    .hero-name {
+      animation: flicker 6s infinite;
+      filter: drop-shadow(0 0 60px rgba(0,200,255,.5));
+    }
+
+    @keyframes flicker {
+      0%,100% { opacity: 1; }
+      92%      { opacity: 1; }
+      93%      { opacity: .95; }
+      94%      { opacity: 1; }
+      96%      { opacity: .97; }
+      97%      { opacity: 1; }
+    }
+
+    /* ─── HERO BADGE — BORDER PULSE ─── */
+    .hero-badge {
+      animation: border-pulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes border-pulse {
+      0%,100% { border-color: rgba(0,200,255,.3); box-shadow: none; }
+      50%      { border-color: rgba(0,200,255,.8); box-shadow: 0 0 12px rgba(0,200,255,.25); }
+    }
+
+    /* ─── NAV LINKS — LIGNE LUMINEUSE SOUS LE LIEN ─── */
+    .nav-links a {
+      position: relative;
+      padding-bottom: 3px;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      transform: translateX(-50%);
+      transition: width .3s ease;
+      box-shadow: 0 0 6px var(--cyan);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    /* ─── STATS HERO — GLOW CYAN RENFORCÉ ─── */
+    .stat-num {
+      text-shadow:
+        0 0 20px rgba(0,200,255,.6),
+        0 0 40px rgba(0,200,255,.3);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .stat:nth-child(2) .stat-num { animation-delay: .4s; }
+    .stat:nth-child(3) .stat-num { animation-delay: .8s; }
+    .stat:nth-child(4) .stat-num { animation-delay: 1.2s; }
+
+    /* ─── DOWNLOAD BOX — BORDER ANIMÉ CONIC ─── */
+    .download-box {
+      --angle: 0deg;
+      border: 1px solid transparent;
+      background:
+        rgba(13,15,26,.8) padding-box,
+        conic-gradient(from var(--angle), rgba(0,200,255,0), rgba(0,200,255,.6) 20%, rgba(59,130,246,.6) 40%, rgba(0,200,255,0) 60%) border-box;
+      animation: rotate-border 4s linear infinite;
+    }
+
+    @property --angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+
+    @keyframes rotate-border {
+      0%   { --angle: 0deg; }
+      100% { --angle: 360deg; }
+    }
+
+    /* ─── KEYFRAMES GLOBAUX ─── */
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+
+    @keyframes slide-in-left {
+      from { opacity: 0; transform: translateX(-40px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes slide-in-right {
+      from { opacity: 0; transform: translateX(40px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── CANVAS FOND GLOBAL (particules) ─── -->
+<canvas id="canvas-bg"></canvas>
+
+<!-- ─── NAV ─── -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo">A.N.T.O.I.N.E</a>
+    <ul class="nav-links">
+      <li><a href="#">Accueil</a></li>
+      <li><a href="#step1">Démarrage</a></li>
+      <li><a href="#capabilities">Fonctionnalités</a></li>
+      <li><a href="#api-guides">FAQ / Guides</a></li>
+      <li><a href="#download">Télécharger</a></li>
+      <li><a href="https://discord.gg/JP9yF3VWQ" target="_blank">Discord</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section class="hero" style="z-index:1;">
+  <div class="hero-left">
+    <div class="hero-badge"><span class="dot"></span> LIVE — Mise à jour V1.0</div>
+
+    <p class="hero-title-small">Système I.A Autonome</p>
+    <h1 class="hero-name">A.N.T.O.I.N.E</h1>
+    <p class="hero-subtitle-line">100% Gratuit · 100% Vocal · 100% Autonome</p>
+
+    <p class="hero-sub">
+      Votre assistant IA personnel entièrement vocal, capable de contrôler votre maison, votre PC et bien plus — sans abonnement, sans limite.
+    </p>
+
+    <div class="hero-btns">
+      <a href="#step1" class="btn btn-primary">⬇ Étape 1 — Télécharger</a>
+      <a href="#step2" class="btn btn-outline">⚙ Étape 2 — Personnaliser</a>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat"><span class="stat-num">+40</span><span class="stat-label">Commandes vocales</span></div>
+      <div class="stat"><span class="stat-num">3</span><span class="stat-label">Moteurs IA</span></div>
+      <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Gratuit</span></div>
+      <div class="stat"><span class="stat-num">V1.0</span><span class="stat-label">Version actuelle</span></div>
+    </div>
+  </div>
+
+  <!-- Globe 3D -->
+  <canvas id="canvas-hero"></canvas>
+</section>
+
+<hr class="divider" />
+
+<!-- ─── STEP 1 : TÉLÉCHARGEMENT ─── -->
+<section id="step1">
+  <div class="container">
+    <div class="step-label"><span class="step-num">1</span> Téléchargement</div>
+    <h2>Installez A.N.T.O.I.N.E sur votre machine</h2>
+    <p class="section-desc">Choisissez votre système d'exploitation et suivez les instructions. Python 3.10+ requis.</p>
+
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-icon">🪟</div>
+        <h3>Windows</h3>
+        <p>Installation recommandée pour la majorité des utilisateurs. Compatible Windows 10/11.</p>
+        <div class="code-block">pip install -r requirements.txt<br/>python antoine.py</div>
+        <a href="https://www.python.org/ftp/python/3.12.0/python-3.12.0-amd64.exe" target="_blank" class="btn btn-outline" style="margin-top:.85rem; font-size:.78rem; padding:.5rem 1rem;">⬇ Télécharger Python 3.12</a>
+      </div>
+      <div class="card">
+        <div class="card-icon">🍎</div>
+        <h3>macOS</h3>
+        <p>Compatible Apple Silicon et Intel. Homebrew recommandé pour les dépendances audio.</p>
+        <div class="code-block">pip3 install -r requirements.txt<br/>python3 antoine.py</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🐧</div>
+        <h3>Linux</h3>
+        <p>Testé sur Ubuntu 22.04+, Debian et dérivés. Portaudio requis pour le micro.</p>
+        <div class="code-block">sudo apt install portaudio19-dev<br/>pip install -r requirements.txt</div>
+      </div>
+    </div>
+
+    <div style="margin-top:1.5rem; background:rgba(13,15,26,.75); backdrop-filter:blur(8px); border:1px solid var(--border); border-radius:10px; padding:1.25rem 1.5rem; font-size:.875rem; color:var(--muted);">
+      💡 <strong style="color:var(--text);">Première installation ?</strong> Téléchargez l'archive complète via le bouton ci-dessous, extrayez le dossier, installez Python 3.10+ si ce n'est pas déjà fait, puis suivez l'<strong>Étape 2</strong> pour configurer votre fichier <code style="color:var(--cyan);">.env</code> avec vos clés API.
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ─── STEP 2 : PERSONNALISATION ─── -->
+<section id="step2" class="bg-dark">
+  <div class="container">
+    <div class="step-label"><span class="step-num">2</span> Personnalisation</div>
+    <h2>Configurez votre assistant</h2>
+    <p class="section-desc">Ajoutez vos clés API, personnalisez les préférences et activez les modules dont vous avez besoin.</p>
+
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-icon">📁</div>
+        <h3>Fichier .env</h3>
+        <p>Dans le dossier A.N.T.O.I.N.E, renommez <code style="color:var(--cyan);">.env.example</code> en <code style="color:var(--cyan);">.env</code>, puis ouvrez-le avec un éditeur de texte et remplissez vos clés. Ne le partagez jamais — il contient vos secrets.</p>
+        <div class="code-block">
+          # Moteur principal (recommandé)<br/>
+          GROQ_API_KEY=gsk_xxxxxxxxxxxx<br/>
+          # Moteurs secondaires (optionnels)<br/>
+          GEMINI_API_KEY=AIzaxxxxxxxxx<br/>
+          ANTHROPIC_API_KEY=sk-ant-xxxxxx<br/>
+          # Intégrations<br/>
+          HA_TOKEN=votre_token_ha<br/>
+          HA_URL=http://homeassistant.local:8123
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔑</div>
+        <h3>Clés API — lesquelles obtenir ?</h3>
+        <p>Seule la clé <strong style="color:var(--cyan);">Groq</strong> est indispensable — c'est le moteur principal, rapide et 100% gratuit. Les autres (Gemini, Claude) sont optionnelles et servent de fallback automatique si Groq est indisponible.</p>
+        <p style="margin-top:.5rem; font-size:.82rem; color:var(--muted);">Voir les guides ci-dessous pour obtenir chaque clé en 2 minutes.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📱</div>
+        <h3>Accès mobile</h3>
+        <p>Une interface companion est disponible pour smartphone, synchronisée avec votre instance A.N.T.O.I.N.E locale via le réseau Wi-Fi. Contrôlez A.N.T.O.I.N.E depuis n'importe quelle pièce.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🚀</div>
+        <h3>Lancer A.N.T.O.I.N.E</h3>
+        <p>Une fois le <code style="color:var(--cyan);">.env</code> configuré avec au moins votre clé Groq, lancez A.N.T.O.I.N.E et dites <em style="color:var(--cyan);">"Antoine"</em> pour activer la reconnaissance vocale.</p>
+        <div class="code-block">python antoine.py</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ─── API CONFIGURATION ─── -->
+<section id="api-config">
+  <div class="container">
+    <div class="section-tag">Configuration</div>
+    <h2>Console de configuration API</h2>
+    <p class="section-desc">Choisissez les moteurs IA et les intégrations que vous souhaitez activer dans A.N.T.O.I.N.E.</p>
+
+    <div class="cards-grid">
+      <div class="card" style="border-color:rgba(0,200,255,.3);">
+        <div class="card-icon">⚡</div>
+        <h3>Groq Cloud <span class="tag" style="background:rgba(0,200,255,.15); color:var(--cyan);">MOTEUR PRINCIPAL</span></h3>
+        <p>Le moteur recommandé — ultra-rapide, 100% gratuit, aucune carte bancaire requise. C'est le premier que vous devez configurer. Basé sur Llama 3 et Mixtral.</p>
+        <div class="code-block">GROQ_API_KEY=gsk_xxxxxxxxxxxx</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🤖</div>
+        <h3>Gemini AI <span class="tag">FALLBACK 1</span></h3>
+        <p>Moteur Google Gemini — puissant et gratuit sur le tier standard. Utilisé automatiquement si Groq est indisponible. Supporte aussi la vision (analyse d'image/écran).</p>
+        <div class="code-block">GEMINI_API_KEY=AIzaxxxxxxxxx</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧠</div>
+        <h3>Claude (Anthropic) <span class="tag">FALLBACK 2</span></h3>
+        <p>Moteur Claude d'Anthropic — le plus raisonnable et précis. Nécessite 5$ de crédit minimum. Activé en dernier recours automatiquement.</p>
+        <div class="code-block">ANTHROPIC_API_KEY=sk-ant-xxxxxx</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔗</div>
+        <h3>Intégrations</h3>
+        <p>Home Assistant pour la domotique, Spotify pour la musique, YouTube pour les vidéos, SerpAPI pour la recherche web — chaque module s'active indépendamment.</p>
+        <div class="code-block">HA_TOKEN=votre_token<br/>HA_URL=http://homeassistant.local:8123<br/>SERPAPI_KEY=votre_clé</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ─── CAPABILITIES ─── -->
+<section id="capabilities" class="bg-dark">
+  <div class="container">
+    <div class="section-tag">Fonctionnalités</div>
+    <h2>Ce que A.N.T.O.I.N.E sait faire</h2>
+    <p class="section-desc">Commandes locales ultra-rapides et commandes IA puissantes — tout en voix naturelle.</p>
+
+    <div class="caps-grid">
+      <div class="caps-col">
+        <h3>⚡ Commandes locales <span class="tag">Instant • Sans Internet</span></h3>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Heure & date</div><div class="cap-example">« Quelle heure est-il ? » / « Quel jour on est ? »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Batterie, CPU & RAM</div><div class="cap-example">« Quel est l'état de la batterie ? » / « Usage CPU ? »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Capture d'écran</div><div class="cap-example">« Fais une capture d'écran »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Intégration Spotify</div><div class="cap-example">« Mets de la musique » / « Pause »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Lancement d'applications (~40 apps)</div><div class="cap-example">« Ouvre Chrome » / « Lance VS Code »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Calculs & mode travail</div><div class="cap-example">« Combien font 15% de 340 ? »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Extinction / veille / verrouillage PC</div><div class="cap-example">« Mets le PC en veille » / « Éteins le PC »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Recherche web rapide</div><div class="cap-example">« Recherche Python sur Google »</div></div></div>
+      </div>
+
+      <div class="caps-col">
+        <h3>🧠 Commandes IA <span class="tag">Domotique • Vision • Internet</span></h3>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Maison connectée — lumières, prises, thermostats</div><div class="cap-example">« Allume la lumière du salon »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Capteurs & alertes</div><div class="cap-example">« Quelle est la temp. de la chambre ? »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Météo & sport</div><div class="cap-example">« Quel temps fait-il demain à Paris ? »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Vision & analyse d'écran</div><div class="cap-example">« Analyse ce qui est sur mon écran »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Mémoire personnalisée</div><div class="cap-example">« Souviens-toi que j'aime le jazz »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Mode A.N.T.O.I.N.E + séquence de démarrage</div><div class="cap-example">« Active le mode A.N.T.O.I.N.E »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Appels WhatsApp vocaux</div><div class="cap-example">« Appelle maman sur WhatsApp »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Fallback multi-moteurs IA automatique</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ─── COMMUNITY ─── -->
+<section id="community">
+  <div class="container">
+    <div class="section-tag">Communauté</div>
+    <h2>Rejoignez la communauté</h2>
+    <p class="section-desc">Tutoriels, aide directe, fichiers et actualités — tout est là.</p>
+    <div class="community-grid">
+      <div class="social-card" style="opacity:0.5; cursor:default;">
+        <div class="social-icon">🎵</div>
+        <div class="social-name">TikTok</div>
+        <div class="social-desc">Bientôt disponible</div>
+      </div>
+      <a href="https://discord.gg/JP9yF3VWQ" target="_blank" class="social-card">
+        <div class="social-icon">💬</div>
+        <div class="social-name">Discord</div>
+        <div class="social-desc">Aide directe, partage de configs et communauté active 24h/24.</div>
+      </a>
+      <div class="social-card" style="opacity:0.5; cursor:default;">
+        <div class="social-icon">🐙</div>
+        <div class="social-name">GitHub</div>
+        <div class="social-desc">Bientôt disponible</div>
+      </div>
+      <div class="social-card" style="opacity:0.5; cursor:default;">
+        <div class="social-icon">𝕏</div>
+        <div class="social-name">X / Twitter</div>
+        <div class="social-desc">Bientôt disponible</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ─── DOWNLOAD ACCESS ─── -->
+<section id="download" class="bg-dark">
+  <div class="container">
+    <div class="download-box">
+      <div class="section-tag">Accès au téléchargement</div>
+      <h2>Prêt à installer A.N.T.O.I.N.E ?</h2>
+      <p class="section-desc">Suivez notre guide d'installation en 3 étapes. Accès libre, donation appréciée.</p>
+
+      <div class="payment-status">
+        <span class="status-dot"></span>
+        Système de livraison automatique opérationnel
+      </div>
+
+      <div class="hero-btns" style="justify-content:center;">
+        <a href="telecharger.html" class="btn btn-primary">⬇ Télécharger A.N.T.O.I.N.E V1.0</a>
+      </div>
+
+      <p style="font-size:.8rem; color:var(--muted); margin-top:1.5rem;">
+        ❤️ A.N.T.O.I.N.E est 100% gratuit. Si vous souhaitez soutenir le développement, une donation est appréciée mais jamais obligatoire. Sélectionnez <strong>"Paiement entre amis"</strong> pour éviter les frais de transaction. Montant entièrement libre.
+      </p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ─── UPDATE V1.0 ─── -->
+<section id="update">
+  <div class="container">
+    <div class="update-header" onclick="toggleUpdate()">
+      <div>
+        <div style="font-weight:800; font-size:1.1rem;">Mise à jour majeure</div>
+        <div style="font-size:.85rem; color:var(--muted);">Toutes les nouveautés de la V1.0</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <span class="update-badge">V1.0</span>
+        <span id="update-chevron" style="color:var(--cyan);">▼</span>
+      </div>
+    </div>
+
+    <div id="update-body" style="display:none;">
+      <div class="features-grid">
+        <div class="feature-card"><h4>🧠 Mémoire contextuelle</h4><p>30 échanges récents + 200 en historique total pour des conversations fluides et cohérentes.</p></div>
+        <div class="feature-card"><h4>📴 Mode 100% local</h4><p>Fonctionne entièrement sans API internet grâce aux modèles embarqués (Ollama, Whisper local).</p></div>
+        <div class="feature-card"><h4>🔄 Basculement IA automatique</h4><p>Si un moteur IA tombe, A.N.T.O.I.N.E bascule automatiquement sur le suivant sans interruption.</p></div>
+        <div class="feature-card"><h4>🎙️ Détection micro intelligente</h4><p>Sélection automatique du meilleur périphérique audio disponible au démarrage.</p></div>
+        <div class="feature-card"><h4>🗣️ +40 intentions vocales</h4><p>Plus de 40 nouvelles intentions de commandes vocales reconnues nativement.</p></div>
+        <div class="feature-card"><h4>👤 Profils sécurisés</h4><p>Plusieurs profils utilisateurs avec permissions et préférences indépendantes.</p></div>
+        <div class="feature-card"><h4>🖥️ App native PyWebView</h4><p>Interface graphique native 1280×780, fluide et sans navigateur requis.</p></div>
+        <div class="feature-card"><h4>🌍 Globe 3D interactif</h4><p>Visualisation globale animée dans l'interface principale de A.N.T.O.I.N.E.</p></div>
+        <div class="feature-card"><h4>📦 Catalogue ~40 apps</h4><p>Intégration native avec environ 40 applications populaires reconnaissables par commande vocale.</p></div>
+        <div class="feature-card"><h4>⚡ +1500 lignes refactorisées</h4><p>Refactorisation profonde pour de meilleures performances et une meilleure maintenabilité.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ─── API GUIDES ─── -->
+<section id="api-guides" class="bg-dark">
+  <div class="container">
+    <div class="section-tag">Tutoriels</div>
+    <h2>Configurer vos clés API</h2>
+    <p class="section-desc">Guides pas-à-pas pour générer vos clés sur chaque plateforme. Tout est gratuit sauf mention contraire.</p>
+
+    <div class="accordion">
+      <div class="acc-item" id="acc-gemini">
+        <div class="acc-header" onclick="toggleAcc('acc-gemini')">🤖 Gemini AI — Créer une clé API <span class="chevron">▼</span></div>
+        <div class="acc-body"><div class="acc-content"><ol>
+          <li>Rendez-vous sur <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a></li>
+          <li>Connectez-vous avec votre compte Google</li>
+          <li>Cliquez sur <strong>"Get API key"</strong> en haut à gauche</li>
+          <li>Cliquez sur <strong>"Create API key"</strong></li>
+          <li>Copiez la clé dans votre <code>.env</code> sous <code>GEMINI_API_KEY=</code></li>
+        </ol></div></div>
+      </div>
+
+      <div class="acc-item" id="acc-groq">
+        <div class="acc-header" onclick="toggleAcc('acc-groq')">⚡ Groq Cloud — Génération de clé API <span style="font-size:.72rem; background:rgba(0,200,255,.15); color:var(--cyan); border:1px solid rgba(0,200,255,.3); border-radius:100px; padding:.1rem .55rem; margin-left:.5rem; font-weight:700;">RECOMMANDÉ EN PREMIER</span> <span class="chevron">▼</span></div>
+        <div class="acc-body"><div class="acc-content">
+          <p style="margin-bottom:.75rem; color:#22c55e;">✅ 100% gratuit, aucune carte bancaire requise. C'est le moteur principal d'A.N.T.O.I.N.E — commencez par celui-ci.</p>
+          <ol>
+            <li>Allez sur <a href="https://console.groq.com" target="_blank">console.groq.com</a></li>
+            <li>Cliquez sur <strong>"Sign Up"</strong> et créez un compte gratuit (ou connectez-vous avec Google)</li>
+            <li>Une fois connecté, dans le menu de gauche, cliquez sur <strong>"API Keys"</strong></li>
+            <li>Cliquez sur <strong>"Create API Key"</strong>, donnez-lui un nom (ex: "antoine")</li>
+            <li>Copiez la clé affichée (commence par <code>gsk_</code>) — elle n'apparaît qu'une seule fois</li>
+            <li>Dans votre fichier <code>.env</code>, collez-la après : <code>GROQ_API_KEY=</code></li>
+          </ol>
+        </div></div>
+      </div>
+
+      <div class="acc-item" id="acc-claude">
+        <div class="acc-header" onclick="toggleAcc('acc-claude')">🧠 Claude (Anthropic) — Clé API <span class="chevron">▼</span></div>
+        <div class="acc-body"><div class="acc-content">
+          <p style="margin-bottom:.5rem; color:#f59e0b;">⚠️ Nécessite un crédit minimum de 5$ pour activer l'API.</p>
+          <ol>
+            <li>Allez sur <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></li>
+            <li>Créez un compte et ajoutez 5$ de crédit (carte bancaire)</li>
+            <li>Cliquez sur <strong>"API Keys"</strong> dans le menu</li>
+            <li>Créez une nouvelle clé et copiez-la dans <code>ANTHROPIC_API_KEY=</code></li>
+          </ol>
+        </div></div>
+      </div>
+
+      <div class="acc-item" id="acc-youtube">
+        <div class="acc-header" onclick="toggleAcc('acc-youtube')">📺 YouTube Data API — Accès vidéos <span class="chevron">▼</span></div>
+        <div class="acc-body"><div class="acc-content"><ol>
+          <li>Allez sur <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a></li>
+          <li>Créez un nouveau projet Google Cloud</li>
+          <li>Activez l'API <strong>"YouTube Data API v3"</strong> depuis la bibliothèque</li>
+          <li>Dans <strong>"Identifiants"</strong>, créez une clé API</li>
+          <li>Copiez-la dans <code>YOUTUBE_API_KEY=</code></li>
+        </ol></div></div>
+      </div>
+
+      <div class="acc-item" id="acc-grok">
+        <div class="acc-header" onclick="toggleAcc('acc-grok')">🤖 Grok (X.ai) — Clé API <span class="chevron">▼</span></div>
+        <div class="acc-body"><div class="acc-content"><ol>
+          <li>Allez sur <a href="https://console.x.ai/" target="_blank">console.x.ai</a></li>
+          <li>Connectez-vous avec votre compte X (Twitter)</li>
+          <li>Dans le menu, cliquez sur <strong>"API Keys"</strong></li>
+          <li>Créez une nouvelle clé et copiez-la dans <code>GROK_API_KEY=</code></li>
+        </ol></div></div>
+      </div>
+
+      <div class="acc-item" id="acc-serp">
+        <div class="acc-header" onclick="toggleAcc('acc-serp')">🔍 SerpAPI — Résultats de recherche <span class="chevron">▼</span></div>
+        <div class="acc-body"><div class="acc-content"><ol>
+          <li>Allez sur <a href="https://serpapi.com" target="_blank">serpapi.com</a></li>
+          <li>Créez un compte gratuit (100 requêtes/mois offertes)</li>
+          <li>Dans votre dashboard, copiez votre <strong>API Key</strong></li>
+          <li>Ajoutez-la dans <code>SERPAPI_KEY=</code></li>
+        </ol></div></div>
+      </div>
+
+      <div class="acc-item" id="acc-ha">
+        <div class="acc-header" onclick="toggleAcc('acc-ha')">🏠 Home Assistant — Token longue durée <span class="chevron">▼</span></div>
+        <div class="acc-body"><div class="acc-content"><ol>
+          <li>Connectez-vous à votre interface Home Assistant</li>
+          <li>Cliquez sur votre profil (en bas à gauche)</li>
+          <li>Faites défiler jusqu'à <strong>"Jetons d'accès longue durée"</strong></li>
+          <li>Cliquez sur <strong>"Créer un jeton"</strong>, donnez-lui un nom</li>
+          <li>Copiez-le dans <code>HA_TOKEN=</code> et renseignez <code>HA_URL=</code></li>
+        </ol></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div style="margin-bottom:.75rem;">
+    <a href="mentions-legales.html">Mentions légales</a>
+    <a href="confidentialite.html">Confidentialité</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <div>© 2026 A.N.T.O.I.N.E V1.0 — Système I.A Autonome 100% Gratuit</div>
+</footer>
+
+<!-- ─── THREE.JS ─── -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ════════════════════════════════════════════
+// 1. FOND GLOBAL — particules + grille holographique
+// ════════════════════════════════════════════
+(function() {
+  const COLOR_CYAN     = 0x00c8ff;
+  const COLOR_BLUE     = 0x3b82f6;
+  const PARTICLE_COUNT = 140;
+  const CONNECT_DIST   = 3.2;
+
+  const canvas = document.getElementById('canvas-bg');
+  const scene  = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 6;
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+
+  // ── Grille holographique ──
+  const gridMat = new THREE.LineBasicMaterial({ color: COLOR_CYAN, transparent: true, opacity: 0.032 });
+  const GRID_W = 28, GRID_H = 20, GRID_STEP = 1.6;
+  const hw = GRID_W / 2, hh = GRID_H / 2;
+  for (let row = -hh; row <= hh; row += GRID_STEP) {
+    const pts = [new THREE.Vector3(-hw, row, -1), new THREE.Vector3(hw, row, -1)];
+    scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), gridMat));
+  }
+  for (let col = -hw; col <= hw; col += GRID_STEP) {
+    const pts = [new THREE.Vector3(col, -hh, -1), new THREE.Vector3(col, hh, -1)];
+    scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), gridMat));
+  }
+
+  // ── Particules : 3 groupes de tailles différentes ──
+  const sizeValues  = [0.022, 0.042, 0.075];
+  const sizeWeights = [0.55, 0.35, 0.10];
+  const sizeOpacity = [0.55, 0.72, 0.9];
+  const groups      = [[], [], []];
+
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    const roll     = Math.random();
+    const sizeIdx  = roll < sizeWeights[0] ? 0 : roll < sizeWeights[0] + sizeWeights[1] ? 1 : 2;
+    const x  = (Math.random() - 0.5) * 18;
+    const y  = (Math.random() - 0.5) * 16;
+    const z  = (Math.random() - 0.5) * 5;
+    const vx = (Math.random() - 0.5) * 0.004;
+    const vy = (Math.random() - 0.5) * 0.003;
+    groups[sizeIdx].push({ x, y, z, vx, vy });
+  }
+
+  const allParticleData = [];
+  const particleMeshes  = [];
+
+  for (let g = 0; g < 3; g++) {
+    const arr = new Float32Array(groups[g].length * 3);
+    for (let k = 0; k < groups[g].length; k++) {
+      const p = groups[g][k];
+      arr[k * 3] = p.x; arr[k * 3 + 1] = p.y; arr[k * 3 + 2] = p.z;
+      allParticleData.push(p);
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(arr, 3));
+    const mat = new THREE.PointsMaterial({
+      color: g === 2 ? COLOR_BLUE : COLOR_CYAN,
+      size: sizeValues[g],
+      transparent: true,
+      opacity: sizeOpacity[g],
+    });
+    const mesh = new THREE.Points(geo, mat);
+    scene.add(mesh);
+    particleMeshes.push({ data: groups[g], posAttr: geo.attributes.position });
+  }
+
+  // ── Connexions dynamiques ──
+  const MAX_LINES  = 500;
+  const lineSegGeo = new THREE.BufferGeometry();
+  const linePosArr = new Float32Array(MAX_LINES * 2 * 3);
+  lineSegGeo.setAttribute('position', new THREE.BufferAttribute(linePosArr, 3));
+  lineSegGeo.setDrawRange(0, 0);
+  const lineSegMesh = new THREE.LineSegments(lineSegGeo,
+    new THREE.LineBasicMaterial({ color: COLOR_BLUE, transparent: true, opacity: 0.12 })
+  );
+  scene.add(lineSegMesh);
+
+  // ── Souris ──
+  let mx = 0, my = 0;
+  document.addEventListener('mousemove', e => {
+    mx = (e.clientX / window.innerWidth  - 0.5) * 2;
+    my = (e.clientY / window.innerHeight - 0.5) * 2;
+  });
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  // ── Boucle ──
+  (function animate() {
+    requestAnimationFrame(animate);
+
+    // Déplacement des particules
+    for (let g = 0; g < 3; g++) {
+      const { data, posAttr } = particleMeshes[g];
+      for (let k = 0; k < data.length; k++) {
+        const p = data[k];
+        p.x += p.vx; p.y += p.vy;
+        if (p.x >  9) p.x = -9;
+        if (p.x < -9) p.x =  9;
+        if (p.y >  8) p.y = -8;
+        if (p.y < -8) p.y =  8;
+        posAttr.setXYZ(k, p.x, p.y, p.z);
+      }
+      posAttr.needsUpdate = true;
+    }
+
+    // Lignes de connexion dynamiques
+    let lineCount = 0;
+    for (let i = 0; i < allParticleData.length && lineCount < MAX_LINES; i++) {
+      for (let j = i + 1; j < allParticleData.length && lineCount < MAX_LINES; j++) {
+        const a = allParticleData[i], b = allParticleData[j];
+        const dx = a.x - b.x, dy = a.y - b.y, dz = a.z - b.z;
+        if (Math.sqrt(dx*dx + dy*dy + dz*dz) < CONNECT_DIST) {
+          const base = lineCount * 6;
+          linePosArr[base]     = a.x; linePosArr[base + 1] = a.y; linePosArr[base + 2] = a.z;
+          linePosArr[base + 3] = b.x; linePosArr[base + 4] = b.y; linePosArr[base + 5] = b.z;
+          lineCount++;
+        }
+      }
+    }
+    lineSegGeo.attributes.position.needsUpdate = true;
+    lineSegGeo.setDrawRange(0, lineCount * 2);
+
+    // Dérive caméra souris
+    camera.position.x += (mx * 0.3 - camera.position.x) * 0.025;
+    camera.position.y += (-my * 0.2 - camera.position.y) * 0.025;
+    camera.lookAt(scene.position);
+    renderer.render(scene, camera);
+  })();
+})();
+
+// ════════════════════════════════════════════
+// 2. GLOBE 3D HERO — version ultra futuriste
+// ════════════════════════════════════════════
+(function() {
+  const COLOR_CYAN  = 0x00c8ff;
+  const COLOR_BLUE  = 0x3b82f6;
+  const COLOR_WHITE = 0xffffff;
+
+  const canvas   = document.getElementById('canvas-hero');
+  const scene    = new THREE.Scene();
+  const camera   = new THREE.PerspectiveCamera(55, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
+  camera.position.z = 4.8;
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+
+  function resize() {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // ── Lumières ──
+  scene.add(new THREE.AmbientLight(0xffffff, 0.15));
+  const pl1 = new THREE.PointLight(COLOR_CYAN, 5, 25);
+  pl1.position.set(4, 3, 4);
+  scene.add(pl1);
+  const pl2 = new THREE.PointLight(COLOR_BLUE, 3, 18);
+  pl2.position.set(-3, -3, 2);
+  scene.add(pl2);
+  const pl3 = new THREE.PointLight(0xffffff, 1.2, 12);
+  pl3.position.set(0, 5, 1);
+  scene.add(pl3);
+
+  // ── Pivot global (réaction souris) ──
+  const globePivot = new THREE.Group();
+  scene.add(globePivot);
+
+  // ── Halo / glow derrière le globe ──
+  const haloGeo = new THREE.CircleGeometry(2.6, 64);
+  const haloMat = new THREE.MeshBasicMaterial({ color: COLOR_CYAN, transparent: true, opacity: 0.045, side: THREE.DoubleSide, depthWrite: false });
+  const halo = new THREE.Mesh(haloGeo, haloMat);
+  halo.position.z = -0.5;
+  globePivot.add(halo);
+
+  const halo2Geo = new THREE.CircleGeometry(1.85, 64);
+  const halo2Mat = new THREE.MeshBasicMaterial({ color: COLOR_CYAN, transparent: true, opacity: 0.07, side: THREE.DoubleSide, depthWrite: false });
+  const halo2 = new THREE.Mesh(halo2Geo, halo2Mat);
+  halo2.position.z = -0.3;
+  globePivot.add(halo2);
+
+  // ── Globe wireframe principal ──
+  const sphereGeo = new THREE.SphereGeometry(1.6, 32, 32);
+  const sphereMat = new THREE.MeshBasicMaterial({ color: COLOR_CYAN, wireframe: true, transparent: true, opacity: 0.13 });
+  const globe = new THREE.Mesh(sphereGeo, sphereMat);
+  globePivot.add(globe);
+
+  // Globe wireframe secondaire (légèrement plus grand, bleu)
+  const sphere2Geo = new THREE.SphereGeometry(1.65, 16, 16);
+  const sphere2Mat = new THREE.MeshBasicMaterial({ color: COLOR_BLUE, wireframe: true, transparent: true, opacity: 0.05 });
+  const globe2 = new THREE.Mesh(sphere2Geo, sphere2Mat);
+  globePivot.add(globe2);
+
+  // Sphère intérieure (volume semi-transparent)
+  const innerGeo = new THREE.SphereGeometry(1.57, 32, 32);
+  const innerMat = new THREE.MeshStandardMaterial({
+    color: 0x001a2e, emissive: COLOR_CYAN, emissiveIntensity: 0.04,
+    roughness: 1, metalness: 0, transparent: true, opacity: 0.18,
+  });
+  globePivot.add(new THREE.Mesh(innerGeo, innerMat));
+
+  // ── Anneaux orbitaux inclinés à 30°, 60°, 90° (chacun dans son propre pivot) ──
+  const ringDefs = [
+    { radius: 2.1,  tube: 0.012, color: COLOR_CYAN, opacity: 0.65, incline: Math.PI / 6,  speed:  0.006  },
+    { radius: 2.35, tube: 0.009, color: COLOR_CYAN, opacity: 0.4,  incline: Math.PI / 3,  speed: -0.004  },
+    { radius: 1.92, tube: 0.007, color: COLOR_BLUE, opacity: 0.55, incline: Math.PI / 2,  speed:  0.008  },
+  ];
+
+  const rings = ringDefs.map(function(def) {
+    const pivot = new THREE.Group();
+    pivot.rotation.x = def.incline;
+    pivot.rotation.z = Math.random() * Math.PI;
+    globePivot.add(pivot);
+    const g = new THREE.TorusGeometry(def.radius, def.tube, 8, 180);
+    const m = new THREE.MeshBasicMaterial({ color: def.color, transparent: true, opacity: def.opacity });
+    pivot.add(new THREE.Mesh(g, m));
+    return { pivot: pivot, speed: def.speed, radius: def.radius };
+  });
+
+  // ── Satellites lumineux sur les anneaux ──
+  const satDefs = [
+    { ringIdx: 0, angle: 0,                   speed:  0.012, size: 0.055, color: COLOR_BLUE  },
+    { ringIdx: 0, angle: Math.PI,              speed:  0.012, size: 0.035, color: COLOR_CYAN  },
+    { ringIdx: 1, angle: Math.PI / 3,          speed: -0.009, size: 0.06,  color: COLOR_CYAN  },
+    { ringIdx: 1, angle: Math.PI,              speed: -0.009, size: 0.04,  color: COLOR_BLUE  },
+    { ringIdx: 2, angle: Math.PI / 2,          speed:  0.015, size: 0.05,  color: COLOR_WHITE },
+    { ringIdx: 2, angle: 3 * Math.PI / 2,      speed:  0.015, size: 0.04,  color: COLOR_CYAN  },
+  ];
+
+  const satellites = satDefs.map(function(sd) {
+    const geo  = new THREE.SphereGeometry(sd.size, 8, 8);
+    const mat  = new THREE.MeshBasicMaterial({ color: sd.color, transparent: true, opacity: 0.95 });
+    const mesh = new THREE.Mesh(geo, mat);
+    rings[sd.ringIdx].pivot.add(mesh);
+    return { mesh: mesh, angle: sd.angle, speed: sd.speed, radius: rings[sd.ringIdx].radius };
+  });
+
+  // ── Nuage de particules orbitales ──
+  const orbCount  = 120;
+  const orbPosArr = new Float32Array(orbCount * 3);
+  for (let i = 0; i < orbCount; i++) {
+    const theta = Math.random() * Math.PI * 2;
+    const phi   = Math.acos(2 * Math.random() - 1);
+    const r     = 1.75 + Math.random() * 1.1;
+    orbPosArr[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
+    orbPosArr[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+    orbPosArr[i * 3 + 2] = r * Math.cos(phi);
+  }
+  const orbGeo = new THREE.BufferGeometry();
+  orbGeo.setAttribute('position', new THREE.BufferAttribute(orbPosArr, 3));
+  const orbMesh = new THREE.Points(orbGeo,
+    new THREE.PointsMaterial({ color: COLOR_BLUE, size: 0.035, transparent: true, opacity: 0.55 })
+  );
+  globePivot.add(orbMesh);
+
+  // ── Arcs de données (lignes courbes entre deux points de la sphère) ──
+  const ARC_COUNT  = 6;
+  const arcLifeMax = 140;
+  const arcs       = [];
+
+  function randomSpherePoint(r) {
+    const theta = Math.random() * Math.PI * 2;
+    const phi   = Math.acos(2 * Math.random() - 1);
+    return new THREE.Vector3(r * Math.sin(phi) * Math.cos(theta), r * Math.sin(phi) * Math.sin(theta), r * Math.cos(phi));
+  }
+
+  function createArc() {
+    var R   = 1.62;
+    var A   = randomSpherePoint(R);
+    var B   = randomSpherePoint(R);
+    var mid = A.clone().add(B).multiplyScalar(0.5);
+    mid.normalize().multiplyScalar(R + 0.35 + Math.random() * 0.45);
+    var curve  = new THREE.QuadraticBezierCurve3(A, mid, B);
+    var geo    = new THREE.BufferGeometry().setFromPoints(curve.getPoints(40));
+    var mat    = new THREE.LineBasicMaterial({
+      color: Math.random() < 0.5 ? COLOR_CYAN : COLOR_BLUE,
+      transparent: true, opacity: 0.0,
+    });
+    var line = new THREE.Line(geo, mat);
+    globePivot.add(line);
+    return { line: line, mat: mat, life: 0, maxLife: arcLifeMax + Math.floor(Math.random() * 80) };
+  }
+
+  for (let i = 0; i < ARC_COUNT; i++) {
+    var arc = createArc();
+    arc.life = Math.floor(Math.random() * arc.maxLife);
+    arcs.push(arc);
+  }
+
+  // ── Souris ──
+  let mx = 0, my = 0;
+  document.addEventListener('mousemove', e => {
+    mx = (e.clientX / window.innerWidth  - 0.5) * 2;
+    my = (e.clientY / window.innerHeight - 0.5) * 2;
+  });
+
+  // ── Boucle d'animation ──
+  let t = 0;
+  (function animate() {
+    requestAnimationFrame(animate);
+    t += 0.01;
+
+    // Rotation du globe
+    globe.rotation.y  += 0.0025;
+    globe.rotation.x  += 0.0008;
+    globe2.rotation.y -= 0.001;
+    globe2.rotation.z += 0.0005;
+
+    // Rotation des pivots d'anneaux
+    rings[0].pivot.rotation.y += rings[0].speed;
+    rings[1].pivot.rotation.y += rings[1].speed;
+    rings[2].pivot.rotation.y += rings[2].speed;
+
+    // Satellites
+    for (var si = 0; si < satellites.length; si++) {
+      var sat = satellites[si];
+      sat.angle += sat.speed;
+      sat.mesh.position.x = sat.radius * Math.cos(sat.angle);
+      sat.mesh.position.z = sat.radius * Math.sin(sat.angle);
+      sat.mesh.position.y = 0;
+      sat.mesh.scale.setScalar(1 + 0.25 * Math.sin(t * 4 + sat.angle));
+    }
+
+    // Rotation du nuage orbital
+    orbMesh.rotation.y += 0.0018;
+    orbMesh.rotation.x += 0.0006;
+
+    // Arcs de données
+    for (var ai = 0; ai < arcs.length; ai++) {
+      var arc = arcs[ai];
+      arc.life++;
+      var fadeIn  = arc.maxLife * 0.25;
+      var hold    = arc.maxLife * 0.6;
+      if (arc.life < fadeIn) {
+        arc.mat.opacity = (arc.life / fadeIn) * 0.7;
+      } else if (arc.life < hold) {
+        arc.mat.opacity = 0.7;
+      } else if (arc.life < arc.maxLife) {
+        arc.mat.opacity = 0.7 * (1 - (arc.life - hold) / (arc.maxLife - hold));
+      } else {
+        globePivot.remove(arc.line);
+        arc.line.geometry.dispose();
+        arc.mat.dispose();
+        arcs[ai] = createArc();
+      }
+    }
+
+    // Halos pulsants
+    halo.scale.setScalar(1 + 0.04 * Math.sin(t * 1.2));
+    halo2.scale.setScalar(1 + 0.06 * Math.sin(t * 1.8 + 1));
+
+    // Lumières pulsantes
+    pl1.intensity = 4.5 + Math.sin(t * 1.1) * 1.8;
+    pl2.intensity = 2.5 + Math.cos(t * 0.9) * 1.0;
+
+    // Réaction souris (inclinaison subtile du pivot)
+    globePivot.rotation.y += (mx * 0.18 - globePivot.rotation.y) * 0.04;
+    globePivot.rotation.x += (-my * 0.12 - globePivot.rotation.x) * 0.04;
+
+    // Dérive caméra douce
+    camera.position.x += (mx * 0.4 - camera.position.x) * 0.04;
+    camera.position.y += (-my * 0.3 - camera.position.y) * 0.04;
+    camera.lookAt(scene.position);
+
+    renderer.render(scene, camera);
+  })();
+})();
+
+// ════════════════════════════════════════════
+// ACCORDION + UPDATE
+// ════════════════════════════════════════════
+function toggleAcc(id) {
+  const item = document.getElementById(id);
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.acc-item.open').forEach(el => el.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+function toggleUpdate() {
+  const body = document.getElementById('update-body');
+  const ch   = document.getElementById('update-chevron');
+  const open = body.style.display === 'none';
+  body.style.display = open ? 'block' : 'none';
+  ch.textContent = open ? '▲' : '▼';
+}
+
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (!t) return;
+    e.preventDefault();
+    window.scrollTo({ top: t.offsetTop - 70, behavior: 'smooth' });
+  });
+});
+</script>
+
+</body>
+</html>
