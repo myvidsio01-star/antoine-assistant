@@ -390,6 +390,74 @@
       margin-left: .25rem;
     }
 
+    /* ─── DISCORD BANNER ─── */
+    .discord-banner {
+      background: linear-gradient(135deg, rgba(88,101,242,.15) 0%, rgba(0,200,255,.08) 100%);
+      border: 1px solid rgba(88,101,242,.4);
+      border-radius: 20px;
+      padding: 2.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .3s, box-shadow .3s;
+    }
+    .discord-banner:hover {
+      border-color: rgba(88,101,242,.7);
+      box-shadow: 0 0 60px rgba(88,101,242,.2);
+    }
+    .discord-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 0% 50%, rgba(88,101,242,.12) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .discord-banner-left { display: flex; align-items: center; gap: 1.5rem; }
+    .discord-logo {
+      font-size: 3.5rem;
+      filter: drop-shadow(0 0 20px rgba(88,101,242,.6));
+      flex-shrink: 0;
+    }
+    .discord-info h3 { font-size: 1.35rem; font-weight: 800; margin-bottom: .35rem; }
+    .discord-info p { font-size: .9rem; color: var(--muted); max-width: 480px; line-height: 1.6; }
+    .discord-pills {
+      display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .75rem;
+    }
+    .discord-pill {
+      font-size: .72rem; font-weight: 700;
+      background: rgba(88,101,242,.15);
+      border: 1px solid rgba(88,101,242,.3);
+      color: #818cf8;
+      border-radius: 100px;
+      padding: .2rem .7rem;
+    }
+    .btn-discord {
+      background: #5865f2;
+      color: #fff;
+      font-weight: 700;
+      font-size: .95rem;
+      padding: .9rem 2rem;
+      border-radius: 10px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all .25s;
+      box-shadow: 0 0 30px rgba(88,101,242,.4);
+    }
+    .btn-discord:hover { background: #4752c4; transform: translateY(-2px); box-shadow: 0 0 50px rgba(88,101,242,.6); }
+    @media(max-width: 700px) {
+      .discord-banner { flex-direction: column; text-align: center; padding: 2rem 1.5rem; }
+      .discord-banner-left { flex-direction: column; }
+      .discord-pills { justify-content: center; }
+    }
+
     /* ─── COMMUNITY ─── */
     .community-grid {
       display: grid;
@@ -1068,6 +1136,26 @@
     <div class="section-tag">Communauté</div>
     <h2>Rejoignez la communauté</h2>
     <p class="section-desc">Support, tutoriels, code source et actualités — rejoignez des centaines d'utilisateurs d'A.N.T.O.I.N.E.</p>
+
+    <!-- Bandeau Discord mis en avant -->
+    <div class="discord-banner animate-on-scroll">
+      <div class="discord-banner-left">
+        <div class="discord-logo">💬</div>
+        <div class="discord-info">
+          <h3>Serveur Discord A.N.T.O.I.N.E</h3>
+          <p>Le quartier général de la communauté. Aide à l'installation, partage de configs, annonces exclusives et support direct. Le meilleur endroit pour démarrer avec Antoine.</p>
+          <div class="discord-pills">
+            <span class="discord-pill">🛠️ Aide installation</span>
+            <span class="discord-pill">🐛 Support bugs</span>
+            <span class="discord-pill">💡 Suggestions</span>
+            <span class="discord-pill">📢 Annonces</span>
+            <span class="discord-pill">🤖 Changelog</span>
+          </div>
+        </div>
+      </div>
+      <a href="https://discord.gg/JP9yF3VWQ" target="_blank" class="btn-discord">💬 Rejoindre le Discord →</a>
+    </div>
+
     <div class="community-grid">
       <a href="https://discord.gg/JP9yF3VWQ" target="_blank" class="social-card animate-on-scroll">
         <div class="social-icon">💬</div>
