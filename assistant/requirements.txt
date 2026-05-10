@@ -1,0 +1,11 @@
+SpeechRecognition
+PyAudio
+pyttsx3
+psutil
+Pillow
+pyautogui
+python-dotenv
+google-genai
+groq
+anthropic
+requests

@@ -738,6 +738,83 @@
       from { opacity: 0; transform: translateX(40px); }
       to   { opacity: 1; transform: translateX(0); }
     }
+
+    /* ════════════════════════════════════════════════
+       AMÉLIORATIONS NIVEAU 2 — ULTRA DARK TECH
+    ════════════════════════════════════════════════ */
+
+    /* ─── SCROLLBAR CUSTOM ─── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #06070d; }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--cyan), var(--blue));
+      border-radius: 3px;
+      box-shadow: 0 0 8px rgba(0,200,255,.4);
+    }
+    ::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
+    * { scrollbar-width: thin; scrollbar-color: var(--cyan) #06070d; }
+
+    /* ─── GLOW PULSANT SUR BTN-PRIMARY ─── */
+    @keyframes btn-glow-pulse {
+      0%,100% {
+        box-shadow: 0 0 20px rgba(0,200,255,.45), 0 0 40px rgba(0,200,255,.15), 0 4px 16px rgba(0,0,0,.4);
+      }
+      50% {
+        box-shadow: 0 0 45px rgba(0,200,255,.8), 0 0 90px rgba(59,130,246,.4), 0 0 130px rgba(0,200,255,.12), 0 4px 16px rgba(0,0,0,.4);
+      }
+    }
+    .btn-primary { animation: btn-glow-pulse 2.5s ease-in-out infinite; }
+    .btn-primary:hover { animation: none; transform: translateY(-3px); box-shadow: 0 0 60px rgba(0,200,255,.9), 0 0 100px rgba(59,130,246,.45), 0 8px 24px rgba(0,0,0,.5); }
+
+    /* ─── ANIMATE ON SCROLL ─── */
+    .animate-on-scroll { opacity: 0; transform: translateY(30px); transition: opacity .6s ease, transform .6s ease; }
+    .animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
+    .cards-grid .animate-on-scroll:nth-child(1) { transition-delay: 0s; }
+    .cards-grid .animate-on-scroll:nth-child(2) { transition-delay: .1s; }
+    .cards-grid .animate-on-scroll:nth-child(3) { transition-delay: .2s; }
+    .cards-grid .animate-on-scroll:nth-child(4) { transition-delay: .3s; }
+    .caps-grid .animate-on-scroll:nth-child(1) { transition-delay: 0s; }
+    .caps-grid .animate-on-scroll:nth-child(2) { transition-delay: .15s; }
+    .accordion .animate-on-scroll:nth-child(1) { transition-delay: 0s; }
+    .accordion .animate-on-scroll:nth-child(2) { transition-delay: .08s; }
+    .accordion .animate-on-scroll:nth-child(3) { transition-delay: .16s; }
+    .accordion .animate-on-scroll:nth-child(4) { transition-delay: .24s; }
+    .accordion .animate-on-scroll:nth-child(5) { transition-delay: .32s; }
+    .accordion .animate-on-scroll:nth-child(6) { transition-delay: .40s; }
+    .accordion .animate-on-scroll:nth-child(7) { transition-delay: .48s; }
+    .community-grid .animate-on-scroll:nth-child(1) { transition-delay: 0s; }
+    .community-grid .animate-on-scroll:nth-child(2) { transition-delay: .1s; }
+    .community-grid .animate-on-scroll:nth-child(3) { transition-delay: .2s; }
+    .community-grid .animate-on-scroll:nth-child(4) { transition-delay: .3s; }
+
+    /* ─── TYPING CURSOR ─── */
+    .typing-cursor { display: inline-block; width: 2px; height: .9em; background: var(--cyan); margin-left: 3px; vertical-align: text-bottom; animation: blink-cursor .75s step-end infinite; box-shadow: 0 0 10px var(--cyan); border-radius: 1px; }
+    @keyframes blink-cursor { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+    /* ─── SÉPARATEURS LUMINEUX ─── */
+    .divider { border: none; height: 1px; background: linear-gradient(90deg, transparent 0%, rgba(0,200,255,.06) 8%, rgba(0,200,255,.32) 28%, rgba(0,200,255,.55) 50%, rgba(0,200,255,.32) 72%, rgba(0,200,255,.06) 92%, transparent 100%); margin: 0; position: relative; z-index: 1; }
+    .divider::after { content: ''; display: block; height: 1px; margin-top: 3px; background: linear-gradient(90deg, transparent 0%, rgba(59,130,246,.03) 15%, rgba(59,130,246,.14) 50%, rgba(59,130,246,.03) 85%, transparent 100%); }
+
+    /* ─── CODE BLOCKS — HEADER TERMINAL ─── */
+    .code-block { position: relative; padding-top: 2.6rem !important; background: rgba(3,4,10,.97) !important; border-color: rgba(0,200,255,.18) !important; }
+    .code-block::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2.1rem; background: rgba(255,255,255,.025); border-bottom: 1px solid rgba(0,200,255,.1); border-radius: 8px 8px 0 0; pointer-events: none; }
+    .code-block-dots { position: absolute; top: .46rem; left: .82rem; display: flex; gap: .35rem; pointer-events: none; z-index: 3; }
+    .code-block-dots span { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+    .code-block-dots span:nth-child(1) { background: #ff5f57; }
+    .code-block-dots span:nth-child(2) { background: #ffbd2e; }
+    .code-block-dots span:nth-child(3) { background: #28c840; }
+    .term-label { position: absolute; top: .42rem; right: .85rem; font-size: .58rem; font-weight: 700; letter-spacing: .12em; color: rgba(0,200,255,.4); font-family: 'JetBrains Mono', monospace; pointer-events: none; z-index: 3; }
+
+    /* ─── ACCORDÉONS AMÉLIORÉS ─── */
+    .acc-item { border-left: 3px solid transparent; transition: border-color .3s ease, border-left-color .35s ease, box-shadow .35s ease; }
+    .acc-item.open { border-left-color: var(--cyan); box-shadow: -4px 0 28px rgba(0,200,255,.14), inset 0 0 50px rgba(0,200,255,.025); }
+    .acc-item.open .acc-header { background: rgba(0,200,255,.04); }
+    .acc-header { position: relative; }
+    .acc-item.open .acc-header::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background: linear-gradient(90deg, var(--cyan), rgba(0,200,255,.1), transparent); }
+
+    /* ─── STATS — SUPPORT COMPTEUR ANIMÉ ─── */
+    .stat-num { font-variant-numeric: tabular-nums; will-change: contents; display: inline-block; }
+
   </style>
 </head>
 <body>
@@ -763,19 +840,19 @@
 <!-- ─── HERO ─── -->
 <section class="hero" style="z-index:1;">
   <div class="hero-left">
-    <div class="hero-badge"><span class="dot"></span> LIVE — Mise à jour V1.0</div>
+    <div class="hero-badge"><span class="dot"></span> SYSTÈME EN LIGNE</div>
 
-    <p class="hero-title-small">Système I.A Autonome</p>
+    <p class="hero-title-small">Assistant Vocal IA Personnel · Python</p>
     <h1 class="hero-name">A.N.T.O.I.N.E</h1>
-    <p class="hero-subtitle-line">100% Gratuit · 100% Vocal · 100% Autonome</p>
+    <p class="hero-subtitle-line" id="hero-subtitle">Autonomous Neural-Triggered Omniscient Intelligence</p>
 
     <p class="hero-sub">
-      Votre assistant IA personnel entièrement vocal, capable de contrôler votre maison, votre PC et bien plus — sans abonnement, sans limite.
+      Votre assistant IA personnel 100% vocal, 100% gratuit — contrôle votre PC, votre maison connectée et bien plus, sans abonnement ni limite.
     </p>
 
     <div class="hero-btns">
-      <a href="#step1" class="btn btn-primary">⬇ Étape 1 — Télécharger</a>
-      <a href="#step2" class="btn btn-outline">⚙ Étape 2 — Personnaliser</a>
+      <a href="https://github.com/myvidsio01-star/antoine-assistant/releases/download/v1.0/ANTOINE-V1.0.zip" class="btn btn-primary">⬇ Télécharger V1.0</a>
+      <a href="https://discord.gg/JP9yF3VWQ" target="_blank" class="btn btn-outline">💬 Discord</a>
     </div>
 
     <div class="stats-row">
@@ -797,32 +874,41 @@
   <div class="container">
     <div class="step-label"><span class="step-num">1</span> Téléchargement</div>
     <h2>Installez A.N.T.O.I.N.E sur votre machine</h2>
-    <p class="section-desc">Choisissez votre système d'exploitation et suivez les instructions. Python 3.10+ requis.</p>
+    <p class="section-desc">Choisissez votre système d'exploitation. Python 3.12 requis. L'installation prend moins de 5 minutes.</p>
 
     <div class="cards-grid">
-      <div class="card">
+      <!-- WINDOWS — PRINCIPAL -->
+      <div class="card animate-on-scroll" style="border-color:rgba(0,200,255,.35); position:relative;">
+        <div style="position:absolute; top:1rem; right:1rem; font-size:.7rem; font-weight:800; background:linear-gradient(135deg,var(--cyan),var(--blue)); color:#000; border-radius:100px; padding:.2rem .65rem;">RECOMMANDÉ</div>
         <div class="card-icon">🪟</div>
-        <h3>Windows</h3>
-        <p>Installation recommandée pour la majorité des utilisateurs. Compatible Windows 10/11.</p>
+        <h3>Windows <span class="tag">Compatible</span></h3>
+        <p>Installation principale — optimisée pour Windows 10 et 11. Testé et validé sur toutes les versions récentes.</p>
         <div class="code-block">pip install -r requirements.txt<br/>python antoine.py</div>
-        <a href="https://www.python.org/ftp/python/3.12.0/python-3.12.0-amd64.exe" target="_blank" class="btn btn-outline" style="margin-top:.85rem; font-size:.78rem; padding:.5rem 1rem;">⬇ Télécharger Python 3.12</a>
+        <div style="display:flex; flex-direction:column; gap:.5rem; margin-top:.85rem;">
+          <a href="https://github.com/myvidsio01-star/antoine-assistant/releases/download/v1.0/ANTOINE-V1.0.zip" class="btn btn-primary" style="font-size:.78rem; padding:.55rem 1rem; justify-content:center;">⬇ Télécharger A.N.T.O.I.N.E V1.0</a>
+          <a href="https://www.python.org/ftp/python/3.12.0/python-3.12.0-amd64.exe" target="_blank" class="btn btn-outline" style="font-size:.78rem; padding:.5rem 1rem; justify-content:center;">⬇ Télécharger Python 3.12</a>
+        </div>
       </div>
-      <div class="card">
+      <!-- MACOS -->
+      <div class="card animate-on-scroll" style="opacity:.7;">
         <div class="card-icon">🍎</div>
-        <h3>macOS</h3>
-        <p>Compatible Apple Silicon et Intel. Homebrew recommandé pour les dépendances audio.</p>
-        <div class="code-block">pip3 install -r requirements.txt<br/>python3 antoine.py</div>
+        <h3>macOS <span class="tag" style="border-color:rgba(100,116,139,.4); color:var(--muted); background:rgba(100,116,139,.1);">Bientôt</span></h3>
+        <p>Guide d'installation macOS en cours de rédaction. Compatible Apple Silicon (M1/M2/M3) et Intel. Homebrew recommandé pour les dépendances audio.</p>
+        <div class="code-block" style="opacity:.5;">pip3 install -r requirements.txt<br/>python3 antoine.py</div>
+        <p style="margin-top:.75rem; font-size:.8rem; color:var(--muted);">En attendant : suivez le guide d'installation manuelle sur notre <a href="https://github.com/myvidsio01-star/antoine-assistant" target="_blank" style="color:var(--cyan);">GitHub</a>.</p>
       </div>
-      <div class="card">
+      <!-- LINUX -->
+      <div class="card animate-on-scroll" style="opacity:.7;">
         <div class="card-icon">🐧</div>
-        <h3>Linux</h3>
-        <p>Testé sur Ubuntu 22.04+, Debian et dérivés. Portaudio requis pour le micro.</p>
-        <div class="code-block">sudo apt install portaudio19-dev<br/>pip install -r requirements.txt</div>
+        <h3>Linux <span class="tag" style="border-color:rgba(100,116,139,.4); color:var(--muted); background:rgba(100,116,139,.1);">Bientôt</span></h3>
+        <p>Guide d'installation Linux en cours de rédaction. Compatibilité testée sur Ubuntu 22.04+ et Debian. Portaudio requis pour le micro.</p>
+        <div class="code-block" style="opacity:.5;">sudo apt install portaudio19-dev<br/>pip install -r requirements.txt<br/>python antoine.py</div>
+        <p style="margin-top:.75rem; font-size:.8rem; color:var(--muted);">En attendant : suivez le guide d'installation manuelle sur notre <a href="https://github.com/myvidsio01-star/antoine-assistant" target="_blank" style="color:var(--cyan);">GitHub</a>.</p>
       </div>
     </div>
 
     <div style="margin-top:1.5rem; background:rgba(13,15,26,.75); backdrop-filter:blur(8px); border:1px solid var(--border); border-radius:10px; padding:1.25rem 1.5rem; font-size:.875rem; color:var(--muted);">
-      💡 <strong style="color:var(--text);">Première installation ?</strong> Téléchargez l'archive complète via le bouton ci-dessous, extrayez le dossier, installez Python 3.10+ si ce n'est pas déjà fait, puis suivez l'<strong>Étape 2</strong> pour configurer votre fichier <code style="color:var(--cyan);">.env</code> avec vos clés API.
+      💡 <strong style="color:var(--text);">Première installation ?</strong> Téléchargez l'archive Windows, extrayez le dossier à l'endroit de votre choix, installez Python 3.12 si ce n'est pas déjà fait, puis suivez l'<strong>Étape 2</strong> pour configurer votre fichier <code style="color:var(--cyan);">.env</code> avec vos clés API. Seule la clé Groq est obligatoire — elle est 100% gratuite.
     </div>
   </div>
 </section>
@@ -837,37 +923,63 @@
     <p class="section-desc">Ajoutez vos clés API, personnalisez les préférences et activez les modules dont vous avez besoin.</p>
 
     <div class="cards-grid">
-      <div class="card">
+      <!-- BLOC .ENV -->
+      <div class="card animate-on-scroll" style="grid-column: 1 / -1;">
         <div class="card-icon">📁</div>
-        <h3>Fichier .env</h3>
-        <p>Dans le dossier A.N.T.O.I.N.E, renommez <code style="color:var(--cyan);">.env.example</code> en <code style="color:var(--cyan);">.env</code>, puis ouvrez-le avec un éditeur de texte et remplissez vos clés. Ne le partagez jamais — il contient vos secrets.</p>
-        <div class="code-block">
-          # Moteur principal (recommandé)<br/>
-          GROQ_API_KEY=gsk_xxxxxxxxxxxx<br/>
-          # Moteurs secondaires (optionnels)<br/>
-          GEMINI_API_KEY=AIzaxxxxxxxxx<br/>
-          ANTHROPIC_API_KEY=sk-ant-xxxxxx<br/>
-          # Intégrations<br/>
-          HA_TOKEN=votre_token_ha<br/>
-          HA_URL=http://homeassistant.local:8123
+        <h3>Contenu du fichier <code style="color:var(--cyan); font-size:.95em;">.env</code></h3>
+        <p style="margin-bottom:1rem;">Dans le dossier A.N.T.O.I.N.E, renommez <code style="color:var(--cyan);">.env.example</code> en <code style="color:var(--cyan);">.env</code>, ouvrez-le avec le Bloc-notes (ou VS Code) et remplissez vos clés. <strong style="color:#f59e0b;">Ne partagez jamais ce fichier</strong> — il contient vos secrets.</p>
+        <div class="code-block" style="line-height:1.9; font-size:.82rem;">
+          <span style="color:#64748b;"># ════════════════════════════════════</span><br/>
+          <span style="color:#64748b;"># MOTEURS IA — GROQ OBLIGATOIRE</span><br/>
+          <span style="color:#64748b;"># ════════════════════════════════════</span><br/>
+          <br/>
+          <span style="color:#64748b;"># Moteur principal — 100% gratuit, ultra-rapide (OBLIGATOIRE)</span><br/>
+          <span style="color:var(--cyan);">GROQ_API_KEY</span>=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>
+          <br/>
+          <span style="color:#64748b;"># Moteur Google Gemini — gratuit, utilisé en fallback (optionnel)</span><br/>
+          <span style="color:var(--cyan);">GEMINI_API_KEY</span>=AIzaSyxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>
+          <br/>
+          <span style="color:#64748b;"># Moteur Claude Anthropic — fallback secondaire, 5$ minimum (optionnel)</span><br/>
+          <span style="color:var(--cyan);">ANTHROPIC_API_KEY</span>=sk-ant-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>
+          <br/>
+          <span style="color:#64748b;"># Moteur Grok (X.ai) — fallback tertiaire (optionnel)</span><br/>
+          <span style="color:var(--cyan);">GROK_API_KEY</span>=xai-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>
+          <br/>
+          <span style="color:#64748b;"># ════════════════════════════════════</span><br/>
+          <span style="color:#64748b;"># INTÉGRATIONS — TOUTES OPTIONNELLES</span><br/>
+          <span style="color:#64748b;"># ════════════════════════════════════</span><br/>
+          <br/>
+          <span style="color:#64748b;"># Recherche web (100 requêtes/mois gratuites)</span><br/>
+          <span style="color:var(--cyan);">SERPAPI_KEY</span>=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>
+          <br/>
+          <span style="color:#64748b;"># YouTube — pour lancer des vidéos par la voix</span><br/>
+          <span style="color:var(--cyan);">YOUTUBE_API_KEY</span>=AIzaSyxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>
+          <br/>
+          <span style="color:#64748b;"># Home Assistant — pour piloter vos appareils domotiques</span><br/>
+          <span style="color:var(--cyan);">HA_TOKEN</span>=votre_token_longue_duree_home_assistant<br/>
+          <span style="color:var(--cyan);">HA_URL</span>=http://homeassistant.local:8123
         </div>
       </div>
-      <div class="card">
+
+      <div class="card animate-on-scroll">
         <div class="card-icon">🔑</div>
-        <h3>Clés API — lesquelles obtenir ?</h3>
-        <p>Seule la clé <strong style="color:var(--cyan);">Groq</strong> est indispensable — c'est le moteur principal, rapide et 100% gratuit. Les autres (Gemini, Claude) sont optionnelles et servent de fallback automatique si Groq est indisponible.</p>
-        <p style="margin-top:.5rem; font-size:.82rem; color:var(--muted);">Voir les guides ci-dessous pour obtenir chaque clé en 2 minutes.</p>
+        <h3>Quelle clé obtenir en premier ?</h3>
+        <p>Commencez par <strong style="color:var(--cyan);">Groq</strong> — c'est le moteur principal d'A.N.T.O.I.N.E. Il est ultra-rapide, 100% gratuit et ne nécessite aucune carte bancaire. Créez votre compte sur <a href="https://console.groq.com" target="_blank" style="color:var(--cyan);">console.groq.com</a> en 2 minutes.</p>
+        <p style="margin-top:.75rem; font-size:.82rem; color:var(--muted);">Les autres clés (Gemini, Claude, Grok) sont optionnelles. A.N.T.O.I.N.E bascule automatiquement sur le moteur suivant si le principal est indisponible.</p>
+        <p style="margin-top:.5rem; font-size:.82rem; color:var(--muted);">→ Consultez les guides détaillés en bas de page pour obtenir chaque clé pas-à-pas.</p>
       </div>
-      <div class="card">
-        <div class="card-icon">📱</div>
-        <h3>Accès mobile</h3>
-        <p>Une interface companion est disponible pour smartphone, synchronisée avec votre instance A.N.T.O.I.N.E locale via le réseau Wi-Fi. Contrôlez A.N.T.O.I.N.E depuis n'importe quelle pièce.</p>
-      </div>
-      <div class="card">
+
+      <div class="card animate-on-scroll">
         <div class="card-icon">🚀</div>
         <h3>Lancer A.N.T.O.I.N.E</h3>
-        <p>Une fois le <code style="color:var(--cyan);">.env</code> configuré avec au moins votre clé Groq, lancez A.N.T.O.I.N.E et dites <em style="color:var(--cyan);">"Antoine"</em> pour activer la reconnaissance vocale.</p>
-        <div class="code-block">python antoine.py</div>
+        <p>Une fois le <code style="color:var(--cyan);">.env</code> configuré avec au moins votre clé Groq, ouvrez un terminal dans le dossier A.N.T.O.I.N.E et exécutez la commande ci-dessous. Dites ensuite <em style="color:var(--cyan);">"Antoine"</em> pour activer la reconnaissance vocale.</p>
+        <div class="code-block" style="margin-top:.85rem; line-height:1.8;">
+          <span style="color:#64748b;"># Dans le dossier ANTOINE-V1.0 :</span><br/>
+          pip install -r requirements.txt<br/>
+          <br/>
+          <span style="color:#64748b;"># Puis à chaque démarrage :</span><br/>
+          python antoine.py
+        </div>
       </div>
     </div>
   </div>
@@ -883,25 +995,25 @@
     <p class="section-desc">Choisissez les moteurs IA et les intégrations que vous souhaitez activer dans A.N.T.O.I.N.E.</p>
 
     <div class="cards-grid">
-      <div class="card" style="border-color:rgba(0,200,255,.3);">
+      <div class="card animate-on-scroll" style="border-color:rgba(0,200,255,.3);">
         <div class="card-icon">⚡</div>
         <h3>Groq Cloud <span class="tag" style="background:rgba(0,200,255,.15); color:var(--cyan);">MOTEUR PRINCIPAL</span></h3>
         <p>Le moteur recommandé — ultra-rapide, 100% gratuit, aucune carte bancaire requise. C'est le premier que vous devez configurer. Basé sur Llama 3 et Mixtral.</p>
         <div class="code-block">GROQ_API_KEY=gsk_xxxxxxxxxxxx</div>
       </div>
-      <div class="card">
+      <div class="card animate-on-scroll">
         <div class="card-icon">🤖</div>
         <h3>Gemini AI <span class="tag">FALLBACK 1</span></h3>
         <p>Moteur Google Gemini — puissant et gratuit sur le tier standard. Utilisé automatiquement si Groq est indisponible. Supporte aussi la vision (analyse d'image/écran).</p>
         <div class="code-block">GEMINI_API_KEY=AIzaxxxxxxxxx</div>
       </div>
-      <div class="card">
+      <div class="card animate-on-scroll">
         <div class="card-icon">🧠</div>
         <h3>Claude (Anthropic) <span class="tag">FALLBACK 2</span></h3>
         <p>Moteur Claude d'Anthropic — le plus raisonnable et précis. Nécessite 5$ de crédit minimum. Activé en dernier recours automatiquement.</p>
         <div class="code-block">ANTHROPIC_API_KEY=sk-ant-xxxxxx</div>
       </div>
-      <div class="card">
+      <div class="card animate-on-scroll">
         <div class="card-icon">🔗</div>
         <h3>Intégrations</h3>
         <p>Home Assistant pour la domotique, Spotify pour la musique, YouTube pour les vidéos, SerpAPI pour la recherche web — chaque module s'active indépendamment.</p>
@@ -921,28 +1033,28 @@
     <p class="section-desc">Commandes locales ultra-rapides et commandes IA puissantes — tout en voix naturelle.</p>
 
     <div class="caps-grid">
-      <div class="caps-col">
-        <h3>⚡ Commandes locales <span class="tag">Instant • Sans Internet</span></h3>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Heure & date</div><div class="cap-example">« Quelle heure est-il ? » / « Quel jour on est ? »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Batterie, CPU & RAM</div><div class="cap-example">« Quel est l'état de la batterie ? » / « Usage CPU ? »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Capture d'écran</div><div class="cap-example">« Fais une capture d'écran »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Intégration Spotify</div><div class="cap-example">« Mets de la musique » / « Pause »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Lancement d'applications (~40 apps)</div><div class="cap-example">« Ouvre Chrome » / « Lance VS Code »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Calculs & mode travail</div><div class="cap-example">« Combien font 15% de 340 ? »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Extinction / veille / verrouillage PC</div><div class="cap-example">« Mets le PC en veille » / « Éteins le PC »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Recherche web rapide</div><div class="cap-example">« Recherche Python sur Google »</div></div></div>
+      <div class="caps-col animate-on-scroll">
+        <h3>⚡ Commandes locales <span class="tag">Instant · Sans Internet</span></h3>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Heure &amp; date en temps réel</div><div class="cap-example">« Quelle heure est-il ? » / « Quel jour on est ? »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Batterie, CPU &amp; RAM</div><div class="cap-example">« Quel est le niveau de batterie ? » / « Usage CPU ? »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Capture d'écran automatique</div><div class="cap-example">« Fais une capture d'écran »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Ouvrir applications &amp; dossiers (~40 apps)</div><div class="cap-example">« Ouvre Chrome » / « Lance VS Code » / « Ouvre Mes Documents »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Mode travail &amp; focus</div><div class="cap-example">« Active le mode travail »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Calculs instantanés</div><div class="cap-example">« Combien font 15% de 340 ? » / « Convertis 50€ en dollars »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Veille, extinction &amp; verrouillage PC</div><div class="cap-example">« Mets le PC en veille » / « Éteins l'ordinateur »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Contrôle Spotify</div><div class="cap-example">« Mets de la musique » / « Pause » / « Musique suivante »</div></div></div>
       </div>
 
-      <div class="caps-col">
-        <h3>🧠 Commandes IA <span class="tag">Domotique • Vision • Internet</span></h3>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Maison connectée — lumières, prises, thermostats</div><div class="cap-example">« Allume la lumière du salon »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Capteurs & alertes</div><div class="cap-example">« Quelle est la temp. de la chambre ? »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Météo & sport</div><div class="cap-example">« Quel temps fait-il demain à Paris ? »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Vision & analyse d'écran</div><div class="cap-example">« Analyse ce qui est sur mon écran »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Mémoire personnalisée</div><div class="cap-example">« Souviens-toi que j'aime le jazz »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Mode A.N.T.O.I.N.E + séquence de démarrage</div><div class="cap-example">« Active le mode A.N.T.O.I.N.E »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Appels WhatsApp vocaux</div><div class="cap-example">« Appelle maman sur WhatsApp »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Fallback multi-moteurs IA automatique</div></div></div>
+      <div class="caps-col animate-on-scroll">
+        <h3>🧠 Intelligence IA <span class="tag">Cloud · Domotique · Mémoire</span></h3>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Questions libres &amp; conversations</div><div class="cap-example">« Explique-moi le machine learning » / « Raconte une blague »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Météo en temps réel</div><div class="cap-example">« Quel temps fait-il demain à Paris ? »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Recherche web intelligente (SerpAPI)</div><div class="cap-example">« Cherche les dernières news IA » / « Recherche Python »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Mémoire persistante personnalisée</div><div class="cap-example">« Souviens-toi que j'aime le jazz » / « Quel est mon prénom ? »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Home Assistant — domotique complète</div><div class="cap-example">« Allume la lumière du salon » / « Règle le thermostat à 20° »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Calculs complexes &amp; conversions</div><div class="cap-example">« Calcule l'hypoténuse d'un triangle 3/4 »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Lancement de vidéos YouTube</div><div class="cap-example">« Lance une vidéo de Lo-Fi hip hop »</div></div></div>
+        <div class="cap-item"><div class="cap-dot"></div><div><div>Basculement automatique multi-moteurs IA</div><div class="cap-example">Si Groq est indisponible → Gemini → Claude → Grok</div></div></div>
       </div>
     </div>
   </div>
@@ -955,27 +1067,27 @@
   <div class="container">
     <div class="section-tag">Communauté</div>
     <h2>Rejoignez la communauté</h2>
-    <p class="section-desc">Tutoriels, aide directe, fichiers et actualités — tout est là.</p>
+    <p class="section-desc">Support, tutoriels, code source et actualités — rejoignez des centaines d'utilisateurs d'A.N.T.O.I.N.E.</p>
     <div class="community-grid">
+      <a href="https://discord.gg/JP9yF3VWQ" target="_blank" class="social-card animate-on-scroll">
+        <div class="social-icon">💬</div>
+        <div class="social-name">Discord</div>
+        <div class="social-desc">Aide directe, partage de configs, annonces et communauté active 24h/24. Le meilleur endroit pour démarrer.</div>
+      </a>
+      <a href="https://github.com/myvidsio01-star/antoine-assistant" target="_blank" class="social-card animate-on-scroll">
+        <div class="social-icon">🐙</div>
+        <div class="social-name">GitHub</div>
+        <div class="social-desc">Code source ouvert, releases officielles, issues et mises à jour. Donnez une étoile pour soutenir le projet ⭐</div>
+      </a>
       <div class="social-card" style="opacity:0.5; cursor:default;">
         <div class="social-icon">🎵</div>
         <div class="social-name">TikTok</div>
-        <div class="social-desc">Bientôt disponible</div>
+        <div class="social-desc">Bientôt disponible — tutoriels vidéo, démonstrations et astuces A.N.T.O.I.N.E.</div>
       </div>
-      <a href="https://discord.gg/JP9yF3VWQ" target="_blank" class="social-card">
-        <div class="social-icon">💬</div>
-        <div class="social-name">Discord</div>
-        <div class="social-desc">Aide directe, partage de configs et communauté active 24h/24.</div>
-      </a>
-      <a href="https://github.com/myvidsio01-star/antoine-assistant" target="_blank" class="social-card">
-        <div class="social-icon">🐙</div>
-        <div class="social-name">GitHub</div>
-        <div class="social-desc">Code source, releases et mises à jour officielles.</div>
-      </a>
       <div class="social-card" style="opacity:0.5; cursor:default;">
         <div class="social-icon">𝕏</div>
-        <div class="social-name">X / Twitter</div>
-        <div class="social-desc">Bientôt disponible</div>
+        <div class="social-name">X (Twitter)</div>
+        <div class="social-desc">Bientôt disponible — actualités, nouvelles fonctionnalités et annonces officielles.</div>
       </div>
     </div>
   </div>
@@ -987,21 +1099,22 @@
 <section id="download" class="bg-dark">
   <div class="container">
     <div class="download-box">
-      <div class="section-tag">Accès au téléchargement</div>
-      <h2>Prêt à installer A.N.T.O.I.N.E ?</h2>
-      <p class="section-desc">Suivez notre guide d'installation en 3 étapes. Accès libre, donation appréciée.</p>
+      <div class="section-tag">Téléchargement</div>
+      <h2>Prêt à lancer A.N.T.O.I.N.E ?</h2>
+      <p class="section-desc">Accès 100% gratuit, sans inscription, sans abonnement. Téléchargez l'archive, configurez votre clé Groq et c'est parti.</p>
 
       <div class="payment-status">
         <span class="status-dot"></span>
-        Système de livraison automatique opérationnel
+        V1.0 disponible — Dernière version stable
       </div>
 
-      <div class="hero-btns" style="justify-content:center;">
-        <a href="telecharger.html" class="btn btn-primary">⬇ Télécharger A.N.T.O.I.N.E V1.0</a>
+      <div class="hero-btns" style="justify-content:center; gap:1rem; flex-wrap:wrap;">
+        <a href="telecharger.html" class="btn btn-primary" style="font-size:1rem; padding:1rem 2.5rem;">⬇ Télécharger A.N.T.O.I.N.E V1.0</a>
+        <a href="https://discord.gg/JP9yF3VWQ" target="_blank" class="btn btn-outline" style="font-size:1rem; padding:1rem 2rem;">💬 Rejoindre le Discord</a>
       </div>
 
-      <p style="font-size:.8rem; color:var(--muted); margin-top:1.5rem;">
-        ❤️ A.N.T.O.I.N.E est 100% gratuit. Si vous souhaitez soutenir le développement, une donation est appréciée mais jamais obligatoire. Sélectionnez <strong>"Paiement entre amis"</strong> pour éviter les frais de transaction. Montant entièrement libre.
+      <p style="font-size:.8rem; color:var(--muted); margin-top:1.75rem;">
+        ❤️ A.N.T.O.I.N.E est et restera 100% gratuit. Si vous souhaitez soutenir le développement, une donation est appréciée mais jamais obligatoire. Sélectionnez <strong>"Paiement entre amis"</strong> pour éviter les frais de transaction. Montant entièrement libre.
       </p>
     </div>
   </div>
@@ -1014,27 +1127,29 @@
   <div class="container">
     <div class="update-header" onclick="toggleUpdate()">
       <div>
-        <div style="font-weight:800; font-size:1.1rem;">Mise à jour majeure</div>
-        <div style="font-size:.85rem; color:var(--muted);">Toutes les nouveautés de la V1.0</div>
+        <div style="font-weight:800; font-size:1.1rem;">Mise à jour majeure — A.N.T.O.I.N.E V1.0</div>
+        <div style="font-size:.85rem; color:var(--muted);">Cliquez pour voir toutes les nouveautés de cette version</div>
       </div>
       <div style="display:flex;align-items:center;gap:1rem;">
-        <span class="update-badge">V1.0</span>
+        <span class="update-badge">V1.0 — Stable</span>
         <span id="update-chevron" style="color:var(--cyan);">▼</span>
       </div>
     </div>
 
     <div id="update-body" style="display:none;">
       <div class="features-grid">
-        <div class="feature-card"><h4>🧠 Mémoire contextuelle</h4><p>30 échanges récents + 200 en historique total pour des conversations fluides et cohérentes.</p></div>
-        <div class="feature-card"><h4>📴 Mode 100% local</h4><p>Fonctionne entièrement sans API internet grâce aux modèles embarqués (Ollama, Whisper local).</p></div>
-        <div class="feature-card"><h4>🔄 Basculement IA automatique</h4><p>Si un moteur IA tombe, A.N.T.O.I.N.E bascule automatiquement sur le suivant sans interruption.</p></div>
-        <div class="feature-card"><h4>🎙️ Détection micro intelligente</h4><p>Sélection automatique du meilleur périphérique audio disponible au démarrage.</p></div>
-        <div class="feature-card"><h4>🗣️ +40 intentions vocales</h4><p>Plus de 40 nouvelles intentions de commandes vocales reconnues nativement.</p></div>
-        <div class="feature-card"><h4>👤 Profils sécurisés</h4><p>Plusieurs profils utilisateurs avec permissions et préférences indépendantes.</p></div>
-        <div class="feature-card"><h4>🖥️ App native PyWebView</h4><p>Interface graphique native 1280×780, fluide et sans navigateur requis.</p></div>
-        <div class="feature-card"><h4>🌍 Globe 3D interactif</h4><p>Visualisation globale animée dans l'interface principale de A.N.T.O.I.N.E.</p></div>
-        <div class="feature-card"><h4>📦 Catalogue ~40 apps</h4><p>Intégration native avec environ 40 applications populaires reconnaissables par commande vocale.</p></div>
-        <div class="feature-card"><h4>⚡ +1500 lignes refactorisées</h4><p>Refactorisation profonde pour de meilleures performances et une meilleure maintenabilité.</p></div>
+        <div class="feature-card"><h4>🧠 Mémoire contextuelle persistante</h4><p>30 échanges récents + 200 en historique long terme. A.N.T.O.I.N.E se souvient de vos préférences entre les sessions.</p></div>
+        <div class="feature-card"><h4>📴 Mode 100% local (offline)</h4><p>Fonctionne sans internet grâce aux modèles embarqués. Whisper local pour la reconnaissance vocale, Ollama pour l'IA.</p></div>
+        <div class="feature-card"><h4>🔄 Basculement automatique multi-IA</h4><p>Groq → Gemini → Claude → Grok : si un moteur tombe, A.N.T.O.I.N.E bascule en silence sur le suivant.</p></div>
+        <div class="feature-card"><h4>🎙️ Détection micro intelligente</h4><p>Sélection automatique du meilleur périphérique audio disponible au démarrage. Zéro configuration requise.</p></div>
+        <div class="feature-card"><h4>🗣️ +40 intentions vocales natives</h4><p>Plus de 40 commandes vocales reconnues directement sans passer par un moteur IA — réponse quasi-instantanée.</p></div>
+        <div class="feature-card"><h4>🏠 Intégration Home Assistant complète</h4><p>Pilotez lumières, prises, thermostats, capteurs et scènes domotiques entièrement à la voix via votre réseau local.</p></div>
+        <div class="feature-card"><h4>🖥️ Interface native PyWebView</h4><p>Application graphique native 1280×780 avec globe 3D interactif. Aucun navigateur requis — expérience desktop fluide.</p></div>
+        <div class="feature-card"><h4>🎵 Contrôle Spotify vocal</h4><p>Lecture, pause, musique suivante/précédente, volume — tout se contrôle à la voix sans toucher votre clavier.</p></div>
+        <div class="feature-card"><h4>📦 Catalogue ~40 applications</h4><p>Ouvrez Chrome, Firefox, VS Code, Notepad++, Discord, Steam, Spotify et ~35 autres apps d'une seule phrase vocale.</p></div>
+        <div class="feature-card"><h4>⚡ Moteur refactorisé (+1500 lignes)</h4><p>Architecture interne entièrement repensée pour des performances optimales, une maintenance facilitée et un démarrage plus rapide.</p></div>
+        <div class="feature-card"><h4>🔍 Recherche web intégrée (SerpAPI)</h4><p>Recherche en temps réel dans Google, Bing ou DuckDuckGo directement depuis une commande vocale.</p></div>
+        <div class="feature-card"><h4>📺 Lancement YouTube vocal</h4><p>Lancez une vidéo YouTube par sujet, artiste ou titre sans jamais toucher votre souris.</p></div>
       </div>
     </div>
   </div>
@@ -1050,7 +1165,7 @@
     <p class="section-desc">Guides pas-à-pas pour générer vos clés sur chaque plateforme. Tout est gratuit sauf mention contraire.</p>
 
     <div class="accordion">
-      <div class="acc-item" id="acc-gemini">
+      <div class="acc-item animate-on-scroll" id="acc-gemini">
         <div class="acc-header" onclick="toggleAcc('acc-gemini')">🤖 Gemini AI — Créer une clé API <span class="chevron">▼</span></div>
         <div class="acc-body"><div class="acc-content"><ol>
           <li>Rendez-vous sur <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a></li>
@@ -1061,7 +1176,7 @@
         </ol></div></div>
       </div>
 
-      <div class="acc-item" id="acc-groq">
+      <div class="acc-item animate-on-scroll" id="acc-groq">
         <div class="acc-header" onclick="toggleAcc('acc-groq')">⚡ Groq Cloud — Génération de clé API <span style="font-size:.72rem; background:rgba(0,200,255,.15); color:var(--cyan); border:1px solid rgba(0,200,255,.3); border-radius:100px; padding:.1rem .55rem; margin-left:.5rem; font-weight:700;">RECOMMANDÉ EN PREMIER</span> <span class="chevron">▼</span></div>
         <div class="acc-body"><div class="acc-content">
           <p style="margin-bottom:.75rem; color:#22c55e;">✅ 100% gratuit, aucune carte bancaire requise. C'est le moteur principal d'A.N.T.O.I.N.E — commencez par celui-ci.</p>
@@ -1076,7 +1191,7 @@
         </div></div>
       </div>
 
-      <div class="acc-item" id="acc-claude">
+      <div class="acc-item animate-on-scroll" id="acc-claude">
         <div class="acc-header" onclick="toggleAcc('acc-claude')">🧠 Claude (Anthropic) — Clé API <span class="chevron">▼</span></div>
         <div class="acc-body"><div class="acc-content">
           <p style="margin-bottom:.5rem; color:#f59e0b;">⚠️ Nécessite un crédit minimum de 5$ pour activer l'API.</p>
@@ -1089,7 +1204,7 @@
         </div></div>
       </div>
 
-      <div class="acc-item" id="acc-youtube">
+      <div class="acc-item animate-on-scroll" id="acc-youtube">
         <div class="acc-header" onclick="toggleAcc('acc-youtube')">📺 YouTube Data API — Accès vidéos <span class="chevron">▼</span></div>
         <div class="acc-body"><div class="acc-content"><ol>
           <li>Allez sur <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a></li>
@@ -1100,7 +1215,7 @@
         </ol></div></div>
       </div>
 
-      <div class="acc-item" id="acc-grok">
+      <div class="acc-item animate-on-scroll" id="acc-grok">
         <div class="acc-header" onclick="toggleAcc('acc-grok')">🤖 Grok (X.ai) — Clé API <span class="chevron">▼</span></div>
         <div class="acc-body"><div class="acc-content"><ol>
           <li>Allez sur <a href="https://console.x.ai/" target="_blank">console.x.ai</a></li>
@@ -1110,7 +1225,7 @@
         </ol></div></div>
       </div>
 
-      <div class="acc-item" id="acc-serp">
+      <div class="acc-item animate-on-scroll" id="acc-serp">
         <div class="acc-header" onclick="toggleAcc('acc-serp')">🔍 SerpAPI — Résultats de recherche <span class="chevron">▼</span></div>
         <div class="acc-body"><div class="acc-content"><ol>
           <li>Allez sur <a href="https://serpapi.com" target="_blank">serpapi.com</a></li>
@@ -1120,7 +1235,7 @@
         </ol></div></div>
       </div>
 
-      <div class="acc-item" id="acc-ha">
+      <div class="acc-item animate-on-scroll" id="acc-ha">
         <div class="acc-header" onclick="toggleAcc('acc-ha')">🏠 Home Assistant — Token longue durée <span class="chevron">▼</span></div>
         <div class="acc-body"><div class="acc-content"><ol>
           <li>Connectez-vous à votre interface Home Assistant</li>
@@ -1557,6 +1672,188 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     window.scrollTo({ top: t.offsetTop - 70, behavior: 'smooth' });
   });
 });
+</script>
+
+<!-- ════════════════════════════════════════════════════════
+     ANIMATIONS AVANCÉES — typing, count-up, scroll, terminal
+════════════════════════════════════════════════════════ -->
+<script>
+(function() {
+  'use strict';
+
+  // ══════════════════════════════════════════════
+  // 1. TERMINAL HEADER — injecter dots + label
+  //    dans tous les .code-block du DOM
+  // ══════════════════════════════════════════════
+  document.querySelectorAll('.code-block').forEach(function(block) {
+    // Éviter les doublons si le script est appelé deux fois
+    if (block.querySelector('.code-block-dots')) return;
+
+    var dots = document.createElement('span');
+    dots.className = 'code-block-dots';
+    dots.innerHTML = '<span></span><span></span><span></span>';
+    block.appendChild(dots);
+
+    // Détecter le type de contenu pour le label
+    var text = block.textContent || '';
+    var labelText = 'bash';
+    if (text.indexOf('API_KEY') !== -1 || text.indexOf('.env') !== -1 || text.indexOf('=') !== -1) {
+      labelText = 'env';
+    } else if (text.indexOf('pip') !== -1 || text.indexOf('python') !== -1 || text.indexOf('sudo') !== -1) {
+      labelText = 'bash';
+    }
+
+    var label = document.createElement('span');
+    label.className = 'term-label';
+    label.textContent = labelText;
+    block.appendChild(label);
+  });
+
+  // ══════════════════════════════════════════════
+  // 2. TYPING EFFECT — sous-titre hero
+  // ══════════════════════════════════════════════
+  var subtitleEl = document.getElementById('hero-subtitle');
+  if (subtitleEl) {
+    var fullText  = subtitleEl.textContent.trim();
+    var cursor    = document.createElement('span');
+    cursor.className = 'typing-cursor';
+
+    // Vider le texte et ajouter le curseur
+    subtitleEl.textContent = '';
+    subtitleEl.appendChild(cursor);
+
+    var charIndex = 0;
+    var typingSpeed = 38; // ms par lettre
+
+    function typeNextChar() {
+      if (charIndex < fullText.length) {
+        // Insérer le texte avant le curseur
+        var textNode = document.createTextNode(fullText[charIndex]);
+        subtitleEl.insertBefore(textNode, cursor);
+        charIndex++;
+        setTimeout(typeNextChar, typingSpeed);
+      }
+      // Le curseur reste et clignote indéfiniment après la fin
+    }
+
+    // Démarrer après 800ms (laisse le temps à la page de charger)
+    setTimeout(typeNextChar, 800);
+  }
+
+  // ══════════════════════════════════════════════
+  // 3. COUNT-UP — stats hero
+  // ══════════════════════════════════════════════
+  var statDefs = [
+    { el: null, target: 40, prefix: '+', suffix: '' },
+    { el: null, target: 3,  prefix: '',  suffix: '' },
+    { el: null, target: 100, prefix: '', suffix: '%' },
+    { el: null, target: null, prefix: 'V', suffix: '.0' }  // "V1.0" — pas un compteur
+  ];
+
+  var statNums = document.querySelectorAll('.stat-num');
+  statNums.forEach(function(el, i) {
+    if (statDefs[i]) statDefs[i].el = el;
+  });
+
+  function animateCount(def, duration) {
+    if (!def.el || def.target === null) return;
+
+    var startTime = null;
+    var startVal  = 0;
+
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      var elapsed  = timestamp - startTime;
+      var progress = Math.min(elapsed / duration, 1);
+      // Easing out cubic
+      var ease     = 1 - Math.pow(1 - progress, 3);
+      var current  = Math.round(startVal + (def.target - startVal) * ease);
+      def.el.textContent = def.prefix + current + def.suffix;
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        def.el.textContent = def.prefix + def.target + def.suffix;
+      }
+    }
+
+    requestAnimationFrame(step);
+  }
+
+  // Démarrer le count-up 400ms après le chargement
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      statDefs.forEach(function(def) {
+        animateCount(def, 1400);
+      });
+    }, 400);
+  });
+
+  // ══════════════════════════════════════════════
+  // 4. INTERSECTION OBSERVER — animate-on-scroll
+  // ══════════════════════════════════════════════
+  var animatedEls = document.querySelectorAll('.animate-on-scroll');
+
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          // Ne pas re-animer ce qui est déjà visible
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.12,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    animatedEls.forEach(function(el) {
+      observer.observe(el);
+    });
+  } else {
+    // Fallback navigateurs anciens : tout rendre visible immédiatement
+    animatedEls.forEach(function(el) {
+      el.classList.add('visible');
+    });
+  }
+
+  // ══════════════════════════════════════════════
+  // 5. ACCORDÉONS — amélioration (max-height dynamique)
+  //    Override de toggleAcc pour un rendu plus fluide
+  // ══════════════════════════════════════════════
+  // On attend que le DOM soit prêt, puis on améliore la transition
+  // en recalculant dynamiquement le max-height réel du contenu
+
+  function improveAccordionTransitions() {
+    document.querySelectorAll('.acc-item').forEach(function(item) {
+      var body    = item.querySelector('.acc-body');
+      var content = item.querySelector('.acc-content');
+      if (!body || !content) return;
+
+      // Recalculer max-height à l'ouverture via MutationObserver
+      var mo = new MutationObserver(function() {
+        if (item.classList.contains('open')) {
+          // Mesure la hauteur réelle du contenu
+          var realHeight = content.scrollHeight + 32; // + padding
+          body.style.maxHeight = realHeight + 'px';
+        } else {
+          body.style.maxHeight = '0';
+        }
+      });
+
+      mo.observe(item, { attributes: true, attributeFilter: ['class'] });
+    });
+  }
+
+  // Attendre que le DOM soit complet
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', improveAccordionTransitions);
+  } else {
+    improveAccordionTransitions();
+  }
+
+})();
 </script>
 
 </body>

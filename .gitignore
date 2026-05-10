@@ -1,0 +1,11 @@
+# Clés API et secrets
+assistant/.env
+assistant/antoine_memory.json
+
+# Python
+assistant/__pycache__/
+assistant/*.pyc
+assistant/*.pyo
+
+# Archive locale (disponible via GitHub Releases)
+ANTOINE-V1.0.zip

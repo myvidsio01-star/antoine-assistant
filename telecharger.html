@@ -444,10 +444,276 @@
     footer a { color: var(--muted); text-decoration: none; margin: 0 .75rem; }
     footer a:hover { color: var(--cyan); }
 
+    /* ─── SECURE BADGE ─── */
+    .secure-badge {
+      background: rgba(34, 197, 94, 0.10);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      color: #22c55e;
+      font-size: .8rem;
+      letter-spacing: .2em;
+      animation: securePulse 3s ease-in-out infinite;
+    }
+
+    .secure-badge .dot {
+      background: #22c55e;
+      box-shadow: 0 0 6px rgba(34, 197, 94, 0.8);
+      animation: pulseGreen 1.5s infinite;
+    }
+
+    @keyframes securePulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+      50% { box-shadow: 0 0 18px rgba(34,197,94,.2); }
+    }
+
+    @keyframes pulseGreen {
+      0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(34,197,94,.7); }
+      50% { opacity: .6; transform: scale(1.4); box-shadow: 0 0 0 5px rgba(34,197,94,0); }
+    }
+
+    /* ─── STEPS CONNECTÉS ─── */
+    .steps-list { position: relative; }
+
+    .steps-connector {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .step-connector-line {
+      width: 2px;
+      height: 2rem;
+      background: linear-gradient(180deg, rgba(0,200,255,.4), rgba(59,130,246,.2));
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .step-num {
+      width: 52px !important;
+      height: 52px !important;
+      min-width: 52px !important;
+      font-size: 1.2rem !important;
+      border-radius: 50% !important;
+      box-shadow: 0 0 20px rgba(0,200,255,.45), 0 0 40px rgba(0,200,255,.15);
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .step-num::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 2px solid rgba(0,200,255,.25);
+      animation: ringPulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes ringPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.15); opacity: 0.3; }
+    }
+
+    /* ─── PAYPAL BTN ─── */
+    .btn-paypal {
+      background: linear-gradient(135deg, #0070ba, #003087);
+      color: #fff;
+      border: 2px solid rgba(0,112,186,.5);
+      font-size: 1rem;
+      padding: 1rem 2.5rem;
+      box-shadow: 0 0 30px rgba(0,112,186,.45);
+      animation: paypalGlow 3s ease-in-out infinite;
+    }
+
+    .btn-paypal:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 0 55px rgba(0,112,186,.75);
+      background: linear-gradient(135deg, #0085d1, #003d99);
+      color: #fff;
+    }
+
+    @keyframes paypalGlow {
+      0%, 100% { box-shadow: 0 0 25px rgba(0,112,186,.4); }
+      50% { box-shadow: 0 0 45px rgba(0,112,186,.7); }
+    }
+
+    .paypal-reassurance {
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      font-size: .82rem;
+      color: #94a3b8;
+      background: rgba(0,112,186,.07);
+      border: 1px solid rgba(0,112,186,.2);
+      border-radius: 8px;
+      padding: .75rem 1rem;
+    }
+
+    .paypal-reassurance strong { color: #e2e8f0; }
+
+    /* ─── DISCORD BTN AMÉLIORÉ ─── */
+    .btn-discord-big {
+      background: rgba(88, 101, 242, 0.18);
+      border: 2px solid rgba(88, 101, 242, 0.5);
+      color: #8b9cf4;
+      font-size: .95rem;
+      padding: .9rem 2rem;
+      box-shadow: 0 0 25px rgba(88,101,242,.2);
+    }
+
+    .btn-discord-big:hover {
+      background: rgba(88, 101, 242, 0.3);
+      border-color: rgba(88, 101, 242, 0.85);
+      transform: translateY(-3px);
+      box-shadow: 0 0 40px rgba(88,101,242,.45);
+      color: #b4bcff;
+    }
+
+    .discord-link-display {
+      margin-top: 1rem;
+      background: rgba(6,7,13,.8);
+      border: 1px solid rgba(88,101,242,.3);
+      border-radius: 8px;
+      padding: .75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .85rem;
+    }
+
+    .discord-link-display .link-label {
+      color: var(--muted);
+      font-size: .75rem;
+      font-family: 'Inter', sans-serif;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .discord-link-display a {
+      color: #8b9cf4;
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    .discord-link-display a:hover { color: #b4bcff; text-decoration: underline; }
+
+    /* ─── DOWNLOAD BTN AMÉLIORÉ ─── */
+    .download-box {
+      background: linear-gradient(135deg, rgba(0,200,255,.05), rgba(59,130,246,.05));
+      border: 2px solid rgba(0,200,255,.3);
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .download-box-info { flex: 1; }
+    .download-box-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: .3rem;
+    }
+    .download-box-meta {
+      font-size: .8rem;
+      color: var(--muted);
+    }
+
+    .btn-download-main {
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      color: #000;
+      font-size: .95rem;
+      padding: .85rem 1.75rem;
+      box-shadow: 0 0 30px rgba(0,200,255,.4);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .btn-download-main:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 55px rgba(0,200,255,.7);
+    }
+
+    /* ─── POST-INSTALL ─── */
+    .post-install {
+      background: rgba(13,15,26,.8);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 2rem;
+      margin-top: 1.5rem;
+    }
+
+    .post-install-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
+
+    .post-install-steps {
+      display: flex;
+      flex-direction: column;
+      gap: .6rem;
+      counter-reset: post-step;
+    }
+
+    .post-step {
+      display: flex;
+      align-items: flex-start;
+      gap: .85rem;
+      counter-increment: post-step;
+    }
+
+    .post-step-num {
+      min-width: 26px;
+      height: 26px;
+      background: rgba(0,200,255,.12);
+      border: 1px solid rgba(0,200,255,.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--cyan);
+      flex-shrink: 0;
+    }
+
+    .post-step-text {
+      font-size: .875rem;
+      color: var(--muted);
+      line-height: 1.5;
+      padding-top: .15rem;
+    }
+
+    .post-step-text code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem;
+      color: var(--cyan);
+      background: rgba(0,200,255,.08);
+      padding: .1rem .4rem;
+      border-radius: 4px;
+    }
+
+    .post-step-text a {
+      color: var(--cyan);
+      text-decoration: none;
+    }
+
+    .post-step-text a:hover { text-decoration: underline; }
+
     @media(max-width: 600px) {
       .page-hero { padding: 4rem 1.5rem 3rem; }
       section { padding: 3rem 1.5rem; }
       .step-card { padding: 1.5rem; }
+      .download-box { flex-direction: column; align-items: flex-start; }
+      .btn-download-main { width: 100%; justify-content: center; }
     }
   </style>
 </head>
@@ -466,7 +732,7 @@
 
 <!-- ─── HERO ─── -->
 <header class="page-hero">
-  <div class="hero-badge"><span class="dot"></span> V1.0 &bull; Disponible</div>
+  <div class="hero-badge secure-badge"><span class="dot"></span> TÉLÉCHARGEMENT SÉCURISÉ</div>
   <h1 class="page-title">Télécharger A.N.T.O.I.N.E</h1>
   <p class="page-subtitle">Suivez les 3 étapes ci-dessous pour installer votre assistant en quelques minutes.</p>
 </header>
@@ -520,16 +786,28 @@
           <div class="step-title">Faire une donation libre</div>
         </div>
         <p class="step-body">
-          L'accès à A.N.T.O.I.N.E est libre. Une donation est appréciée pour soutenir le projet et couvrir les frais d'hébergement. Vous pouvez mettre 0€ si vous le souhaitez — aucun blocage.
+          L'accès à A.N.T.O.I.N.E est <strong style="color:var(--text);">100% libre et gratuit</strong>. Une donation aide à couvrir les frais du projet. Vous pouvez mettre <strong style="color:#22c55e;">0€ si vous le souhaitez</strong> — aucun blocage, aucune restriction.
         </p>
-        <a href="https://paypal.me/MathisAmerein" target="_blank" class="btn btn-primary">💳 Faire une donation (PayPal)</a>
-        <div class="note">
-          ℹ️ Sélectionnez <strong>"Paiement entre amis"</strong> lors du paiement pour éviter les frais de transaction. Montant entièrement libre — même 0€.
+        <a href="https://paypal.me/MathisAmerein" target="_blank" class="btn btn-paypal">💳 Faire une donation via PayPal</a>
+        <div class="paypal-reassurance">
+          <span style="font-size:1.1rem;">🔒</span>
+          <div>
+            Paiement 100% sécurisé via PayPal.
+            <strong>Montant libre — même 0€.</strong>
+            Sélectionnez <strong>"Paiement entre amis"</strong> pour éviter les frais.
+          </div>
         </div>
         <div class="payment-status">
           <span class="status-dot"></span>
           Système de livraison opérationnel
         </div>
+      </div>
+
+      <!-- CONNECTEUR 1→2 -->
+      <div style="display:flex; flex-direction:column; align-items:flex-start; padding-left:26px; gap:0;">
+        <div style="width:2px; height:2rem; background:linear-gradient(180deg, rgba(0,200,255,.5), rgba(59,130,246,.2)); margin-left:0;"></div>
+        <div style="font-size:.72rem; color:var(--muted); font-weight:600; letter-spacing:.1em; text-transform:uppercase; padding:.15rem .6rem; background:rgba(0,200,255,.06); border:1px solid rgba(0,200,255,.15); border-radius:100px; white-space:nowrap;">Étape suivante</div>
+        <div style="width:2px; height:2rem; background:linear-gradient(180deg, rgba(59,130,246,.2), rgba(0,200,255,.5)); margin-left:0;"></div>
       </div>
 
       <!-- ÉTAPE 2 -->
@@ -541,7 +819,18 @@
         <p class="step-body">
           Rejoignez notre serveur Discord. Après votre donation, le mot de passe de l'archive vous sera envoyé automatiquement dans le canal <strong style="color:var(--text);">#téléchargement</strong>. Si vous avez mis 0€, vous recevrez quand même le lien — pensez à consulter le canal.
         </p>
-        <a href="https://discord.gg/JP9yF3VWQ" target="_blank" class="btn btn-discord">💬 Rejoindre le Discord</a>
+        <a href="https://discord.gg/JP9yF3VWQ" target="_blank" class="btn btn-discord-big">💬 Rejoindre le Discord</a>
+        <div class="discord-link-display">
+          <span class="link-label">Lien direct :</span>
+          <a href="https://discord.gg/JP9yF3VWQ" target="_blank">https://discord.gg/JP9yF3VWQ</a>
+        </div>
+      </div>
+
+      <!-- CONNECTEUR 2→3 -->
+      <div style="display:flex; flex-direction:column; align-items:flex-start; padding-left:26px; gap:0;">
+        <div style="width:2px; height:2rem; background:linear-gradient(180deg, rgba(0,200,255,.5), rgba(59,130,246,.2)); margin-left:0;"></div>
+        <div style="font-size:.72rem; color:var(--muted); font-weight:600; letter-spacing:.1em; text-transform:uppercase; padding:.15rem .6rem; background:rgba(0,200,255,.06); border:1px solid rgba(0,200,255,.15); border-radius:100px; white-space:nowrap;">Étape suivante</div>
+        <div style="width:2px; height:2rem; background:linear-gradient(180deg, rgba(59,130,246,.2), rgba(0,200,255,.5)); margin-left:0;"></div>
       </div>
 
       <!-- ÉTAPE 3 -->
@@ -551,27 +840,53 @@
           <div class="step-title">Télécharger et installer</div>
         </div>
         <p class="step-body">
-          Une fois le mot de passe reçu sur Discord, téléchargez l'archive ci-dessous. Extrayez-la avec le mot de passe, puis suivez les commandes d'installation.
+          Une fois le mot de passe reçu sur Discord, téléchargez l'archive ci-dessous. Extrayez-la, puis suivez les instructions post-téléchargement.
         </p>
 
-        <div class="mirror-item">
-          <div>
-            <div class="mirror-label">Archive A.N.T.O.I.N.E V1.0</div>
-            <div class="mirror-size">Windows 64-bit • Python requis • Gratuit</div>
+        <div class="download-box">
+          <div class="download-box-info">
+            <div class="download-box-title">⬇ Archive A.N.T.O.I.N.E V1.0</div>
+            <div class="download-box-meta">Windows 64-bit · Python requis · Gratuit · GitHub Releases</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:.73rem; color:var(--muted); margin-top:.4rem; word-break:break-all;">
+              https://github.com/myvidsio01-star/antoine-assistant/releases/download/v1.0/ANTOINE-V1.0.zip
+            </div>
           </div>
-          <a href="https://github.com/myvidsio01-star/antoine-assistant/releases/download/v1.0/ANTOINE-V1.0.zip" class="btn btn-outline" style="font-size:.78rem; padding:.5rem 1rem; white-space:nowrap;">⬇ Télécharger</a>
+          <a href="https://github.com/myvidsio01-star/antoine-assistant/releases/download/v1.0/ANTOINE-V1.0.zip" class="btn btn-download-main">⬇ Télécharger</a>
         </div>
 
-        <div class="code-block">
-          <span class="comment"># 1. Extraire l'archive avec le mot de passe reçu sur Discord</span><br/>
-          <span class="comment"># 2. Ouvrir un terminal dans le dossier extrait</span><br/>
-          <br/>
-          pip install -r requirements.txt<br/>
-          <span class="comment"># ou double-cliquer sur setup.bat</span><br/>
-          <br/>
-          python antoine.py<br/>
-          <span class="comment"># ou double-cliquer sur run.bat</span>
+        <!-- POST-INSTALL INSTRUCTIONS -->
+        <div class="post-install">
+          <div class="post-install-title">
+            <span style="font-size:1.1rem;">📋</span> Instructions post-téléchargement
+          </div>
+          <div class="post-install-steps">
+            <div class="post-step">
+              <div class="post-step-num">1</div>
+              <div class="post-step-text">Dézipper l'archive <code>ANTOINE-V1.0.zip</code> (avec le mot de passe reçu sur Discord)</div>
+            </div>
+            <div class="post-step">
+              <div class="post-step-num">2</div>
+              <div class="post-step-text">Ouvrir <code>setup.bat</code> — il installe tout automatiquement</div>
+            </div>
+            <div class="post-step">
+              <div class="post-step-num">3</div>
+              <div class="post-step-text">Renommer le fichier <code>.env.example</code> en <code>.env</code></div>
+            </div>
+            <div class="post-step">
+              <div class="post-step-num">4</div>
+              <div class="post-step-text">Obtenir une clé Groq gratuite sur <a href="https://console.groq.com" target="_blank">console.groq.com</a></div>
+            </div>
+            <div class="post-step">
+              <div class="post-step-num">5</div>
+              <div class="post-step-text">Coller votre clé Groq dans le fichier <code>.env</code></div>
+            </div>
+            <div class="post-step">
+              <div class="post-step-num">6</div>
+              <div class="post-step-text">Lancer <code>run.bat</code> — A.N.T.O.I.N.E démarre 🚀</div>
+            </div>
+          </div>
         </div>
+
       </div>
 
     </div>
@@ -589,46 +904,66 @@
 
     <div class="accordion">
 
-      <div class="acc-item" id="faq-password">
-        <div class="acc-header" onclick="toggleAcc('faq-password')">
-          Je n'ai pas reçu le mot de passe
-          <span class="chevron">▼</span>
-        </div>
-        <div class="acc-body">
-          <div class="acc-content">
-            Le mot de passe est envoyé automatiquement après validation de votre donation. Si vous ne le recevez pas dans les 5 minutes, rendez-vous sur notre Discord et ouvrez un ticket dans le canal <a href="https://discord.gg/JP9yF3VWQ" target="_blank">#aide-installation</a>. Un membre de l'équipe vous répondra rapidement.
-          </div>
-        </div>
-      </div>
-
       <div class="acc-item" id="faq-pyaudio">
         <div class="acc-header" onclick="toggleAcc('faq-pyaudio')">
-          Erreur PyAudio lors de l'installation
+          ⚠️ Erreur PyAudio lors de l'installation
           <span class="chevron">▼</span>
         </div>
         <div class="acc-body">
           <div class="acc-content">
-            PyAudio est parfois difficile à installer directement sur Windows. Utilisez <code>pipwin</code> à la place — c'est un outil qui simplifie l'installation des paquets audio sur Windows :<br/><br/>
+            PyAudio est parfois difficile à installer sur Windows. La solution la plus simple est de le réinstaller directement avec pip :<br/><br/>
+            <code>pip install PyAudio</code><br/><br/>
+            Si cette commande échoue aussi, utilisez <code>pipwin</code> (un outil spécialisé Windows) :<br/><br/>
             <code>pip install pipwin</code><br/>
             puis<br/>
             <code>pipwin install pyaudio</code><br/><br/>
-            Relancez ensuite <code>pip install -r requirements.txt</code> et tout devrait fonctionner.
+            Relancez ensuite <code>setup.bat</code> ou <code>pip install -r requirements.txt</code> et tout devrait fonctionner.
           </div>
         </div>
       </div>
 
       <div class="acc-item" id="faq-voice">
         <div class="acc-header" onclick="toggleAcc('faq-voice')">
-          A.N.T.O.I.N.E ne comprend pas ma voix
+          🎤 Antoine ne comprend pas ma voix
           <span class="chevron">▼</span>
         </div>
         <div class="acc-body">
           <div class="acc-content">
-            Voici les choses à vérifier dans l'ordre :<br/><br/>
-            1. Assurez-vous que votre microphone est bien sélectionné comme périphérique d'entrée par défaut dans les paramètres Windows (Paramètres → Son → Entrée).<br/>
-            2. Parlez clairement et en français — A.N.T.O.I.N.E est optimisé pour le français.<br/>
-            3. Évitez les environnements très bruyants. Un micro casque donne de meilleurs résultats qu'un micro intégré.<br/>
-            4. Si le problème persiste, ouvrez un ticket sur le Discord dans <a href="https://discord.gg/JP9yF3VWQ" target="_blank">#aide-installation</a>.
+            Le problème vient souvent du microphone. Voici comment le vérifier :<br/><br/>
+            1. Allez dans <strong style="color:var(--text);">Paramètres Windows → Son → Entrée</strong><br/>
+            2. Vérifiez que votre microphone est sélectionné comme périphérique d'entrée <strong style="color:var(--text);">par défaut</strong><br/>
+            3. Parlez clairement et en français — A.N.T.O.I.N.E est optimisé pour le français<br/>
+            4. Évitez les environnements très bruyants. Un micro casque donne de meilleurs résultats qu'un micro intégré<br/><br/>
+            Si le problème persiste, ouvrez un ticket sur <a href="https://discord.gg/JP9yF3VWQ" target="_blank">notre Discord</a>.
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item" id="faq-noresponse">
+        <div class="acc-header" onclick="toggleAcc('faq-noresponse')">
+          🤖 Aucune réponse de l'IA
+          <span class="chevron">▼</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            Ce problème vient presque toujours de la clé API. Voici quoi vérifier :<br/><br/>
+            1. Ouvrez votre fichier <code>.env</code> (à la racine du dossier d'A.N.T.O.I.N.E)<br/>
+            2. Vérifiez que votre clé Groq est bien collée après <code>GROQ_API_KEY=</code> — sans espace, sans guillemets<br/>
+            3. Assurez-vous que la clé est bien active sur <a href="https://console.groq.com" target="_blank">console.groq.com</a><br/>
+            4. Vérifiez que le fichier s'appelle bien <code>.env</code> et non <code>.env.example</code> ou <code>.env.txt</code><br/><br/>
+            Si tout semble correct mais que ça ne fonctionne toujours pas, rejoignez <a href="https://discord.gg/JP9yF3VWQ" target="_blank">notre Discord</a> pour obtenir de l'aide.
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item" id="faq-password">
+        <div class="acc-header" onclick="toggleAcc('faq-password')">
+          🔑 Je n'ai pas reçu le mot de passe
+          <span class="chevron">▼</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-content">
+            Le mot de passe est envoyé automatiquement après validation de votre donation. Si vous ne le recevez pas dans les 5 minutes, rendez-vous sur notre Discord et consultez le canal <a href="https://discord.gg/JP9yF3VWQ" target="_blank">#téléchargement</a>. Si vous avez mis 0€, le mot de passe y est également disponible directement.
           </div>
         </div>
       </div>
@@ -645,7 +980,7 @@
     <a href="mentions-legales.html">Mentions légales</a>
     <a href="contact.html">Contact</a>
   </div>
-  <div>© 2026 AssistantVocal — A.N.T.O.I.N.E</div>
+  <div>© 2026 A.N.T.O.I.N.E V1.0 — Système I.A Autonome 100% Gratuit</div>
 </footer>
 
 <!-- ─── THREE.JS ─── -->
