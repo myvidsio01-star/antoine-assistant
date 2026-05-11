@@ -96,21 +96,33 @@
     /* ─── HERO ─── */
     .hero {
       min-height: 100vh;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
       align-items: center;
       padding: 0 6%;
-      gap: 2rem;
       overflow: hidden;
+      position: relative;
+    }
+
+    /* Globe en fond absolu derrière le texte */
+    #canvas-hero {
+      position: absolute;
+      top: 50%;
+      right: -5%;
+      transform: translateY(-50%);
+      width: 70%;
+      height: 110%;
+      z-index: 0;
+      opacity: 0.55;
+      pointer-events: none;
     }
 
     @media(max-width: 900px) {
-      .hero { grid-template-columns: 1fr; text-align: center; padding: 5rem 6% 2rem; }
-      #canvas-hero { width: 100%; height: 280px; }
+      .hero { text-align: center; padding: 5rem 6% 6rem; justify-content: center; }
+      #canvas-hero { width: 100%; height: 100%; top: 50%; right: 50%; transform: translate(50%, -50%); opacity: 0.35; }
       .hero-btns { justify-content: center; }
     }
 
-    .hero-left { position: relative; z-index: 2; }
+    .hero-left { position: relative; z-index: 2; max-width: 640px; }
 
     .hero-badge {
       display: inline-flex;
@@ -217,13 +229,6 @@
     }
 
     .btn-outline:hover { border-color: var(--cyan); color: var(--cyan); transform: translateY(-3px); }
-
-    /* ─── CANVAS HERO ─── */
-    #canvas-hero {
-      width: 100%;
-      height: 560px;
-      display: block;
-    }
 
     /* ─── SECTIONS ─── */
     section { padding: 5rem 2rem; }
@@ -1553,7 +1558,7 @@
 
   // ── Globe wireframe principal ──
   const sphereGeo = new THREE.SphereGeometry(1.6, 32, 32);
-  const sphereMat = new THREE.MeshBasicMaterial({ color: COLOR_CYAN, wireframe: true, transparent: true, opacity: 0.13 });
+  const sphereMat = new THREE.MeshBasicMaterial({ color: COLOR_CYAN, wireframe: true, transparent: true, opacity: 0.18 });
   const globe = new THREE.Mesh(sphereGeo, sphereMat);
   globePivot.add(globe);
 
