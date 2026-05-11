@@ -1,5 +1,5 @@
 """
-A.N.T.O.I.N.E V1.0
+A.N.T.O.I.N.E V1.1
 Autonomous Neural-Triggered Omniscient Intelligence
 Assistant vocal personnel en français pour Windows
 """
@@ -8,6 +8,14 @@ import os
 import sys
 import json
 import datetime
+from pathlib import Path
+
+# Quand lancé en tant qu'exe PyInstaller → redirige les logs vers antoine.log
+if getattr(sys, 'frozen', False):
+    _log_path = Path(sys.executable).parent / "antoine.log"
+    _log = open(_log_path, "w", encoding="utf-8", buffering=1)
+    sys.stdout = _log
+    sys.stderr = _log
 
 # Force UTF-8 pour le terminal Windows (ignoré en mode .pyw sans console)
 try:
@@ -41,7 +49,8 @@ ANTHROPIC_API_KEY  = os.getenv("ANTHROPIC_API_KEY", "")
 HA_URL             = os.getenv("HA_URL", "")
 HA_TOKEN           = os.getenv("HA_TOKEN", "")
 
-MEMORY_FILE        = Path(__file__).parent / "antoine_memory.json"
+_BASE_DIR   = Path(sys.executable).parent if getattr(sys, 'frozen', False) else Path(__file__).parent
+MEMORY_FILE = _BASE_DIR / "antoine_memory.json"
 MAX_HISTORY        = 30
 MAX_TOTAL_HISTORY  = 200
 
