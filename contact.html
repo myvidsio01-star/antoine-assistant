@@ -143,7 +143,7 @@
   <div class="form-card">
     <form id="contact-form" action="https://formspree.io/f/mnjworjl" method="POST">
       <input type="hidden" name="_subject" value="Message depuis AssistantVocal" />
-      <input type="hidden" name="_next" value="contact.html?sent=1" />
+      <input type="hidden" name="_next" value="https://myvidsio01-star.github.io/antoine-assistant/contact.html?sent=1" />
       <div class="field">
         <label for="name">Votre prénom</label>
         <input type="text" id="name" name="name" placeholder="Antoine" required />
@@ -209,9 +209,10 @@
   <div>© 2026 A.N.T.O.I.N.E V1.1 — Système I.A Autonome 100% Gratuit</div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha512-dLxUelApnYxpLt6K2iomGngnHO83iUvZytA3YjDUCjT0HDOHKXnVYdf3hU4JjfgVyUy6es7b/2+wNVAEuhCbg==" crossorigin="anonymous"></script>
 <script>
-  if (window.location.search.includes('sent=1')) {
+  const _params = new URLSearchParams(window.location.search);
+  if (_params.get('sent') === '1') {
     document.getElementById('success').style.display = 'block';
   }
 
