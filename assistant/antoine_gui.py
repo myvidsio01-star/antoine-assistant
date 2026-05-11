@@ -54,12 +54,23 @@ class AssistantThread(QThread):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._running       = True
+        self._running        = True
         self._trigger_listen = False
+        self._stop_speech    = False
 
     def trigger_listen(self):
         """Appel externe pour forcer une écoute immédiate."""
         self._trigger_listen = True
+
+    def stop_speech(self):
+        """Interrompt la parole en cours et annule l'action actuelle."""
+        self._stop_speech = True
+        try:
+            import pygame
+            if pygame.mixer.get_init():
+                pygame.mixer.music.stop()
+        except Exception:
+            pass
 
     def stop(self):
         """Arrêt propre du thread."""
@@ -74,9 +85,12 @@ class AssistantThread(QThread):
         original_speak = core.speak
 
         def speak_and_emit(text: str):
+            self._stop_speech = False
             self.message_from_antoine.emit(text)
             self.status_changed.emit("Je parle...")
-            original_speak(text)
+            if not self._stop_speech:
+                original_speak(text)
+            self._stop_speech = False
             self.status_changed.emit("En veille")
 
         core.speak = speak_and_emit
@@ -302,9 +316,10 @@ class TopBar(QWidget):
 # ─────────────────────────────────────────────
 
 class BottomBar(QWidget):
-    """Barre d'état avec label de statut et bouton microphone."""
+    """Barre d'état avec label de statut, bouton stop et bouton microphone."""
 
-    mic_clicked = pyqtSignal()
+    mic_clicked  = pyqtSignal()
+    stop_clicked = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -327,6 +342,25 @@ class BottomBar(QWidget):
         layout.addSpacing(6)
         layout.addWidget(self._status_label)
         layout.addStretch()
+
+        # Bouton STOP
+        self._stop_btn = QPushButton("■")
+        self._stop_btn.setFixedSize(QSize(48, 48))
+        self._stop_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self._stop_btn.setFont(QFont(FONT_MAIN, 16, QFont.Weight.Bold))
+        self._stop_btn.setStyleSheet(
+            "QPushButton {"
+            "  background: #1a0f0f; border-radius: 24px;"
+            "  border: 2px solid #ef4444; color: #ef4444;"
+            "}"
+            "QPushButton:hover {"
+            "  background: #ef4444; color: #ffffff;"
+            "}"
+        )
+        self._stop_btn.clicked.connect(self.stop_clicked.emit)
+        layout.addSpacing(8)
+        layout.addWidget(self._stop_btn)
+        layout.addSpacing(8)
 
         # Bouton microphone
         self._mic_btn = QPushButton("🎤")
@@ -441,6 +475,7 @@ class MainWindow(QMainWindow):
         # Barre inférieure
         self._bottom_bar = BottomBar()
         self._bottom_bar.mic_clicked.connect(self._on_mic_clicked)
+        self._bottom_bar.stop_clicked.connect(self._on_stop_clicked)
         root.addWidget(self._bottom_bar)
 
         # Message de bienvenue
@@ -471,6 +506,10 @@ class MainWindow(QMainWindow):
 
     def _on_mic_clicked(self):
         self._thread.trigger_listen()
+
+    def _on_stop_clicked(self):
+        self._thread.stop_speech()
+        self._bottom_bar.update_status("En veille")
 
     # ── Fermeture propre ──
 
