@@ -206,20 +206,22 @@ def listen() -> str:
 
 
 def listen_passive() -> bool:
-    """Écoute brèvement pour détecter le wake word. Retourne True si détecté."""
+    """
+    Détecte la présence d'une voix via le niveau sonore — aucun appel API.
+    Retourne True si une voix est probablement présente.
+    """
     if recognizer is None or microphone is None:
-        return True  # Mode texte : pas de wake word, toujours actif
+        return True  # Mode texte : toujours actif
     try:
         import speech_recognition as sr
         with microphone as source:
-            audio = recognizer.listen(source, timeout=4, phrase_time_limit=4)
-        text = recognizer.recognize_google(audio, language="fr-FR").lower()
-        print(f"   [VEILLE] Entendu : {text}")
-        return any(ww in text for ww in WAKE_WORDS)
-    except (sr.WaitTimeoutError, sr.UnknownValueError):
-        return False
-    except Exception as e:
-        print(f"   [VEILLE] Erreur : {e}")
+            # Attend du son au-dessus du seuil d'énergie (local, sans Google)
+            # WaitTimeoutError = silence → on reboucle
+            recognizer.listen(source, timeout=3, phrase_time_limit=2)
+        return True  # Son de type voix détecté → on se réveille
+    except sr.WaitTimeoutError:
+        return False  # Silence normal
+    except Exception:
         return False
 
 
