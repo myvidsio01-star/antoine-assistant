@@ -164,7 +164,7 @@
     }
 
     .hero-name {
-      font-size: clamp(2.8rem, 7vw, 6.5rem);
+      font-size: clamp(2.2rem, 5vw, 4.5rem);
       font-weight: 900;
       line-height: 1;
       letter-spacing: .08em;
@@ -670,64 +670,12 @@
       --glow-strong: 0 0 60px rgba(0,200,255,.6);
     }
 
-    /* ─── EFFET SCANLINE CRT ─── */
-    body::after {
-      content: '';
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0,200,255,0.01) 2px,
-        rgba(0,200,255,0.01) 4px
-      );
-      pointer-events: none;
-      z-index: 9999;
-    }
-
-    /* ─── CARDS HOVER AMÉLIORÉ + ANIMATION SCAN ─── */
+    /* ─── CARDS HOVER ─── */
     .card:hover {
       box-shadow:
         0 0 0 1px rgba(0,200,255,.15),
         0 20px 60px rgba(0,0,0,.5),
         inset 0 1px 0 rgba(0,200,255,.1);
-    }
-
-    .card::after {
-      content: '';
-      position: absolute;
-      top: -100%;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(0,200,255,.6), transparent);
-      transition: none;
-      pointer-events: none;
-    }
-
-    .card:hover::after {
-      animation: card-scan .6s ease forwards;
-    }
-
-    @keyframes card-scan {
-      0%   { top: -5%; }
-      100% { top: 105%; }
-    }
-
-    /* ─── TITRE ANTOINE — FLICKER ─── */
-    .hero-name {
-      animation: flicker 6s infinite;
-      filter: drop-shadow(0 0 60px rgba(0,200,255,.5));
-    }
-
-    @keyframes flicker {
-      0%,100% { opacity: 1; }
-      92%      { opacity: 1; }
-      93%      { opacity: .95; }
-      94%      { opacity: 1; }
-      96%      { opacity: .97; }
-      97%      { opacity: 1; }
     }
 
     /* ─── HERO BADGE — BORDER PULSE ─── */
@@ -763,44 +711,20 @@
       width: 100%;
     }
 
-    /* ─── STATS HERO — GLOW CYAN RENFORCÉ ─── */
+    /* ─── STATS HERO — GLOW CYAN ─── */
     .stat-num {
       text-shadow:
         0 0 20px rgba(0,200,255,.6),
         0 0 40px rgba(0,200,255,.3);
-      animation: float 3s ease-in-out infinite;
     }
 
-    .stat:nth-child(2) .stat-num { animation-delay: .4s; }
-    .stat:nth-child(3) .stat-num { animation-delay: .8s; }
-    .stat:nth-child(4) .stat-num { animation-delay: 1.2s; }
-
-    /* ─── DOWNLOAD BOX — BORDER ANIMÉ CONIC ─── */
+    /* ─── DOWNLOAD BOX ─── */
     .download-box {
-      --angle: 0deg;
-      border: 1px solid transparent;
-      background:
-        rgba(13,15,26,.8) padding-box,
-        conic-gradient(from var(--angle), rgba(0,200,255,0), rgba(0,200,255,.6) 20%, rgba(59,130,246,.6) 40%, rgba(0,200,255,0) 60%) border-box;
-      animation: rotate-border 4s linear infinite;
-    }
-
-    @property --angle {
-      syntax: '<angle>';
-      initial-value: 0deg;
-      inherits: false;
-    }
-
-    @keyframes rotate-border {
-      0%   { --angle: 0deg; }
-      100% { --angle: 360deg; }
+      border: 1px solid rgba(0,200,255,.25);
+      background: rgba(13,15,26,.8);
     }
 
     /* ─── KEYFRAMES GLOBAUX ─── */
-    @keyframes float {
-      0%,100% { transform: translateY(0); }
-      50%      { transform: translateY(-8px); }
-    }
 
     @keyframes slide-in-left {
       from { opacity: 0; transform: translateX(-40px); }
@@ -827,17 +751,9 @@
     ::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
     * { scrollbar-width: thin; scrollbar-color: var(--cyan) #06070d; }
 
-    /* ─── GLOW PULSANT SUR BTN-PRIMARY ─── */
-    @keyframes btn-glow-pulse {
-      0%,100% {
-        box-shadow: 0 0 20px rgba(0,200,255,.45), 0 0 40px rgba(0,200,255,.15), 0 4px 16px rgba(0,0,0,.4);
-      }
-      50% {
-        box-shadow: 0 0 45px rgba(0,200,255,.8), 0 0 90px rgba(59,130,246,.4), 0 0 130px rgba(0,200,255,.12), 0 4px 16px rgba(0,0,0,.4);
-      }
-    }
-    .btn-primary { animation: btn-glow-pulse 2.5s ease-in-out infinite; }
-    .btn-primary:hover { animation: none; transform: translateY(-3px); box-shadow: 0 0 60px rgba(0,200,255,.9), 0 0 100px rgba(59,130,246,.45), 0 8px 24px rgba(0,0,0,.5); }
+    /* ─── BTN-PRIMARY ─── */
+    .btn-primary { box-shadow: 0 0 20px rgba(0,200,255,.35), 0 4px 16px rgba(0,0,0,.4); }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 0 40px rgba(0,200,255,.7), 0 8px 24px rgba(0,0,0,.5); }
 
     /* ─── ANIMATE ON SCROLL ─── */
     .animate-on-scroll { opacity: 0; transform: translateY(30px); transition: opacity .6s ease, transform .6s ease; }
@@ -1367,7 +1283,7 @@
 (function() {
   const COLOR_CYAN     = 0x00c8ff;
   const COLOR_BLUE     = 0x3b82f6;
-  const PARTICLE_COUNT = 140;
+  const PARTICLE_COUNT = 60;
   const CONNECT_DIST   = 3.2;
 
   const canvas = document.getElementById('canvas-bg');
