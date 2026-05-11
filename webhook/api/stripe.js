@@ -46,9 +46,10 @@ export default async function handler(req, res) {
     const session = event.data.object;
     const email = session.customer_details?.email;
 
-    // Guard: no email address on the session — nothing to send, but acknowledge receipt
-    if (!email) {
-      console.warn('checkout.session.completed received with no customer email');
+    // Guard: no email address or invalid format
+    const emailValid = typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!emailValid) {
+      console.warn('checkout.session.completed received with no/invalid customer email');
       return res.status(200).json({ received: true });
     }
 

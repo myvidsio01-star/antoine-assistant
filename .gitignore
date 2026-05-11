@@ -1,5 +1,11 @@
 # Clés API et secrets
+.env
+.env.local
+.env.*.local
 assistant/.env
+
+# Node
+node_modules/
 assistant/antoine_memory.json
 
 # Python
