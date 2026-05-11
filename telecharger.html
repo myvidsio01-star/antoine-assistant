@@ -513,7 +513,113 @@
       50% { transform: scale(1.15); opacity: 0.3; }
     }
 
-    /* ─── PAYPAL BTN ─── */
+    /* ─── PREMIUM BANNER ─── */
+  .premium-banner {
+    background: linear-gradient(135deg, rgba(245,158,11,.08), rgba(0,200,255,.05));
+    border: 2px solid rgba(245,158,11,.35);
+    border-radius: 20px;
+    padding: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+
+  .premium-banner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #f59e0b, #00c8ff);
+  }
+
+  .premium-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: rgba(245,158,11,.15);
+    border: 1px solid rgba(245,158,11,.4);
+    border-radius: 100px;
+    padding: .25rem .8rem;
+    font-size: .7rem;
+    font-weight: 700;
+    color: #f59e0b;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    margin-bottom: .6rem;
+  }
+
+  .premium-banner h3 { font-size: 1.35rem; font-weight: 800; margin-bottom: .4rem; }
+  .premium-banner p { font-size: .875rem; color: var(--muted); line-height: 1.6; }
+
+  .premium-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin-top: .75rem;
+  }
+
+  .premium-pill {
+    font-size: .73rem;
+    font-weight: 600;
+    background: rgba(245,158,11,.1);
+    border: 1px solid rgba(245,158,11,.25);
+    border-radius: 100px;
+    padding: .2rem .7rem;
+    color: #fbbf24;
+  }
+
+  .btn-stripe {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #000;
+    font-size: 1rem;
+    font-weight: 800;
+    padding: 1rem 2.25rem;
+    box-shadow: 0 0 35px rgba(245,158,11,.45);
+    white-space: nowrap;
+    flex-shrink: 0;
+    animation: stripeGlow 3s ease-in-out infinite;
+  }
+
+  .btn-stripe:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 60px rgba(245,158,11,.7);
+  }
+
+  @keyframes stripeGlow {
+    0%, 100% { box-shadow: 0 0 30px rgba(245,158,11,.4); }
+    50% { box-shadow: 0 0 55px rgba(245,158,11,.7); }
+  }
+
+  .version-separator {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    color: var(--muted);
+    font-size: .78rem;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+
+  .version-separator::before,
+  .version-separator::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  @media(max-width: 700px) {
+    .premium-banner { flex-direction: column; }
+    .btn-stripe { width: 100%; justify-content: center; }
+  }
+
+  /* ─── PAYPAL BTN ─── */
     .btn-paypal {
       background: linear-gradient(135deg, #0070ba, #003087);
       color: #fff;
@@ -770,10 +876,40 @@
 
 <hr class="divider" />
 
+<!-- ─── CHOIX VERSION ─── -->
+<section>
+  <div class="container">
+    <div class="section-tag">Versions disponibles</div>
+    <h2>Choisissez votre version</h2>
+    <p class="section-desc">Deux versions d'A.N.T.O.I.N.E selon vos besoins.</p>
+
+    <!-- PREMIUM -->
+    <div class="premium-banner">
+      <div>
+        <div class="premium-badge">⭐ Recommandé</div>
+        <h3>A.N.T.O.I.N.E V1.1 — Premium</h3>
+        <p>La version complète. Aucune installation de Python requise — un simple double-clic suffit.<br>Wake word, voix Neural, démarrage automatique Windows.</p>
+        <div class="premium-features">
+          <span class="premium-pill">🎙️ Wake word</span>
+          <span class="premium-pill">🖱️ Sans terminal</span>
+          <span class="premium-pill">🚀 Démarrage auto</span>
+          <span class="premium-pill">🎤 Voix Neural Henri</span>
+          <span class="premium-pill">📦 Sans Python</span>
+        </div>
+      </div>
+      <a href="https://buy.stripe.com/6oU6oH7nZ701bMxcB3gbm03" target="_blank" class="btn btn-stripe">💳 Acheter — 5€</a>
+    </div>
+
+    <!-- SÉPARATEUR -->
+    <div class="version-separator">ou version gratuite</div>
+
+  </div>
+</section>
+
 <!-- ─── LES 3 ÉTAPES ─── -->
 <section class="bg-dark">
   <div class="container">
-    <div class="section-tag">Installation</div>
+    <div class="section-tag">Installation — V1.0 Gratuite</div>
     <h2>Les 3 étapes</h2>
     <p class="section-desc">Suivez ces étapes dans l'ordre. L'installation prend moins de 5 minutes.</p>
 

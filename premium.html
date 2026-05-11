@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Merci — A.N.T.O.I.N.E V1.1 Premium</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #06070d;
+      --bg2: #0d0f1a;
+      --border: rgba(0, 200, 255, 0.12);
+      --cyan: #00c8ff;
+      --blue: #3b82f6;
+      --gold: #f59e0b;
+      --gold-glow: rgba(245, 158, 11, 0.4);
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --glow: 0 0 30px rgba(0, 200, 255, 0.4);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    #canvas-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    nav, section, footer, header { position: relative; z-index: 1; }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(6, 7, 13, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+
+    .logo {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--cyan);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      text-shadow: var(--glow);
+    }
+
+    .nav-back {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: color .2s;
+    }
+    .nav-back:hover { color: var(--cyan); }
+
+    /* ─── HERO ─── */
+    .page-hero {
+      padding: 6rem 2rem 4rem;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: rgba(245,158,11,.10);
+      border: 1px solid rgba(245,158,11,.4);
+      border-radius: 100px;
+      padding: .35rem 1.1rem;
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      animation: goldPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes goldPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(245,158,11,0); }
+      50% { box-shadow: 0 0 20px rgba(245,158,11,.25); }
+    }
+
+    .page-title {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -.02em;
+      background: linear-gradient(135deg, #ffffff 0%, var(--gold) 50%, var(--cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 40px rgba(245,158,11,.3));
+      margin-bottom: 1rem;
+    }
+
+    .page-subtitle {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 540px;
+      margin: 0 auto;
+    }
+
+    /* ─── DOWNLOAD HERO ─── */
+    section { padding: 3rem 2rem; }
+    .container { max-width: 780px; margin: 0 auto; }
+
+    .download-hero {
+      background: linear-gradient(135deg, rgba(245,158,11,.06), rgba(0,200,255,.06));
+      border: 2px solid rgba(245,158,11,.35);
+      border-radius: 20px;
+      padding: 2.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .download-hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--cyan));
+    }
+
+    .download-hero-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1.25rem;
+      filter: drop-shadow(0 0 20px rgba(245,158,11,.5));
+    }
+
+    .download-hero h2 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: .5rem;
+    }
+
+    .download-hero p {
+      color: var(--muted);
+      font-size: .95rem;
+      margin-bottom: 2rem;
+      max-width: 460px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .btn-download-premium {
+      display: inline-flex;
+      align-items: center;
+      gap: .65rem;
+      padding: 1.1rem 2.75rem;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      text-decoration: none;
+      background: linear-gradient(135deg, var(--gold), #d97706);
+      color: #000;
+      box-shadow: 0 0 40px rgba(245,158,11,.5);
+      transition: all .25s;
+      letter-spacing: .02em;
+    }
+
+    .btn-download-premium:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 0 65px rgba(245,158,11,.75);
+    }
+
+    .file-meta {
+      margin-top: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .file-meta-item {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      font-size: .78rem;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ─── INSTALL STEPS ─── */
+    .section-tag {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .18em;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: .75rem;
+    }
+
+    h2.section-title {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 800;
+      margin-bottom: .75rem;
+    }
+
+    .section-desc {
+      color: var(--muted);
+      font-size: .9rem;
+      margin-bottom: 2rem;
+    }
+
+    .steps-simple {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .step-simple {
+      background: rgba(13,15,26,.75);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      transition: border-color .3s;
+    }
+
+    .step-simple:hover { border-color: rgba(0,200,255,.25); }
+
+    .step-simple-num {
+      min-width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .85rem;
+      font-weight: 900;
+      color: #000;
+      flex-shrink: 0;
+    }
+
+    .step-simple-text {
+      font-size: .9rem;
+      color: var(--muted);
+      line-height: 1.6;
+      padding-top: .2rem;
+    }
+
+    .step-simple-text strong { color: var(--text); }
+
+    .step-simple-text code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: var(--cyan);
+      background: rgba(0,200,255,.08);
+      padding: .1rem .4rem;
+      border-radius: 4px;
+    }
+
+    /* ─── NOUVEAUTÉS ─── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .feature-card {
+      background: rgba(13,15,26,.75);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      transition: border-color .3s, transform .3s;
+    }
+
+    .feature-card:hover { border-color: rgba(245,158,11,.3); transform: translateY(-3px); }
+
+    .feature-icon { font-size: 1.5rem; margin-bottom: .6rem; }
+    .feature-title { font-size: .9rem; font-weight: 700; margin-bottom: .3rem; }
+    .feature-desc { font-size: .8rem; color: var(--muted); line-height: 1.55; }
+
+    /* ─── SUPPORT ─── */
+    .support-box {
+      background: rgba(88,101,242,.08);
+      border: 1px solid rgba(88,101,242,.3);
+      border-radius: 14px;
+      padding: 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .support-box-text h3 { font-size: 1rem; font-weight: 700; margin-bottom: .3rem; }
+    .support-box-text p { font-size: .85rem; color: var(--muted); }
+
+    .btn-discord {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .8rem 1.75rem;
+      border-radius: 10px;
+      font-size: .88rem;
+      font-weight: 700;
+      text-decoration: none;
+      background: rgba(88,101,242,.18);
+      border: 2px solid rgba(88,101,242,.5);
+      color: #8b9cf4;
+      transition: all .25s;
+      white-space: nowrap;
+    }
+
+    .btn-discord:hover {
+      background: rgba(88,101,242,.3);
+      border-color: rgba(88,101,242,.85);
+      transform: translateY(-2px);
+      box-shadow: 0 0 35px rgba(88,101,242,.4);
+      color: #b4bcff;
+    }
+
+    /* ─── DIVIDER ─── */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; position: relative; z-index: 1; }
+    .bg-dark { background: rgba(10,12,20,.6); }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: .83rem;
+      position: relative;
+      z-index: 1;
+      background: rgba(6,7,13,.7);
+      backdrop-filter: blur(8px);
+    }
+
+    footer a { color: var(--muted); text-decoration: none; margin: 0 .75rem; }
+    footer a:hover { color: var(--cyan); }
+
+    @media(max-width: 600px) {
+      .page-hero { padding: 4rem 1.5rem 3rem; }
+      section { padding: 2.5rem 1.5rem; }
+      .download-hero { padding: 2rem 1.5rem; }
+      .support-box { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="canvas-bg"></canvas>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">AssistantVocal</a>
+    <a href="index.html" class="nav-back">← Retour au site</a>
+  </div>
+</nav>
+
+<header class="page-hero">
+  <div class="hero-badge">⭐ Version Premium Débloquée</div>
+  <h1 class="page-title">Merci pour votre achat !</h1>
+  <p class="page-subtitle">Votre accès à A.N.T.O.I.N.E V1.1 est prêt. Téléchargez et lancez en moins de 2 minutes.</p>
+</header>
+
+<hr class="divider" />
+
+<!-- ─── TÉLÉCHARGEMENT ─── -->
+<section>
+  <div class="container">
+    <div class="download-hero">
+      <div class="download-hero-icon">📦</div>
+      <h2>A.N.T.O.I.N.E V1.1 — Premium</h2>
+      <p>Archive complète · Windows 64-bit · Aucune installation Python requise</p>
+      <a href="https://github.com/myvidsio01-star/antoine-assistant/releases/download/v1.1/ANTOINE-V1.1.zip" class="btn-download-premium">
+        ⬇ Télécharger ANTOINE-V1.1.zip
+      </a>
+      <div class="file-meta">
+        <div class="file-meta-item">📁 ANTOINE-V1.1.zip</div>
+        <div class="file-meta-item">🪟 Windows 64-bit</div>
+        <div class="file-meta-item">⚡ ~76 Mo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ─── INSTALLATION ─── -->
+<section class="bg-dark">
+  <div class="container">
+    <div class="section-tag">Installation</div>
+    <h2 class="section-title">Prêt en 3 étapes</h2>
+    <p class="section-desc">La V1.1 ne nécessite plus Python. Double-cliquez et c'est parti.</p>
+
+    <div class="steps-simple">
+      <div class="step-simple">
+        <div class="step-simple-num">1</div>
+        <div class="step-simple-text">
+          <strong>Décompressez</strong> l'archive <code>ANTOINE-V1.1.zip</code> dans le dossier de votre choix.
+        </div>
+      </div>
+      <div class="step-simple">
+        <div class="step-simple-num">2</div>
+        <div class="step-simple-text">
+          Renommez <code>.env.example</code> en <code>.env</code> et collez-y votre clé Groq gratuite
+          depuis <a href="https://console.groq.com" target="_blank" style="color:var(--cyan);">console.groq.com</a>.
+          Aucune autre clé obligatoire.
+        </div>
+      </div>
+      <div class="step-simple">
+        <div class="step-simple-num">3</div>
+        <div class="step-simple-text">
+          Double-cliquez <strong><code>ANTOINE.exe</code></strong> — l'assistant démarre en fond.
+          Dites <strong>"Hey Antoine"</strong> pour le réveiller. 🎙️
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ─── NOUVEAUTÉS V1.1 ─── -->
+<section>
+  <div class="container">
+    <div class="section-tag">Nouveautés</div>
+    <h2 class="section-title">Ce qui change dans la V1.1</h2>
+    <p class="section-desc">Tout ce que vous avez dans cette version par rapport à la V1.0 gratuite.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🎙️</div>
+        <div class="feature-title">Wake word</div>
+        <div class="feature-desc">Dites "Hey Antoine" pour réveiller l'assistant. Zéro touche à presser.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🖱️</div>
+        <div class="feature-title">Sans terminal</div>
+        <div class="feature-desc">Lance-toi d'un double-clic. Aucune fenêtre noire, aucune commande à saisir.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🚀</div>
+        <div class="feature-title">Démarrage auto</div>
+        <div class="feature-desc">Antoine se lance dès l'ouverture de votre session Windows. Toujours disponible.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎙️</div>
+        <div class="feature-title">Voix Neural Henri</div>
+        <div class="feature-desc">Voix masculine Microsoft Neural — naturelle, claire, bien meilleure que la V1.0.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📦</div>
+        <div class="feature-title">Pas de Python</div>
+        <div class="feature-desc">Tout est embarqué dans l'exe. Aucune dépendance à installer manuellement.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <div class="feature-title">Zéro quota gaspillé</div>
+        <div class="feature-desc">La veille ne consomme aucun appel API. Vos crédits servent uniquement aux commandes.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ─── SUPPORT ─── -->
+<section class="bg-dark">
+  <div class="container">
+    <div class="support-box">
+      <div class="support-box-text">
+        <h3>💬 Un problème ? On est là.</h3>
+        <p>Rejoignez le Discord et ouvrez un ticket dans #aide-installation. Réponse rapide garantie.</p>
+      </div>
+      <a href="https://discord.gg/JP9yF3VWQ" target="_blank" class="btn-discord">💬 Rejoindre le Discord</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div style="margin-bottom:.75rem;">
+    <a href="mentions-legales.html">Mentions légales</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <div>© 2026 A.N.T.O.I.N.E V1.1 Premium — Merci pour votre soutien ❤️</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function() {
+  const canvas = document.getElementById('canvas-bg');
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 5;
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+  const COUNT = 80;
+  const positions = new Float32Array(COUNT * 3);
+  const pts = [];
+  for (let i = 0; i < COUNT; i++) {
+    const x = (Math.random() - 0.5) * 14, y = (Math.random() - 0.5) * 14, z = (Math.random() - 0.5) * 6;
+    positions[i*3]=x; positions[i*3+1]=y; positions[i*3+2]=z;
+    pts.push({x,y,z});
+  }
+  const pg = new THREE.BufferGeometry();
+  pg.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  scene.add(new THREE.Points(pg, new THREE.PointsMaterial({ color: 0xf59e0b, size: 0.04, transparent: true, opacity: 0.5 })));
+  const lm = new THREE.LineBasicMaterial({ color: 0x00c8ff, transparent: true, opacity: 0.08 });
+  const lg = new THREE.Group();
+  scene.add(lg);
+  for (let i = 0; i < COUNT; i++) for (let j = i+1; j < COUNT; j++) {
+    const a=pts[i],b=pts[j];
+    if (Math.sqrt((a.x-b.x)**2+(a.y-b.y)**2+(a.z-b.z)**2) < 3) {
+      lg.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(a.x,a.y,a.z),new THREE.Vector3(b.x,b.y,b.z)]), lm));
+    }
+  }
+  let mx=0,my=0;
+  document.addEventListener('mousemove', e => { mx=(e.clientX/window.innerWidth-.5)*2; my=(e.clientY/window.innerHeight-.5)*2; });
+  window.addEventListener('resize', () => { camera.aspect=window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth,window.innerHeight); });
+  (function animate() {
+    requestAnimationFrame(animate);
+    lg.rotation.y += 0.0002; lg.rotation.x += 0.00008;
+    camera.position.x += (mx*.25-camera.position.x)*.03;
+    camera.position.y += (-my*.15-camera.position.y)*.03;
+    camera.lookAt(scene.position);
+    renderer.render(scene, camera);
+  })();
+})();
+</script>
+
+</body>
+</html>
