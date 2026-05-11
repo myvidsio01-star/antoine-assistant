@@ -7,5 +7,17 @@ assistant/__pycache__/
 assistant/*.pyc
 assistant/*.pyo
 
-# Archive locale (disponible via GitHub Releases)
+# Archives locales (disponibles via GitHub Releases)
 ANTOINE-V1.0.zip
+ANTOINE-V1.1.zip
+
+# Build PyInstaller
+assistant/build/
+assistant/dist/
+assistant/_internal/
+assistant/*.spec
+assistant/creer_demarrage.ps1
+assistant/preparer_distribution.ps1
+assistant/creer_zip.ps1
+assistant/test_exe.ps1
+assistant/antoine.log
