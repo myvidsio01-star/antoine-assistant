@@ -25,6 +25,8 @@ try:
         sys.stderr.reconfigure(encoding='utf-8', errors='replace')
 except Exception:
     pass
+import ast
+import operator
 import subprocess
 import webbrowser
 import re
@@ -507,12 +509,12 @@ def open_app(app_name: str) -> str:
         elif os.path.isabs(path) and os.path.exists(path):
             subprocess.Popen([path])
         else:
-            subprocess.Popen(path, shell=True)
+            subprocess.Popen([path])
         return f"J'ouvre {matched_key}."
     except FileNotFoundError:
         # Fallback : chercher l'exe dans PATH
         try:
-            subprocess.Popen(path, shell=True)
+            subprocess.Popen([path])
             return f"J'ouvre {matched_key}."
         except Exception as e:
             return f"Je n'ai pas trouvé {matched_key} sur ce PC : {e}"
@@ -560,6 +562,29 @@ def open_spotify() -> str:
 #   CALCULS
 # ─────────────────────────────────────────────
 
+_SAFE_OPS = {
+    ast.Add:  operator.add,
+    ast.Sub:  operator.sub,
+    ast.Mult: operator.mul,
+    ast.Div:  operator.truediv,
+    ast.Pow:  operator.pow,
+    ast.USub: operator.neg,
+    ast.UAdd: operator.pos,
+}
+
+def _safe_eval(expr: str):
+    """Évalue une expression arithmétique sans utiliser eval()."""
+    def _eval(node):
+        if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
+            return node.value
+        if isinstance(node, ast.BinOp) and type(node.op) in _SAFE_OPS:
+            return _SAFE_OPS[type(node.op)](_eval(node.left), _eval(node.right))
+        if isinstance(node, ast.UnaryOp) and type(node.op) in _SAFE_OPS:
+            return _SAFE_OPS[type(node.op)](_eval(node.operand))
+        raise ValueError("Expression non autorisée")
+    return _eval(ast.parse(expr, mode='eval').body)
+
+
 def calculate(expression: str) -> str:
     """Évalue une expression mathématique en langage naturel."""
     expr = expression.lower()
@@ -600,7 +625,7 @@ def calculate(expression: str) -> str:
         return "Je n'ai pas pu extraire le calcul."
 
     try:
-        result = eval(clean_expr, {"__builtins__": {}, "math": math})
+        result = _safe_eval(clean_expr)
         return f"Le résultat est {result:g}."
     except ZeroDivisionError:
         return "Impossible de diviser par zéro."
