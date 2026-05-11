@@ -9,11 +9,14 @@ import sys
 import json
 import datetime
 
-# Force UTF-8 pour le terminal Windows
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
-if sys.stderr.encoding != 'utf-8':
-    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+# Force UTF-8 pour le terminal Windows (ignoré en mode .pyw sans console)
+try:
+    if sys.stdout and sys.stdout.encoding != 'utf-8':
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    if sys.stderr and sys.stderr.encoding != 'utf-8':
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+except Exception:
+    pass
 import subprocess
 import webbrowser
 import re
@@ -48,6 +51,9 @@ SYSTEM_PROMPT = (
     "comme si tu parlais à voix haute. "
     "Pas de markdown, pas de listes, juste du texte naturel parlé."
 )
+
+WAKE_WORDS     = ["hey antoine", "hé antoine", "eh antoine", "antoine"]
+ACTIVE_TIMEOUT = 30  # secondes d'inactivité avant retour en veille
 
 # ─────────────────────────────────────────────
 #   TTS — SYNTHÈSE VOCALE
@@ -197,6 +203,24 @@ def listen() -> str:
     except Exception as e:
         print(f"   [ERREUR STT] {e}")
         return ""
+
+
+def listen_passive() -> bool:
+    """Écoute brèvement pour détecter le wake word. Retourne True si détecté."""
+    if recognizer is None or microphone is None:
+        return True  # Mode texte : pas de wake word, toujours actif
+    try:
+        import speech_recognition as sr
+        with microphone as source:
+            audio = recognizer.listen(source, timeout=4, phrase_time_limit=4)
+        text = recognizer.recognize_google(audio, language="fr-FR").lower()
+        print(f"   [VEILLE] Entendu : {text}")
+        return any(ww in text for ww in WAKE_WORDS)
+    except (sr.WaitTimeoutError, sr.UnknownValueError):
+        return False
+    except Exception as e:
+        print(f"   [VEILLE] Erreur : {e}")
+        return False
 
 
 # ─────────────────────────────────────────────
@@ -832,7 +856,7 @@ def ask_ai(prompt: str, context: str = "") -> str:
 
 ANTOINE_ASCII = """
   ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-  ░   ╔═╗╔╗╔╔╦╗╔═╗╦╔╗╔╔═╗           V1.0    ░
+  ░   ╔═╗╔╗╔╔╦╗╔═╗╦╔╗╔╔═╗           V1.1    ░
   ░   ╠═╣║║║ ║ ║ ║║║║║║╣            ██████  ░
   ░   ╩ ╩╝╚╝ ╩ ╚═╝╩╝╚╝╚═╝          ░░  ░░  ░
   ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -1064,7 +1088,7 @@ def extract_search_query(text: str) -> str:
 
 STARTUP_BANNER = """
 ╔══════════════════════════════════════════════════════════════╗
-║          A.N.T.O.I.N.E — V1.0                               ║
+║          A.N.T.O.I.N.E — V1.1                               ║
 ║   Autonomous Neural-Triggered Omniscient Intelligence        ║
 ╚══════════════════════════════════════════════════════════════╝"""
 
@@ -1105,7 +1129,6 @@ def check_ha_status() -> str:
 
 def main():
     """Point d'entrée principal de A.N.T.O.I.N.E."""
-    # Initialisation
     tts_ok  = init_tts()
     stt_ok  = init_stt()
     memory  = load_memory()
@@ -1118,13 +1141,31 @@ def main():
     if not stt_ok:
         print("   [INFO] STT non disponible. Mode saisie clavier activé.")
 
-    # Message de démarrage vocal
-    speak("Antoine en ligne. Systèmes initialisés. Comment puis-je vous aider ?")
+    speak("Antoine en ligne. Dites 'Hey Antoine' pour me réveiller.")
 
-    # Boucle principale
-    running = True
+    running     = True
+    active      = False
+    active_since = 0.0
+
     while running:
         try:
+            # ─── VEILLE : attente du wake word ───
+            if not active:
+                print("\n   [VEILLE] En attente de 'Hey Antoine'...")
+                if not listen_passive():
+                    continue
+                speak("Je vous écoute.")
+                active       = True
+                active_since = time.time()
+                continue
+
+            # ─── ACTIF : timeout → retour en veille ───
+            if time.time() - active_since > ACTIVE_TIMEOUT:
+                speak("Je repasse en veille. Dites 'Hey Antoine' pour me réveiller.")
+                active = False
+                continue
+
+            # ─── ACTIF : écoute et traitement ───
             user_text = listen()
 
             if not user_text:
@@ -1133,6 +1174,7 @@ def main():
                 speak("Je n'ai pas compris. Pouvez-vous répéter ?")
                 continue
 
+            active_since = time.time()
             response, should_quit = route_command(user_text, memory)
             speak(response)
 
@@ -1143,8 +1185,7 @@ def main():
             speak("Arrêt manuel détecté. À bientôt.")
             running = False
         except Exception as e:
-            error_msg = f"Une erreur inattendue s'est produite : {e}"
-            print(f"   [ERREUR] {error_msg}")
+            print(f"   [ERREUR] {e}")
             speak("Je rencontre un problème technique. Veuillez réessayer.")
 
     print("\n   ► A.N.T.O.I.N.E hors ligne.")
