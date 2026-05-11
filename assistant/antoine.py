@@ -48,6 +48,41 @@ except ImportError:
 GEMINI_API_KEY     = os.getenv("GEMINI_API_KEY", "")
 GROQ_API_KEY       = os.getenv("GROQ_API_KEY", "")
 ANTHROPIC_API_KEY  = os.getenv("ANTHROPIC_API_KEY", "")
+
+# ─────────────────────────────────────────────
+#   CLIENTS IA — INITIALISÉS UNE SEULE FOIS (LAZY)
+# ─────────────────────────────────────────────
+
+_groq_client      = None
+_gemini_client    = None
+_anthropic_client = None
+
+
+def _get_groq_client():
+    """Retourne le client Groq, en l'initialisant au premier appel."""
+    global _groq_client
+    if _groq_client is None:
+        from groq import Groq
+        _groq_client = Groq(api_key=GROQ_API_KEY)
+    return _groq_client
+
+
+def _get_gemini_client():
+    """Retourne le client Gemini, en l'initialisant au premier appel."""
+    global _gemini_client
+    if _gemini_client is None:
+        from google import genai
+        _gemini_client = genai.Client(api_key=GEMINI_API_KEY)
+    return _gemini_client
+
+
+def _get_anthropic_client():
+    """Retourne le client Anthropic, en l'initialisant au premier appel."""
+    global _anthropic_client
+    if _anthropic_client is None:
+        import anthropic
+        _anthropic_client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    return _anthropic_client
 HA_URL             = os.getenv("HA_URL", "")
 HA_TOKEN           = os.getenv("HA_TOKEN", "")
 
@@ -132,23 +167,22 @@ def speak(text: str):
             import edge_tts
             import pygame
             import asyncio
-            import tempfile
-            import os as _os
+            import io
 
-            async def _synthesize():
+            async def _synthesize_to_bytes():
                 communicate = edge_tts.Communicate(text, EDGE_VOICE)
-                with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as f:
-                    tmp_path = f.name
-                await communicate.save(tmp_path)
-                return tmp_path
+                audio_data = b""
+                async for chunk in communicate.stream():
+                    if chunk["type"] == "audio":
+                        audio_data += chunk["data"]
+                return audio_data
 
-            tmp_path = asyncio.run(_synthesize())
-            pygame.mixer.music.load(tmp_path)
+            audio_bytes = asyncio.run(_synthesize_to_bytes())
+            audio_buffer = io.BytesIO(audio_bytes)
+            pygame.mixer.music.load(audio_buffer)
             pygame.mixer.music.play()
             while pygame.mixer.music.get_busy():
                 pygame.time.Clock().tick(10)
-            pygame.mixer.music.unload()
-            _os.unlink(tmp_path)
             return
         except Exception as e:
             print(f"   [ERREUR Edge TTS] {e}")
@@ -175,9 +209,9 @@ def init_stt():
     try:
         import speech_recognition as sr
         recognizer = sr.Recognizer()
-        recognizer.energy_threshold = 400
+        recognizer.energy_threshold = 350
         recognizer.dynamic_energy_threshold = True
-        recognizer.pause_threshold = 0.6
+        recognizer.pause_threshold = 0.5
         microphone = sr.Microphone()
 
         with microphone as source:
@@ -202,7 +236,7 @@ def listen() -> str:
         import speech_recognition as sr
         print("\n   [ÉCOUTE] Parlez maintenant...")
         with microphone as source:
-            audio = recognizer.listen(source, timeout=8, phrase_time_limit=12)
+            audio = recognizer.listen(source, timeout=5, phrase_time_limit=8)
 
         text = recognizer.recognize_google(audio, language="fr-FR")
         print(f"   [VOUS] {text}")
@@ -780,7 +814,7 @@ def web_search(query: str) -> str:
 def activate_work_mode() -> str:
     """Active le mode travail : ouvre le Bloc-notes et informe sur le blocage des distractions."""
     try:
-        subprocess.Popen("notepad.exe", shell=True)
+        subprocess.Popen(["notepad.exe"])
     except Exception:
         pass
     return (
@@ -796,9 +830,8 @@ def activate_work_mode() -> str:
 def ask_gemini(prompt: str, context: str) -> str:
     """Envoie une question à Gemini 2.0 Flash."""
     try:
-        from google import genai
         from google.genai import types
-        client = genai.Client(api_key=GEMINI_API_KEY)
+        client = _get_gemini_client()
         full_prompt = f"{context}\n\nUtilisateur: {prompt}" if context else prompt
         response = client.models.generate_content(
             model="gemini-2.0-flash",
@@ -815,8 +848,7 @@ def ask_gemini(prompt: str, context: str) -> str:
 def ask_groq(prompt: str, context: str) -> str:
     """Envoie une question à Groq llama-3.3-70b-versatile."""
     try:
-        from groq import Groq
-        client = Groq(api_key=GROQ_API_KEY)
+        client = _get_groq_client()
 
         messages = [{"role": "system", "content": SYSTEM_PROMPT}]
         if context:
@@ -831,8 +863,6 @@ def ask_groq(prompt: str, context: str) -> str:
             temperature=0.7,
         )
         return completion.choices[0].message.content.strip()
-    except ImportError:
-        raise RuntimeError("groq non installé")
     except Exception as e:
         raise RuntimeError(f"Groq : {e}")
 
@@ -840,8 +870,7 @@ def ask_groq(prompt: str, context: str) -> str:
 def ask_claude(prompt: str, context: str) -> str:
     """Envoie une question à Claude Haiku (Anthropic)."""
     try:
-        import anthropic
-        client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+        client = _get_anthropic_client()
 
         user_content = f"{context}\n\nUtilisateur: {prompt}" if context else prompt
 
@@ -852,8 +881,6 @@ def ask_claude(prompt: str, context: str) -> str:
             messages=[{"role": "user", "content": user_content}],
         )
         return message.content[0].text.strip()
-    except ImportError:
-        raise RuntimeError("anthropic non installé")
     except Exception as e:
         raise RuntimeError(f"Claude : {e}")
 
@@ -1183,6 +1210,15 @@ def main():
         print("   [INFO] STT non disponible. Mode saisie clavier activé.")
 
     speak("Antoine en ligne. Dites 'Hey Antoine' pour me réveiller.")
+
+    # Pre-warm: import du client IA en arrière-plan pour éviter la latence au premier appel
+    import threading
+    def _prewarm():
+        try:
+            _get_groq_client()
+        except Exception:
+            pass
+    threading.Thread(target=_prewarm, daemon=True).start()
 
     running     = True
     active      = False
