@@ -410,6 +410,51 @@ def get_system_stats() -> str:
         return f"Je n'ai pas pu lire les stats système : {e}"
 
 
+def get_disk_usage() -> dict:
+    """Retourne l'utilisation du disque C:."""
+    try:
+        import psutil
+        disk = psutil.disk_usage('C:\\')
+        return {
+            "total": round(disk.total / (1024**3), 1),
+            "used": round(disk.used / (1024**3), 1),
+            "percent": disk.percent
+        }
+    except Exception:
+        return {"total": 0, "used": 0, "percent": 0}
+
+
+def get_uptime() -> str:
+    """Retourne le temps depuis le démarrage du PC (HH:MM:SS)."""
+    try:
+        import psutil, datetime
+        boot = datetime.datetime.fromtimestamp(psutil.boot_time())
+        delta = datetime.datetime.now() - boot
+        total_seconds = int(delta.total_seconds())
+        h = total_seconds // 3600
+        m = (total_seconds % 3600) // 60
+        s = total_seconds % 60
+        return f"{h:02d}:{m:02d}:{s:02d}"
+    except Exception:
+        return "00:00:00"
+
+
+def get_system_stats_dict() -> dict:
+    """Retourne CPU%, RAM% et RAM details pour l'interface graphique."""
+    try:
+        import psutil
+        cpu = psutil.cpu_percent(interval=0.1)
+        ram = psutil.virtual_memory()
+        return {
+            "cpu": cpu,
+            "ram_percent": ram.percent,
+            "ram_used": round(ram.used / (1024**3), 1),
+            "ram_total": round(ram.total / (1024**3), 1),
+        }
+    except Exception:
+        return {"cpu": 0, "ram_percent": 0, "ram_used": 0, "ram_total": 0}
+
+
 def take_screenshot() -> str:
     """Prend une capture d'écran et la sauvegarde sur le Bureau."""
     try:
