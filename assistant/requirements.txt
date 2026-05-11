@@ -9,3 +9,5 @@ google-genai
 groq
 anthropic
 requests
+edge-tts
+pygame

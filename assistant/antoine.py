@@ -59,25 +59,26 @@ ACTIVE_TIMEOUT = 30  # secondes d'inactivité avant retour en veille
 #   TTS — SYNTHÈSE VOCALE
 # ─────────────────────────────────────────────
 
-tts_engine = None
-USE_GTTS = False
+tts_engine  = None
+USE_EDGE_TTS = False
+EDGE_VOICE   = "fr-FR-HenriNeural"
 
 def init_tts():
-    """Initialise gTTS (Google, haute qualité) avec fallback pyttsx3."""
-    global tts_engine, USE_GTTS
+    """Initialise Edge TTS (Microsoft Neural) avec fallback pyttsx3."""
+    global tts_engine, USE_EDGE_TTS
 
-    # Priorité : gTTS + pygame
+    # Priorité : Edge TTS + pygame
     try:
-        from gtts import gTTS
+        import edge_tts
         import pygame
         pygame.mixer.init()
-        USE_GTTS = True
-        print("   ► Voix Google TTS activée (haute qualité)")
+        USE_EDGE_TTS = True
+        print(f"   ► Voix Microsoft Neural activée ({EDGE_VOICE})")
         return True
     except ImportError:
         pass
     except Exception as e:
-        print(f"   ► [gTTS] Non disponible : {e}")
+        print(f"   ► [Edge TTS] Non disponible : {e}")
 
     # Fallback : pyttsx3
     try:
@@ -115,18 +116,22 @@ def speak(text: str):
     """Prononce le texte donné à voix haute."""
     print(f"\n   [A.N.T.O.I.N.E] {text}")
 
-    if USE_GTTS:
+    if USE_EDGE_TTS:
         try:
-            from gtts import gTTS
+            import edge_tts
             import pygame
+            import asyncio
             import tempfile
             import os as _os
 
-            tts = gTTS(text=text, lang="fr", slow=False)
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as f:
-                tmp_path = f.name
-            tts.save(tmp_path)
+            async def _synthesize():
+                communicate = edge_tts.Communicate(text, EDGE_VOICE)
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as f:
+                    tmp_path = f.name
+                await communicate.save(tmp_path)
+                return tmp_path
 
+            tmp_path = asyncio.run(_synthesize())
             pygame.mixer.music.load(tmp_path)
             pygame.mixer.music.play()
             while pygame.mixer.music.get_busy():
@@ -135,7 +140,7 @@ def speak(text: str):
             _os.unlink(tmp_path)
             return
         except Exception as e:
-            print(f"   [ERREUR gTTS] {e}")
+            print(f"   [ERREUR Edge TTS] {e}")
 
     if tts_engine is None:
         return
