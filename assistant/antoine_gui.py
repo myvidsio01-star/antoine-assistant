@@ -260,16 +260,16 @@ class AssistantThread(QThread):
                         self._trigger_listen = False
                         active = True
                         active_since = time.time()
-                        core.speak("Je vous écoute.")
+                        core.speak("Je vous écoute, Monsieur.")
                         continue
                     if core.listen_passive():
                         active = True
                         active_since = time.time()
-                        core.speak("Je vous écoute.")
+                        core.speak("Je vous écoute, Monsieur.")
                     continue
 
                 if time.time() - active_since > core.ACTIVE_TIMEOUT:
-                    core.speak("Je repasse en veille.")
+                    core.speak("Je repasse en veille, Monsieur. Dites Hey Antoine pour me réveiller.")
                     active = False
                     continue
 
@@ -283,7 +283,7 @@ class AssistantThread(QThread):
                 if not user_text:
                     continue
                 if user_text == "__not_understood__":
-                    core.speak("Je n'ai pas compris. Pouvez-vous répéter ?")
+                    core.speak("Je n'ai pas saisi, Monsieur. Pourriez-vous répéter ?")
                     continue
 
                 self.message_from_user.emit(user_text)
@@ -350,8 +350,8 @@ class TopBar(QWidget):
 
     def _tick(self):
         now = QDateTime.currentDateTime()
-        self._time_lbl.setText(now.toString("hh:mm:ss AP"))
-        self._date_lbl.setText(now.toString("MMMM dd, yyyy"))
+        self._time_lbl.setText(now.toString("HH:mm:ss"))
+        self._date_lbl.setText(now.toString("dddd dd MMMM yyyy"))
 
     def update_temperature(self, temp: float, city: str):
         self._temp_lbl.setText(f"● {temp:.1f}°C  {city}")
@@ -421,6 +421,12 @@ class SystemStatsCard(_Card):
         self._mini[0].setText(f"{cpu:.0f}%")
         self._mini[1].setText(f"{ram_used:.1f}/{ram_total:.1f}G")
         self._mini[2].setText(f"{disk_used:.0f}/{disk_total:.0f}G")
+        # Couleur CPU selon charge
+        cpu_color = "#ef4444" if cpu > 85 else ("#f59e0b" if cpu > 60 else "#00c8ff")
+        self._cpu_bar.setStyleSheet(
+            f"QProgressBar{{background:#1a2a35;border-radius:2px;border:none;}}"
+            f"QProgressBar::chunk{{background:{cpu_color};border-radius:2px;}}")
+        self._cpu_lbl.setStyleSheet(f"color:{cpu_color};background:transparent;")
 
 
 class WeatherCard(_Card):
@@ -468,6 +474,43 @@ class UptimeCard(_Card):
         self._cmds.setText(str(commands))
 
 
+class BatteryCard(_Card):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        row = QHBoxLayout(); row.setContentsMargins(0, 0, 0, 0)
+        row.addWidget(_lbl("⚡ Battery", TEXT, 9, bold=True))
+        row.addStretch()
+        self._pct_lbl = _lbl("—%", CYAN, 11, mono=True, bold=True)
+        row.addWidget(self._pct_lbl)
+        self._v.addLayout(row)
+        self._bar = _progress(GREEN)
+        self._v.addWidget(self._bar)
+        self._status_lbl = _lbl("Aucune batterie", MUTED, 8)
+        self._v.addWidget(self._status_lbl)
+
+    def update(self, percent: int, plugged: bool, available: bool):
+        if not available:
+            self._pct_lbl.setText("N/A")
+            self._status_lbl.setText("PC fixe")
+            self._bar.setValue(0)
+            return
+        self._pct_lbl.setText(f"{percent}%")
+        self._bar.setValue(percent)
+        status = "En charge ⚡" if plugged else "Sur batterie"
+        self._status_lbl.setText(status)
+        # Couleur selon niveau
+        if percent < 15 and not plugged:
+            color = RED
+        elif percent < 30 and not plugged:
+            color = "#f59e0b"
+        else:
+            color = GREEN
+        self._bar.setStyleSheet(
+            f"QProgressBar{{background:#1a2a35;border-radius:2px;border:none;}}"
+            f"QProgressBar::chunk{{background:{color};border-radius:2px;}}")
+        self._pct_lbl.setStyleSheet(f"color:{color};background:transparent;border:none;")
+
+
 class LeftPanel(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -476,8 +519,10 @@ class LeftPanel(QWidget):
         v = QVBoxLayout(self); v.setContentsMargins(4,4,4,4); v.setSpacing(4)
         self.stats   = SystemStatsCard(self)
         self.weather = WeatherCard(self)
+        self.battery = BatteryCard(self)
         self.uptime  = UptimeCard(self)
-        v.addWidget(self.stats); v.addWidget(self.weather); v.addWidget(self.uptime)
+        v.addWidget(self.stats); v.addWidget(self.weather)
+        v.addWidget(self.battery); v.addWidget(self.uptime)
         v.addStretch()
 
 
@@ -486,10 +531,10 @@ class LeftPanel(QWidget):
 # ─────────────────────────────────────────────
 
 _STATUS_LABELS = {
-    "idle":      "● En veille",
+    "idle":      "● En veille, Monsieur",
     "listening": "● En écoute...",
-    "thinking":  "● Je réfléchis...",
-    "speaking":  "● Je parle...",
+    "thinking":  "● Traitement en cours...",
+    "speaking":  "● En train de parler...",
 }
 _STATUS_COLORS = {
     "idle": MUTED, "listening": CYAN, "thinking": BLUE, "speaking": GREEN,
@@ -718,7 +763,7 @@ class MainWindow(QMainWindow):
         root.addLayout(body, stretch=1)
 
         self._right.add_message(
-            "Bonjour ! Dites 'Hey Antoine' ou cliquez sur 🎤 pour commencer.", "antoine")
+            "Tous mes systèmes sont opérationnels, Monsieur. Dites 'Hey Antoine' ou cliquez sur 🎤 pour commencer.", "antoine")
 
         self._center.mic_clicked.connect(self._on_mic)
         self._center.stop_clicked.connect(self._on_stop)
@@ -756,6 +801,16 @@ class MainWindow(QMainWindow):
             self._left.stats.update(
                 s["cpu"], s["ram_percent"], s["ram_used"], s["ram_total"],
                 d["used"], d["total"])
+            # Batterie
+            try:
+                import psutil
+                bat = psutil.sensors_battery()
+                if bat:
+                    self._left.battery.update(int(bat.percent), bat.power_plugged, True)
+                else:
+                    self._left.battery.update(0, False, False)
+            except Exception:
+                self._left.battery.update(0, False, False)
         except Exception:
             pass
 
@@ -820,11 +875,7 @@ class MainWindow(QMainWindow):
         self._thread.stop()
         self._thread.quit()
         self._thread.wait(3000)
-        # Nettoyer fichier temporaire
-        tmp = os.path.join(os.path.dirname(__file__), "center_panel.py")
-        if os.path.exists(tmp):
-            try: os.remove(tmp)
-            except Exception: pass
+        pass
         event.accept()
 
 

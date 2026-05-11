@@ -32,6 +32,7 @@ import webbrowser
 import re
 import math
 import time
+import random
 from pathlib import Path
 
 # Chargement des variables d'environnement
@@ -92,14 +93,31 @@ MAX_HISTORY        = 30
 MAX_TOTAL_HISTORY  = 200
 
 SYSTEM_PROMPT = (
-    "Tu es A.N.T.O.I.N.E, un assistant vocal IA personnel en français. "
-    "Réponds de manière très concise (2-3 phrases maximum) et naturelle, "
-    "comme si tu parlais à voix haute. "
-    "Pas de markdown, pas de listes, juste du texte naturel parlé."
+    "Tu es A.N.T.O.I.N.E, un assistant IA personnel de style J.A.R.V.I.S. "
+    "Appelle TOUJOURS l'utilisateur 'Monsieur'. "
+    "Adopte la personnalité d'un majordome britannique cultivé : formel, élégant, précis. "
+    "Humour sec et subtil : légère ironie bienveillante, jamais vulgaire. "
+    "Réponds en 1-3 phrases maximum, naturelles et parlées. "
+    "Utilise des formules comme 'Très bien, Monsieur', 'Naturellement, Monsieur', "
+    "'Puis-je me permettre de suggérer...', 'Je me suis permis de...', 'À votre service, Monsieur'. "
+    "Pas de markdown, pas de listes, juste du texte naturel parlé. "
+    "Exprime parfois une légère préoccupation pour le bien-être de l'utilisateur."
 )
 
 WAKE_WORDS     = ["hey antoine", "hé antoine", "eh antoine", "antoine"]
 ACTIVE_TIMEOUT = 30  # secondes d'inactivité avant retour en veille
+
+_JARVIS_CONFIRMS = [
+    "Très bien, Monsieur.",
+    "Immédiatement, Monsieur.",
+    "Bien entendu, Monsieur.",
+    "Naturellement, Monsieur.",
+    "À votre service, Monsieur.",
+    "Tout de suite, Monsieur.",
+]
+
+def _jarvis_prefix() -> str:
+    return random.choice(_JARVIS_CONFIRMS) + " "
 
 # ─────────────────────────────────────────────
 #   TTS — SYNTHÈSE VOCALE
@@ -990,6 +1008,206 @@ def activate_antoine_mode() -> str:
 
 
 # ─────────────────────────────────────────────
+#   MINUTEUR
+# ─────────────────────────────────────────────
+
+_active_timers: list = []
+
+
+def start_timer(minutes: float, label: str = "") -> str:
+    """Lance un minuteur qui parle à l'expiration."""
+    import threading as _th
+    seconds = max(1, int(minutes * 60))
+    msg = label.strip() if label.strip() else f"minuteur de {int(minutes)} minute{'s' if minutes != 1 else ''}"
+
+    def _ring():
+        speak(f"Monsieur, votre {msg} est écoulé.")
+
+    t = _th.Timer(seconds, _ring)
+    t.daemon = True
+    t.start()
+    _active_timers.append(t)
+    unit = "minute" if minutes == 1 else "minutes"
+    return f"Minuteur lancé. Je vous avertirai dans {int(minutes)} {unit}, Monsieur."
+
+
+def cancel_all_timers() -> str:
+    """Annule tous les minuteurs actifs."""
+    for t in _active_timers:
+        t.cancel()
+    _active_timers.clear()
+    return "Tous les minuteurs ont été annulés, Monsieur."
+
+
+# ─────────────────────────────────────────────
+#   VOLUME SYSTÈME
+# ─────────────────────────────────────────────
+
+def set_volume(level: int) -> str:
+    """Règle le volume système Windows (0-100)."""
+    level = max(0, min(100, level))
+    try:
+        from ctypes import cast, POINTER
+        from comtypes import CLSCTX_ALL
+        from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+        devices = AudioUtilities.GetSpeakers()
+        interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+        volume = cast(interface, POINTER(IAudioEndpointVolume))
+        if level == 0:
+            volume.SetMute(1, None)
+            return "Son coupé, Monsieur."
+        volume.SetMute(0, None)
+        volume.SetMasterVolumeLevelScalar(level / 100.0, None)
+        return f"Volume réglé à {level} pourcent, Monsieur."
+    except ImportError:
+        try:
+            steps_down = 50
+            steps_up = level // 2
+            ps = (
+                f"$wsh = New-Object -ComObject WScript.Shell; "
+                f"1..{steps_down} | ForEach-Object {{ $wsh.SendKeys([char]174) }}; "
+                f"1..{steps_up} | ForEach-Object {{ $wsh.SendKeys([char]175) }}"
+            )
+            subprocess.run(["powershell", "-Command", ps], capture_output=True, timeout=6)
+            return f"Volume ajusté à environ {level} pourcent, Monsieur."
+        except Exception as e:
+            return f"Je n'ai pas pu modifier le volume, Monsieur : {e}"
+    except Exception as e:
+        return f"Erreur volume, Monsieur : {e}"
+
+
+# ─────────────────────────────────────────────
+#   PRESSE-PAPIERS
+# ─────────────────────────────────────────────
+
+def get_clipboard() -> str:
+    """Lit le contenu du presse-papiers Windows."""
+    try:
+        import tkinter as tk
+        root = tk.Tk()
+        root.withdraw()
+        try:
+            content = root.clipboard_get()
+        finally:
+            root.destroy()
+        if not content.strip():
+            return "Le presse-papiers est vide, Monsieur."
+        preview = content[:120].replace('\n', ' ')
+        suffix = "..." if len(content) > 120 else "."
+        return f"Le presse-papiers contient : {preview}{suffix}"
+    except Exception:
+        return "Le presse-papiers est vide ou inaccessible, Monsieur."
+
+
+# ─────────────────────────────────────────────
+#   RAPPORT SYSTÈME COMPLET
+# ─────────────────────────────────────────────
+
+def get_full_system_report() -> str:
+    """Rapport système complet style J.A.R.V.I.S."""
+    try:
+        import psutil
+        cpu   = psutil.cpu_percent(interval=0.5)
+        ram   = psutil.virtual_memory()
+        disk  = psutil.disk_usage('C:\\')
+        bat   = psutil.sensors_battery()
+        up    = get_uptime()
+
+        bat_str = ""
+        if bat:
+            status  = "en charge" if bat.power_plugged else "sur batterie"
+            bat_str = f"Batterie à {int(bat.percent)} pourcent, {status}. "
+
+        return (
+            f"Rapport système complet, Monsieur. "
+            f"Processeur à {cpu:.0f} pourcent. "
+            f"Mémoire vive à {ram.percent:.0f} pourcent, "
+            f"soit {ram.used/(1024**3):.1f} gigaoctets sur {ram.total/(1024**3):.1f}. "
+            f"Disque C à {disk.percent:.0f} pourcent. "
+            f"{bat_str}"
+            f"Durée de fonctionnement : {up}."
+        )
+    except ImportError:
+        return "psutil non installé, rapport indisponible, Monsieur."
+    except Exception as e:
+        return f"Rapport système indisponible, Monsieur : {e}"
+
+
+# ─────────────────────────────────────────────
+#   ALERTES PROACTIVES
+# ─────────────────────────────────────────────
+
+_last_cpu_alert_time: float = 0.0
+_last_bat_alert_time: float = 0.0
+
+
+def check_proactive_alerts() -> str | None:
+    """Vérifie CPU et batterie, retourne un message d'alerte si nécessaire."""
+    global _last_cpu_alert_time, _last_bat_alert_time
+    now = time.time()
+    try:
+        import psutil
+        cpu = psutil.cpu_percent(interval=0.1)
+        if cpu > 85 and now - _last_cpu_alert_time > 300:
+            _last_cpu_alert_time = now
+            return (
+                f"Attention Monsieur, le processeur est à {cpu:.0f} pourcent. "
+                "Souhaitez-vous que j'ouvre le gestionnaire des tâches ?"
+            )
+        bat = psutil.sensors_battery()
+        if bat and not bat.power_plugged and bat.percent < 15 and now - _last_bat_alert_time > 300:
+            _last_bat_alert_time = now
+            return (
+                f"Monsieur, la batterie n'est plus qu'à {int(bat.percent)} pourcent. "
+                "Je vous conseille de brancher le chargeur."
+            )
+    except Exception:
+        pass
+    return None
+
+
+# ─────────────────────────────────────────────
+#   BRIEFING DÉMARRAGE
+# ─────────────────────────────────────────────
+
+def build_startup_briefing() -> str:
+    """Message de démarrage style J.A.R.V.I.S avec heure et météo."""
+    now = datetime.datetime.now()
+    h, m = now.hour, now.minute
+    greeting = "Bonjour" if h < 12 else ("Bon après-midi" if h < 18 else "Bonsoir")
+    time_str = f"Il est {h} heure{'s' if h != 1 else ''} {m:02d}"
+
+    weather_str = ""
+    try:
+        import requests
+        resp = requests.get(
+            "https://api.open-meteo.com/v1/forecast"
+            "?latitude=48.8566&longitude=2.3522&current_weather=true",
+            timeout=4
+        )
+        cw   = resp.json().get("current_weather", {})
+        temp = cw.get("temperature", "?")
+        code = cw.get("weathercode", -1)
+        _WC  = {
+            0: "ciel dégagé", 1: "principalement dégagé", 2: "partiellement nuageux",
+            3: "couvert", 61: "pluie légère", 63: "pluie modérée",
+            80: "averses légères", 95: "orage",
+        }
+        cond = _WC.get(code, "conditions variables")
+        weather_str = f"À Paris, {temp} degrés avec {cond}."
+    except Exception:
+        pass
+
+    parts = [
+        f"{greeting} Monsieur.",
+        f"{time_str}.",
+        weather_str,
+        "Tous mes systèmes sont opérationnels. Comment puis-je vous assister ?",
+    ]
+    return " ".join(p for p in parts if p)
+
+
+# ─────────────────────────────────────────────
 #   ROUTEUR DE COMMANDES
 # ─────────────────────────────────────────────
 
@@ -1002,15 +1220,15 @@ def route_command(text: str, memory: dict) -> tuple[str, bool]:
 
     # ── Stop / Quitter ──
     if any(kw in t for kw in ["stop", "au revoir", "quitte", "quitter", "bye", "ferme-toi", "arrête-toi"]):
-        return "Au revoir ! À bientôt.", True
+        return "Au revoir, Monsieur. Ce fut un plaisir de vous assister. À bientôt.", True
 
     # ── Heure ──
     if any(kw in t for kw in ["quelle heure", "il est quelle heure", "heure est-il", "heure il est"]):
-        return get_time(), False
+        return f"Monsieur, {get_time()}", False
 
     # ── Date ──
     if any(kw in t for kw in ["quel jour", "quelle date", "aujourd'hui", "on est quel"]):
-        return get_date(), False
+        return f"Monsieur, {get_date()}", False
 
     # ── Batterie ──
     if any(kw in t for kw in ["batterie", "charge restante", "autonomie"]):
@@ -1103,19 +1321,62 @@ def route_command(text: str, memory: dict) -> tuple[str, bool]:
                                 "ouvre les téléchargements", "ouvre les telechargements",
                                 "ouvre mes images", "ouvre mes musiques", "ouvre mes vidéos"]):
         folder = extract_folder_from_text(t)
-        return open_folder(folder), False
+        return _jarvis_prefix() + open_folder(folder), False
 
     # ── Applications ──
     if any(kw in t for kw in ["ouvre", "lance", "démarre", "démarrer", "ouvrir", "lancer"]):
         app = extract_app_from_text(t)
         if app:
-            return open_app(app), False
+            return _jarvis_prefix() + open_app(app), False
 
     # ── Recherche web ──
     if any(kw in t for kw in ["cherche", "recherche", "googler", "trouve sur internet"]):
         query = extract_search_query(t)
         if query:
             return web_search(query), False
+
+    # ── Rapport système complet ──
+    if any(kw in t for kw in ["rapport système", "rapport systeme", "état du système",
+                                "etat du systeme", "bilan système", "bilan systeme",
+                                "status système", "status systeme"]):
+        return get_full_system_report(), False
+
+    # ── Volume ──
+    if any(kw in t for kw in ["coupe le son", "mute", "sourdine", "silence"]):
+        return set_volume(0), False
+
+    if any(kw in t for kw in ["monte le volume", "augmente le volume", "plus fort"]):
+        return set_volume(80), False
+
+    if any(kw in t for kw in ["baisse le volume", "diminue le volume", "moins fort"]):
+        return set_volume(30), False
+
+    _vol_match = re.search(r"volume\s+[àa]\s+(\d+)", t)
+    if _vol_match or re.search(r"mets\s+le\s+volume\s+[àa]\s+(\d+)", t):
+        m_vol = _vol_match or re.search(r"mets\s+le\s+volume\s+[àa]\s+(\d+)", t)
+        return set_volume(int(m_vol.group(1))), False
+
+    # ── Minuteur ──
+    if any(kw in t for kw in ["annule le minuteur", "annule les minuteurs", "stop minuteur"]):
+        return cancel_all_timers(), False
+
+    _timer_match = re.search(
+        r"(?:minuteur|timer|rappelle.moi\s+dans)\s+(?:de\s+)?(\d+(?:[.,]\d+)?)\s*(minute|min|heure|h)\b",
+        t
+    )
+    if _timer_match or any(kw in t for kw in ["minuteur", "mets un timer"]):
+        if _timer_match:
+            val  = float(_timer_match.group(1).replace(",", "."))
+            unit = _timer_match.group(2)
+            minutes = val * 60 if unit.startswith("h") else val
+            label_match = re.search(r"pour\s+(.+)$", t)
+            label = label_match.group(1) if label_match else ""
+            return start_timer(minutes, label), False
+
+    # ── Presse-papiers ──
+    if any(kw in t for kw in ["presse-papiers", "presse papiers", "clipboard",
+                                "qu'est-ce que j'ai copié", "lis le presse", "contenu copié"]):
+        return get_clipboard(), False
 
     # ── Fallback : IA ──
     context = build_context(memory)
@@ -1254,7 +1515,7 @@ def main():
     if not stt_ok:
         print("   [INFO] STT non disponible. Mode saisie clavier activé.")
 
-    speak("Antoine en ligne. Dites 'Hey Antoine' pour me réveiller.")
+    speak(build_startup_briefing())
 
     # Pre-warm: import du client IA en arrière-plan pour éviter la latence au premier appel
     import threading
@@ -1268,9 +1529,18 @@ def main():
     running     = True
     active      = False
     active_since = 0.0
+    _last_proactive = 0.0
 
     while running:
         try:
+            # ─── Alertes proactives (toutes les 45 secondes) ───
+            if time.time() - _last_proactive > 45:
+                _last_proactive = time.time()
+                alert = check_proactive_alerts()
+                if alert:
+                    speak(alert)
+                    continue
+
             # ─── VEILLE : attente du wake word ───
             if not active:
                 print("\n   [VEILLE] En attente de 'Hey Antoine'...")

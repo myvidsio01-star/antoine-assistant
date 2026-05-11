@@ -1,7 +1,56 @@
-# A.N.T.O.I.N.E V1.0
+# A.N.T.O.I.N.E V1.1
 **Autonomous Neural-Triggered Omniscient Intelligence**
 
 Assistant vocal personnel en français pour Windows, inspiré du projet JARVIS de TechEnClair.
+
+---
+
+## Nouvelles fonctionnalités V1.1
+
+### Personnalité J.A.R.V.I.S
+A.N.T.O.I.N.E adopte désormais la personnalité de J.A.R.V.I.S : il vous appelle "Monsieur", répond avec un humour sec et des formules élégantes, et maintient un ton calme et sophistiqué en toutes circonstances.
+
+### Briefing vocal au démarrage
+Au lancement, A.N.T.O.I.N.E prononce automatiquement un briefing complet : heure actuelle, météo locale et statut des systèmes.
+> *"Bonjour Monsieur. Il est 9h14. La température extérieure est de 18 degrés. Tous les systèmes sont opérationnels."*
+
+### Minuteur vocal
+| Ce que vous dites | Action |
+|-------------------|--------|
+| "Mets un minuteur de 20 minutes" | Lance un minuteur et vous prévient vocalement |
+| "Minuteur 5 minutes" | Lance un minuteur de 5 minutes |
+
+### Contrôle du volume
+| Ce que vous dites | Action |
+|-------------------|--------|
+| "Monte le volume" | Augmente le volume système |
+| "Baisse le volume" | Diminue le volume système |
+| "Volume à 50%" | Règle le volume exactement à 50% |
+| "Coupe le son" | Met le son en sourdine |
+| "Remet le son" | Réactive le son |
+
+### Rapport système complet
+| Ce que vous dites | Action |
+|-------------------|--------|
+| "Rapport système" | Rapport vocal complet : CPU, RAM, batterie, disque, processus actifs |
+
+### Lecture du presse-papiers
+| Ce que vous dites | Action |
+|-------------------|--------|
+| "Qu'est-ce que j'ai copié" | Lit à voix haute le contenu du presse-papiers |
+| "Lis le presse-papiers" | Même action |
+
+### Alertes proactives
+A.N.T.O.I.N.E surveille en continu votre système et vous alerte automatiquement :
+- CPU > 85% pendant plus de 10 secondes
+- Batterie < 15% (si non branchée)
+
+### Interface graphique J.A.R.V.I.S
+Nouvelle interface visuelle inspirée de J.A.R.V.I.S avec :
+- Affichage de la batterie en temps réel
+- Indicateurs CPU et RAM
+- Couleurs d'alerte automatiques (orange puis rouge selon les seuils)
+- Design sombre avec accents bleu électrique
 
 ---
 
@@ -231,4 +280,4 @@ assistant/
 
 ---
 
-*A.N.T.O.I.N.E V1.0 — Inspiré du projet JARVIS de TechEnClair*
+*A.N.T.O.I.N.E V1.1 — Inspiré du projet JARVIS de TechEnClair*

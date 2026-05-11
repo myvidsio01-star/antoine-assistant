@@ -11,3 +11,6 @@ anthropic
 requests
 edge-tts
 pygame
+PyQt6
+pycaw
+comtypes
