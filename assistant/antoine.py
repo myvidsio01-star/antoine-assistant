@@ -227,13 +227,13 @@ def init_stt():
     try:
         import speech_recognition as sr
         recognizer = sr.Recognizer()
-        recognizer.energy_threshold = 350
-        recognizer.dynamic_energy_threshold = True
+        recognizer.energy_threshold = 300
+        recognizer.dynamic_energy_threshold = False  # Évite la dérive du seuil
         recognizer.pause_threshold = 0.5
         microphone = sr.Microphone()
 
         with microphone as source:
-            recognizer.adjust_for_ambient_noise(source, duration=0.5)
+            recognizer.adjust_for_ambient_noise(source, duration=1.0)
 
         return True
     except ImportError:
@@ -275,20 +275,22 @@ def listen() -> str:
 
 def listen_passive() -> bool:
     """
-    Détecte la présence d'une voix via le niveau sonore — aucun appel API.
-    Retourne True si une voix est probablement présente.
+    Écoute le mot de réveil 'Hey Antoine'. Retourne True si détecté.
+    Utilise Google pour la reconnaissance — plus fiable que la détection sonore brute.
     """
     if recognizer is None or microphone is None:
         return True  # Mode texte : toujours actif
     try:
         import speech_recognition as sr
         with microphone as source:
-            # Attend du son au-dessus du seuil d'énergie (local, sans Google)
-            # WaitTimeoutError = silence → on reboucle
-            recognizer.listen(source, timeout=3, phrase_time_limit=2)
-        return True  # Son de type voix détecté → on se réveille
+            audio = recognizer.listen(source, timeout=3, phrase_time_limit=4)
+        text = recognizer.recognize_google(audio, language="fr-FR").lower()
+        wake_words = ["antoine", "hey antoine", "hé antoine", "salut antoine", "bonjour antoine"]
+        return any(w in text for w in wake_words)
     except sr.WaitTimeoutError:
-        return False  # Silence normal
+        return False
+    except (sr.UnknownValueError, sr.RequestError):
+        return False
     except Exception:
         return False
 
