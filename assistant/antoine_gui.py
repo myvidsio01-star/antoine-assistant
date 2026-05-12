@@ -237,7 +237,7 @@ class AssistantThread(QThread):
             if not self._stop_speech:
                 original_speak(text)
             self._stop_speech = False
-            self.status_changed.emit("En veille")
+            self.status_changed.emit("En écoute...")
 
         core.speak = speak_and_emit
 
@@ -245,14 +245,11 @@ class AssistantThread(QThread):
         core.init_tts()
         core.init_stt()
         memory = core.load_memory()
-        core.speak("Antoine en ligne. Dites Hey Antoine pour me réveiller.")
-
-        active = False
-        active_since = 0.0
+        core.speak("Tous mes systèmes sont opérationnels. Je vous écoute, Monsieur.")
 
         while self._running:
             try:
-                # Texte envoyé depuis l'input
+                # Texte envoyé depuis l'input clavier
                 if self._text_queue:
                     text = self._text_queue.pop(0)
                     self.message_from_user.emit(text)
@@ -262,51 +259,23 @@ class AssistantThread(QThread):
                     core.speak(response)
                     if should_quit:
                         self._running = False
-                    active = True
-                    active_since = time.time()
                     continue
 
-                if not active:
-                    self.status_changed.emit("En veille")
-                    if self._trigger_listen:
-                        self._trigger_listen = False
-                        active = True
-                        active_since = time.time()
-                        core.speak("Je vous écoute, Monsieur.")
-                        continue
-                    if core.listen_passive():
-                        active = True
-                        active_since = time.time()
-                        core.speak("Je vous écoute, Monsieur.")
-                    continue
-
-                if time.time() - active_since > core.ACTIVE_TIMEOUT:
-                    core.speak("Je repasse en veille, Monsieur. Dites Hey Antoine pour me réveiller.")
-                    active = False
-                    continue
-
-                if self._trigger_listen:
-                    self._trigger_listen = False
-                    active_since = time.time()
-
+                # Écoute vocale continue — pas de mot de réveil requis
                 self.status_changed.emit("En écoute...")
                 user_text = core.listen()
 
-                if not user_text:
-                    continue
-                if user_text == "__not_understood__":
-                    core.speak("Je n'ai pas saisi, Monsieur. Pourriez-vous répéter ?")
+                if not user_text or user_text == "__not_understood__":
                     continue
 
-                if any(kw in user_text.lower() for kw in ["stop", "tais-toi", "silence", "chut", "arrête"]):
+                # Interrompre la parole en cours
+                if any(kw in user_text.lower() for kw in ["stop", "tais-toi", "silence", "chut"]):
                     self.stop_speech()
                     self.message_from_user.emit(user_text)
-                    core.speak("Bien, Monsieur. Je repasse en veille.")
-                    active = False
+                    core.speak("Bien, Monsieur.")
                     continue
 
                 self.message_from_user.emit(user_text)
-                active_since = time.time()
                 self.status_changed.emit("Je réfléchis...")
                 response, should_quit = core.route_command(user_text, memory)
                 self.command_done.emit()
@@ -314,8 +283,8 @@ class AssistantThread(QThread):
                 if should_quit:
                     self._running = False
 
-            except Exception as exc:
-                self.status_changed.emit("Erreur")
+            except Exception:
+                self.status_changed.emit("En écoute...")
                 try:
                     core.speak("Je rencontre un problème technique.")
                 except Exception:

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>A.N.T.O.I.N.E — Système I.A Autonome 100% Gratuit</title>
+  <title>A.N.T.O.I.N.E — Assistant IA Vocal Autonome</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -11,18 +11,23 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #06070d;
-      --bg2: #0d0f1a;
-      --border: rgba(0, 200, 255, 0.12);
-      --cyan: #00c8ff;
-      --blue: #3b82f6;
+      --bg: #030508;
+      --bg2: #080c14;
+      --bg3: #0d1220;
+      --cyan: #00d4ff;
+      --cyan2: #00a8cc;
+      --violet: #7c3aed;
+      --red: #ef4444;
+      --green: #22c55e;
       --text: #e2e8f0;
       --muted: #64748b;
-      --glow: 0 0 30px rgba(0, 200, 255, 0.4);
+      --border: rgba(0, 212, 255, 0.12);
+      --border2: rgba(124, 58, 237, 0.2);
+      --glow: 0 0 40px rgba(0, 212, 255, 0.3);
+      --glow2: 0 0 40px rgba(124, 58, 237, 0.3);
     }
 
     html { scroll-behavior: smooth; }
-
     body {
       font-family: 'Inter', sans-serif;
       background: var(--bg);
@@ -31,1843 +36,695 @@
       overflow-x: hidden;
     }
 
-    /* ─── CANVAS FOND GLOBAL ─── */
-    #canvas-bg {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 0;
-      pointer-events: none;
-    }
+    /* CANVAS */
+    #canvas-bg { position: fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
 
-    /* Tout le contenu au-dessus du canvas */
-    nav, section, footer, .hero { position: relative; z-index: 1; }
-
-    /* ─── NAV ─── */
+    /* NAV */
     nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(6, 7, 13, 0.85);
-      backdrop-filter: blur(16px);
+      position: sticky; top: 0; z-index: 1000;
+      background: rgba(3,5,8,0.7);
+      backdrop-filter: blur(24px);
       border-bottom: 1px solid var(--border);
       padding: 0 2rem;
     }
-
     .nav-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
       height: 60px;
-      gap: 2rem;
     }
-
-    .logo {
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: var(--cyan);
+    .nav-logo {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.95rem; font-weight: 700;
+      color: var(--cyan); letter-spacing: 0.15em;
+      display: flex; align-items: center; gap: 8px;
       text-decoration: none;
-      letter-spacing: 0.05em;
-      text-shadow: var(--glow);
-      white-space: nowrap;
     }
-
-    .nav-links {
-      display: flex;
-      gap: 1.5rem;
-      list-style: none;
-      flex-wrap: wrap;
-    }
-
-    .nav-links a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 0.85rem;
-      font-weight: 500;
-      transition: color .2s;
-    }
-
+    .nav-logo .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse-dot 2s infinite; }
+    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
     .nav-links a:hover { color: var(--cyan); }
+    .nav-cta {
+      background: var(--cyan); color: #000;
+      padding: 0.45rem 1.1rem; border-radius: 6px;
+      font-size: 0.8rem; font-weight: 700;
+      text-decoration: none; transition: all 0.2s;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .nav-cta:hover { background: #fff; box-shadow: var(--glow); }
 
-    @media(max-width: 600px) { .nav-links { display: none; } }
+    /* Tout au-dessus du canvas */
+    nav, section, footer, .hero, .boot-section { position: relative; z-index: 1; }
 
-    /* ─── HERO ─── */
+    /* HERO */
     .hero {
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      padding: 0 6%;
-      overflow: hidden;
-      position: relative;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 6rem 2rem 4rem;
+      gap: 2rem;
     }
-
-    /* Globe en fond absolu derrière le texte */
-    #canvas-hero {
-      position: absolute;
-      top: 50%;
-      right: -5%;
-      transform: translateY(-50%);
-      width: 70%;
-      height: 110%;
-      z-index: 0;
-      opacity: 0.55;
-      pointer-events: none;
+    .hero-reactor {
+      width: 160px; height: 160px;
+      position: relative; margin: 0 auto 1rem;
     }
-
-    @media(max-width: 900px) {
-      .hero { text-align: center; padding: 5rem 6% 6rem; justify-content: center; }
-      #canvas-hero { width: 100%; height: 100%; top: 50%; right: 50%; transform: translate(50%, -50%); opacity: 0.35; }
-      .hero-btns { justify-content: center; }
-    }
-
-    .hero-left { position: relative; z-index: 2; max-width: 640px; }
-
+    .hero-reactor svg { width: 100%; height: 100%; }
     .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: .5rem;
-      background: rgba(0,200,255,.08);
-      border: 1px solid rgba(0,200,255,.3);
-      border-radius: 100px;
-      padding: .35rem 1rem;
-      font-size: .78rem;
-      font-weight: 700;
-      color: var(--cyan);
-      margin-bottom: 1.5rem;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-    }
-
-    .hero-badge .dot {
-      width: 7px; height: 7px;
-      background: var(--cyan);
-      border-radius: 50%;
-      animation: pulse 1.5s infinite;
-      display: inline-block;
-    }
-
-    @keyframes pulse {
-      0%,100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(0,200,255,.5); }
-      50% { opacity: .5; transform: scale(1.3); box-shadow: 0 0 0 6px rgba(0,200,255,0); }
-    }
-
-    /* ─── TITRE GÉANT ─── */
-    .hero-title-small {
-      font-size: clamp(.85rem, 1.5vw, 1rem);
-      font-weight: 600;
-      color: var(--muted);
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      margin-bottom: .25rem;
-    }
-
-    .hero-name {
-      font-size: clamp(2.2rem, 5vw, 4.5rem);
-      font-weight: 900;
-      line-height: 1;
-      letter-spacing: .08em;
-      background: linear-gradient(135deg, #ffffff 0%, var(--cyan) 50%, var(--blue) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      filter: drop-shadow(0 0 40px rgba(0,200,255,.35));
-      margin-bottom: .5rem;
-    }
-
-    .hero-subtitle-line {
-      font-size: clamp(1rem, 2vw, 1.35rem);
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 1.25rem;
-      letter-spacing: .02em;
-    }
-
-    .hero-sub {
-      font-size: .95rem;
-      color: var(--muted);
-      max-width: 480px;
-      margin-bottom: 2.5rem;
-      line-height: 1.8;
-    }
-
-    .hero-btns {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: .5rem;
-      padding: .85rem 2rem;
-      border-radius: 10px;
-      font-size: .9rem;
-      font-weight: 700;
-      text-decoration: none;
-      cursor: pointer;
-      border: none;
-      transition: all .25s;
-      letter-spacing: .02em;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--cyan), var(--blue));
-      color: #000;
-      box-shadow: 0 0 30px rgba(0,200,255,.4);
-    }
-
-    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 0 50px rgba(0,200,255,.65); }
-
-    .btn-outline {
-      background: rgba(255,255,255,.04);
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(0,212,255,0.08);
       border: 1px solid var(--border);
-      color: var(--text);
-      backdrop-filter: blur(4px);
+      padding: 0.35rem 1rem; border-radius: 999px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem; color: var(--cyan);
     }
+    .hero-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(3.5rem, 10vw, 7rem);
+      font-weight: 700; letter-spacing: 0.12em;
+      line-height: 1; position: relative;
+      color: #fff;
+    }
+    .hero-title span.glitch {
+      position: relative; display: inline-block;
+    }
+    .hero-title span.glitch::before,
+    .hero-title span.glitch::after {
+      content: attr(data-text);
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+    }
+    .hero-title span.glitch::before {
+      color: var(--cyan); left: 2px;
+      animation: glitch1 3s infinite;
+      clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%);
+    }
+    .hero-title span.glitch::after {
+      color: var(--violet); left: -2px;
+      animation: glitch2 3s infinite;
+      clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%);
+    }
+    @keyframes glitch1 {
+      0%,90%,100%{transform:translate(0)} 92%{transform:translate(-3px,1px)} 94%{transform:translate(2px,-1px)} 96%{transform:translate(-1px,2px)}
+    }
+    @keyframes glitch2 {
+      0%,90%,100%{transform:translate(0)} 92%{transform:translate(3px,-1px)} 94%{transform:translate(-2px,1px)} 96%{transform:translate(1px,-2px)}
+    }
+    .hero-sub {
+      font-size: 1.1rem; color: var(--muted); max-width: 520px;
+      margin: 0 auto;
+    }
+    .hero-sub strong { color: var(--text); }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+    .btn-primary {
+      background: var(--cyan); color: #000;
+      padding: 0.85rem 2rem; border-radius: 8px;
+      font-size: 0.95rem; font-weight: 700;
+      text-decoration: none; transition: all 0.25s;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: 0 0 30px rgba(0,212,255,0.25);
+    }
+    .btn-primary:hover { box-shadow: 0 0 50px rgba(0,212,255,0.5); transform: translateY(-2px); }
+    .btn-secondary {
+      background: transparent; color: var(--text);
+      padding: 0.85rem 2rem; border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 0.95rem; font-weight: 600;
+      text-decoration: none; transition: all 0.25s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .btn-secondary:hover { border-color: var(--cyan); color: var(--cyan); }
+    .hero-scroll { margin-top: 1rem; color: var(--muted); font-size: 0.8rem; animation: bounce 2s infinite; }
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
 
-    .btn-outline:hover { border-color: var(--cyan); color: var(--cyan); transform: translateY(-3px); }
+    /* BOOT TERMINAL */
+    .boot-section {
+      padding: 4rem 2rem;
+      display: flex; justify-content: center;
+    }
+    .terminal {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: 100%; max-width: 680px;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(0,212,255,0.08);
+    }
+    .terminal-bar {
+      background: var(--bg3);
+      padding: 0.7rem 1rem;
+      display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .t-dot { width:11px; height:11px; border-radius:50%; }
+    .t-dot.r{background:#ef4444;} .t-dot.y{background:#f59e0b;} .t-dot.g{background:#22c55e;}
+    .terminal-title { font-size: 0.75rem; color: var(--muted); margin-left: auto; font-family: 'JetBrains Mono',monospace; }
+    .terminal-body { padding: 1.2rem 1.4rem; font-family: 'JetBrains Mono',monospace; font-size: 0.82rem; min-height: 200px; }
+    .t-line { margin-bottom: 4px; line-height: 1.7; }
+    .t-prompt { color: var(--cyan); }
+    .t-ok { color: var(--green); }
+    .t-warn { color: #f59e0b; }
+    .t-info { color: var(--muted); }
+    .t-cursor { display: inline-block; width: 9px; height: 15px; background: var(--cyan); animation: blink 1s infinite; vertical-align: middle; }
+    @keyframes blink { 0%,50%{opacity:1} 51%,100%{opacity:0} }
 
-    /* ─── SECTIONS ─── */
-    section { padding: 5rem 2rem; }
-    .container { max-width: 1100px; margin: 0 auto; }
+    /* STATS */
+    .stats-section { padding: 3rem 2rem; }
+    .stats-grid {
+      max-width: 800px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+    }
+    .stat-card {
+      background: var(--bg2);
+      padding: 2rem; text-align: center;
+    }
+    .stat-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2.8rem; font-weight: 700;
+      color: var(--cyan);
+    }
+    .stat-label { font-size: 0.85rem; color: var(--muted); margin-top: 0.3rem; }
 
+    /* SECTION HEADER */
+    .section-header { text-align: center; margin-bottom: 3rem; }
     .section-tag {
       display: inline-block;
-      font-size: .72rem;
-      font-weight: 700;
-      letter-spacing: .18em;
-      color: var(--cyan);
-      text-transform: uppercase;
-      margin-bottom: .75rem;
-    }
-
-    h2 {
-      font-size: clamp(1.75rem, 4vw, 2.75rem);
-      font-weight: 800;
-      margin-bottom: 1rem;
-      line-height: 1.2;
-    }
-
-    .section-desc {
-      color: var(--muted);
-      font-size: .95rem;
-      max-width: 600px;
-      margin-bottom: 3rem;
-    }
-
-    /* ─── STEP ─── */
-    .step-label {
-      display: inline-flex;
-      align-items: center;
-      gap: .5rem;
-      font-size: .85rem;
-      font-weight: 700;
-      color: var(--cyan);
-      margin-bottom: 2rem;
-    }
-
-    .step-num {
-      width: 28px; height: 28px;
-      background: linear-gradient(135deg, var(--cyan), var(--blue));
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: .8rem;
-      color: #000;
-      font-weight: 800;
-    }
-
-    /* ─── CARDS ─── */
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.25rem;
-    }
-
-    .card {
-      background: rgba(13, 15, 26, 0.75);
-      backdrop-filter: blur(10px);
+      font-family: 'JetBrains Mono',monospace;
+      font-size: 0.72rem; color: var(--cyan);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 1.75rem;
-      transition: all .3s;
-      position: relative;
-      overflow: hidden;
+      padding: 0.25rem 0.8rem; border-radius: 4px;
+      margin-bottom: 1rem; letter-spacing: 0.1em;
     }
+    .section-title { font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 700; }
+    .section-sub { color: var(--muted); margin-top: 0.75rem; font-size: 0.95rem; }
 
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--cyan), var(--blue));
-      opacity: 0;
-      transition: opacity .3s;
-    }
-
-    .card:hover { border-color: rgba(0,200,255,.35); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,.4); }
-    .card:hover::before { opacity: 1; }
-
-    .card-icon { font-size: 2rem; margin-bottom: 1rem; }
-    .card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: .5rem; }
-    .card p { font-size: .875rem; color: var(--muted); line-height: 1.65; }
-
-    .code-block {
-      background: rgba(6,7,13,.9);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: .75rem 1rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: .8rem;
-      color: var(--cyan);
-      margin-top: .75rem;
-      overflow-x: auto;
-    }
-
-    /* ─── CAPABILITIES ─── */
-    .caps-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-    }
-
-    @media(max-width: 768px) { .caps-grid { grid-template-columns: 1fr; } }
-
-    .caps-col {
-      background: rgba(13,15,26,.75);
-      backdrop-filter: blur(10px);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 2rem;
-    }
-
-    .caps-col h3 {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--cyan);
-      margin-bottom: 1.25rem;
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      flex-wrap: wrap;
-    }
-
-    .cap-item {
-      display: flex;
-      align-items: flex-start;
-      gap: .75rem;
-      padding: .6rem 0;
-      border-bottom: 1px solid var(--border);
-      font-size: .875rem;
-    }
-
-    .cap-item:last-child { border-bottom: none; }
-
-    .cap-dot {
-      width: 6px; height: 6px;
-      background: var(--cyan);
-      border-radius: 50%;
-      margin-top: .45rem;
-      flex-shrink: 0;
-      box-shadow: 0 0 6px var(--cyan);
-    }
-
-    .cap-example {
-      font-size: .78rem;
-      color: var(--muted);
-      font-style: italic;
-      margin-top: .2rem;
-    }
-
-    .tag {
-      display: inline-block;
-      font-size: .7rem;
-      font-weight: 700;
-      background: rgba(0,200,255,.1);
-      border: 1px solid rgba(0,200,255,.25);
-      color: var(--cyan);
-      border-radius: 100px;
-      padding: .15rem .6rem;
-      margin-left: .25rem;
-    }
-
-    /* ─── DISCORD BANNER ─── */
-    .discord-banner {
-      background: linear-gradient(135deg, rgba(88,101,242,.15) 0%, rgba(0,200,255,.08) 100%);
-      border: 1px solid rgba(88,101,242,.4);
-      border-radius: 20px;
-      padding: 2.5rem 3rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 2rem;
-      margin-bottom: 2rem;
-      position: relative;
-      overflow: hidden;
-      transition: border-color .3s, box-shadow .3s;
-    }
-    .discord-banner:hover {
-      border-color: rgba(88,101,242,.7);
-      box-shadow: 0 0 60px rgba(88,101,242,.2);
-    }
-    .discord-banner::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at 0% 50%, rgba(88,101,242,.12) 0%, transparent 60%);
-      pointer-events: none;
-    }
-    .discord-banner-left { display: flex; align-items: center; gap: 1.5rem; }
-    .discord-logo {
-      font-size: 3.5rem;
-      filter: drop-shadow(0 0 20px rgba(88,101,242,.6));
-      flex-shrink: 0;
-    }
-    .discord-info h3 { font-size: 1.35rem; font-weight: 800; margin-bottom: .35rem; }
-    .discord-info p { font-size: .9rem; color: var(--muted); max-width: 480px; line-height: 1.6; }
-    .discord-pills {
-      display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .75rem;
-    }
-    .discord-pill {
-      font-size: .72rem; font-weight: 700;
-      background: rgba(88,101,242,.15);
-      border: 1px solid rgba(88,101,242,.3);
-      color: #818cf8;
-      border-radius: 100px;
-      padding: .2rem .7rem;
-    }
-    .btn-discord {
-      background: #5865f2;
-      color: #fff;
-      font-weight: 700;
-      font-size: .95rem;
-      padding: .9rem 2rem;
-      border-radius: 10px;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: .5rem;
-      white-space: nowrap;
-      flex-shrink: 0;
-      transition: all .25s;
-      box-shadow: 0 0 30px rgba(88,101,242,.4);
-    }
-    .btn-discord:hover { background: #4752c4; transform: translateY(-2px); box-shadow: 0 0 50px rgba(88,101,242,.6); }
-    @media(max-width: 700px) {
-      .discord-banner { flex-direction: column; text-align: center; padding: 2rem 1.5rem; }
-      .discord-banner-left { flex-direction: column; }
-      .discord-pills { justify-content: center; }
-    }
-
-    /* ─── COMMUNITY ─── */
-    .community-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.25rem;
-    }
-
-    .social-card {
-      background: rgba(13,15,26,.75);
-      backdrop-filter: blur(10px);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 1.75rem;
-      text-decoration: none;
-      color: var(--text);
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: .75rem;
-      transition: all .3s;
-    }
-
-    .social-card:hover { border-color: rgba(0,200,255,.35); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,.4); }
-
-    .social-icon { font-size: 1.75rem; }
-    .social-name { font-weight: 700; font-size: 1rem; }
-    .social-desc { font-size: .83rem; color: var(--muted); }
-
-    /* ─── DOWNLOAD ─── */
-    .download-box {
-      background: rgba(13,15,26,.8);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(0,200,255,.2);
-      border-radius: 20px;
-      padding: 3.5rem;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .download-box::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at 50% 0%, rgba(0,200,255,.1) 0%, transparent 65%);
-      pointer-events: none;
-    }
-
-    .download-box h2 { margin-bottom: .75rem; }
-    .download-box .section-desc { margin: 0 auto 2rem; }
-
-    .payment-status {
-      display: inline-flex;
-      align-items: center;
-      gap: .5rem;
-      background: rgba(0,200,255,.06);
-      border: 1px solid rgba(0,200,255,.2);
-      border-radius: 8px;
-      padding: .5rem 1.25rem;
-      font-size: .83rem;
-      color: var(--cyan);
-      margin-bottom: 2rem;
-    }
-
-    .status-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; animation: pulse 1.5s infinite; flex-shrink: 0; }
-
-    /* ─── UPDATE ─── */
-    .update-header {
-      background: linear-gradient(135deg, rgba(0,200,255,.08), rgba(59,130,246,.08));
-      border: 1px solid rgba(0,200,255,.25);
-      border-radius: 14px;
-      padding: 1.5rem 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      margin-bottom: 1.5rem;
-      transition: border-color .2s;
-    }
-
-    .update-header:hover { border-color: rgba(0,200,255,.45); }
-
-    .update-badge {
-      background: linear-gradient(135deg, var(--cyan), var(--blue));
-      color: #000;
-      font-size: .75rem;
-      font-weight: 800;
-      padding: .3rem .8rem;
-      border-radius: 100px;
-    }
-
+    /* FEATURES */
+    .features-section { padding: 5rem 2rem; }
     .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;
     }
-
     .feature-card {
-      background: rgba(13,15,26,.75);
-      backdrop-filter: blur(8px);
+      background: var(--bg2);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.25rem;
-      transition: border-color .2s;
+      border-radius: 12px;
+      padding: 1.8rem;
+      transition: all 0.3s;
+      cursor: default;
     }
-
-    .feature-card:hover { border-color: rgba(0,200,255,.3); }
-
-    .feature-card h4 { font-size: .9rem; font-weight: 700; margin-bottom: .4rem; color: var(--cyan); }
-    .feature-card p { font-size: .82rem; color: var(--muted); }
-
-    /* ─── ACCORDION ─── */
-    .accordion { display: flex; flex-direction: column; gap: .75rem; }
-
-    .acc-item {
-      background: rgba(13,15,26,.75);
-      backdrop-filter: blur(8px);
+    .feature-card:hover {
+      border-color: var(--cyan);
+      box-shadow: 0 0 30px rgba(0,212,255,0.1);
+      transform: translateY(-3px);
+    }
+    .feature-icon {
+      font-size: 1.8rem; margin-bottom: 1rem;
+      width: 52px; height: 52px;
+      background: rgba(0,212,255,0.08);
       border: 1px solid var(--border);
       border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .feature-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .feature-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+    /* LLM SECTION */
+    .llm-section { padding: 5rem 2rem; }
+    .llm-inner { max-width: 800px; margin: 0 auto; }
+    .llm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2.5rem; }
+    .llm-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.6rem;
+    }
+    .llm-card.groq { border-color: rgba(34,197,94,0.3); }
+    .llm-card.gemini { border-color: rgba(59,130,246,0.3); }
+    .llm-badge {
+      display: inline-block;
+      padding: 0.2rem 0.7rem; border-radius: 4px;
+      font-family: 'JetBrains Mono',monospace; font-size: 0.72rem; font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    .llm-badge.groq { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .llm-badge.gemini { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .llm-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .llm-desc { font-size: 0.83rem; color: var(--muted); }
+    .llm-arrow {
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 1.5rem;
+    }
+    .fallback-note {
+      margin-top: 1.5rem;
+      background: rgba(0,212,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      font-size: 0.83rem; color: var(--muted);
+    }
+    .fallback-note strong { color: var(--cyan); }
+
+    /* DEMO */
+    .demo-section { padding: 5rem 2rem; }
+    .demo-terminal {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: 100%; max-width: 700px;
+      margin: 0 auto;
       overflow: hidden;
-      transition: border-color .2s;
+      box-shadow: 0 0 60px rgba(124,58,237,0.1);
     }
+    .demo-body { padding: 1.5rem; font-family: 'JetBrains Mono',monospace; font-size: 0.82rem; }
+    .demo-msg { margin-bottom: 0.9rem; display: flex; gap: 0.6rem; }
+    .demo-from { font-weight: 700; white-space: nowrap; }
+    .demo-from.user { color: #f59e0b; }
+    .demo-from.ai { color: var(--cyan); }
+    .demo-text { color: var(--text); }
 
-    .acc-item.open { border-color: rgba(0,200,255,.3); }
-
-    .acc-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.1rem 1.5rem;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: .95rem;
-      transition: background .2s;
+    /* CTA */
+    .cta-section {
+      padding: 6rem 2rem;
+      text-align: center;
+      background: linear-gradient(to bottom, transparent, rgba(0,212,255,0.03), transparent);
     }
+    .cta-title { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; margin-bottom: 1rem; }
+    .cta-sub { color: var(--muted); margin-bottom: 2.5rem; font-size: 1rem; }
+    .cta-count { font-family: 'JetBrains Mono',monospace; font-size: 0.8rem; color: var(--muted); margin-top: 1.2rem; }
+    .cta-count span { color: var(--green); }
 
-    .acc-header:hover { background: rgba(0,200,255,.05); }
-
-    .acc-header .chevron {
-      color: var(--cyan);
-      transition: transform .3s;
-    }
-
-    .acc-item.open .chevron { transform: rotate(180deg); }
-
-    .acc-body { max-height: 0; overflow: hidden; transition: max-height .4s ease; }
-    .acc-item.open .acc-body { max-height: 500px; }
-
-    .acc-content { padding: 0 1.5rem 1.5rem; color: var(--muted); font-size: .875rem; }
-    .acc-content ol { padding-left: 1.25rem; margin-top: .5rem; display: flex; flex-direction: column; gap: .4rem; }
-    .acc-content a { color: var(--cyan); text-decoration: none; }
-    .acc-content a:hover { text-decoration: underline; }
-
-
-    /* ─── FOOTER ─── */
+    /* FOOTER */
     footer {
       border-top: 1px solid var(--border);
       padding: 2rem;
       text-align: center;
       color: var(--muted);
-      font-size: .83rem;
-      position: relative;
-      z-index: 1;
-      background: rgba(6,7,13,.7);
-      backdrop-filter: blur(8px);
+      font-size: 0.8rem;
     }
-
-    footer a { color: var(--muted); text-decoration: none; margin: 0 .75rem; }
+    footer a { color: var(--muted); text-decoration: none; }
     footer a:hover { color: var(--cyan); }
+    .footer-links { display: flex; justify-content: center; gap: 2rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
 
-    /* ─── DIVIDER ─── */
-    .divider { border: none; border-top: 1px solid var(--border); margin: 0; position: relative; z-index: 1; }
-
-    /* ─── BG SECTIONS ─── */
-    .bg-dark { background: rgba(10, 12, 20, 0.6); backdrop-filter: blur(2px); }
-
-    /* ─── STATS ROW ─── */
-    .stats-row {
-      display: flex;
-      gap: 2.5rem;
-      margin-top: 2.5rem;
-      flex-wrap: wrap;
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .llm-grid { grid-template-columns: 1fr; }
+      .llm-arrow { transform: rotate(90deg); }
     }
-
-    .stat { display: flex; flex-direction: column; }
-    .stat-num {
-      font-size: 1.75rem;
-      font-weight: 900;
-      color: var(--cyan);
-      line-height: 1;
-      text-shadow: 0 0 20px rgba(0,200,255,.4);
-    }
-    .stat-label { font-size: .75rem; color: var(--muted); margin-top: .2rem; text-transform: uppercase; letter-spacing: .1em; }
-
-    @media(max-width: 900px) { .stats-row { justify-content: center; } }
-
-    /* ════════════════════════════════════════════════
-       AMÉLIORATIONS FUTURISTES — AJOUT CSS
-    ════════════════════════════════════════════════ */
-
-    /* ─── VARIABLES SUPPLÉMENTAIRES ─── */
-    :root {
-      --purple: #7c3aed;
-      --green: #10b981;
-      --glow-strong: 0 0 60px rgba(0,200,255,.6);
-    }
-
-    /* ─── CARDS HOVER ─── */
-    .card:hover {
-      box-shadow:
-        0 0 0 1px rgba(0,200,255,.15),
-        0 20px 60px rgba(0,0,0,.5),
-        inset 0 1px 0 rgba(0,200,255,.1);
-    }
-
-    /* ─── HERO BADGE — BORDER PULSE ─── */
-    .hero-badge {
-      animation: border-pulse 2.5s ease-in-out infinite;
-    }
-
-    @keyframes border-pulse {
-      0%,100% { border-color: rgba(0,200,255,.3); box-shadow: none; }
-      50%      { border-color: rgba(0,200,255,.8); box-shadow: 0 0 12px rgba(0,200,255,.25); }
-    }
-
-    /* ─── NAV LINKS — LIGNE LUMINEUSE SOUS LE LIEN ─── */
-    .nav-links a {
-      position: relative;
-      padding-bottom: 3px;
-    }
-
-    .nav-links a::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      width: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
-      transform: translateX(-50%);
-      transition: width .3s ease;
-      box-shadow: 0 0 6px var(--cyan);
-    }
-
-    .nav-links a:hover::after {
-      width: 100%;
-    }
-
-    /* ─── STATS HERO — GLOW CYAN ─── */
-    .stat-num {
-      text-shadow:
-        0 0 20px rgba(0,200,255,.6),
-        0 0 40px rgba(0,200,255,.3);
-    }
-
-    /* ─── DOWNLOAD BOX ─── */
-    .download-box {
-      border: 1px solid rgba(0,200,255,.25);
-      background: rgba(13,15,26,.8);
-    }
-
-    /* ─── KEYFRAMES GLOBAUX ─── */
-
-    @keyframes slide-in-left {
-      from { opacity: 0; transform: translateX(-40px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
-
-    @keyframes slide-in-right {
-      from { opacity: 0; transform: translateX(40px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
-
-    /* ════════════════════════════════════════════════
-       AMÉLIORATIONS NIVEAU 2 — ULTRA DARK TECH
-    ════════════════════════════════════════════════ */
-
-    /* ─── SCROLLBAR CUSTOM ─── */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #06070d; }
-    ::-webkit-scrollbar-thumb {
-      background: linear-gradient(180deg, var(--cyan), var(--blue));
-      border-radius: 3px;
-      box-shadow: 0 0 8px rgba(0,200,255,.4);
-    }
-    ::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
-    * { scrollbar-width: thin; scrollbar-color: var(--cyan) #06070d; }
-
-    /* ─── BTN-PRIMARY ─── */
-    .btn-primary { box-shadow: 0 0 20px rgba(0,200,255,.35), 0 4px 16px rgba(0,0,0,.4); }
-    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 0 40px rgba(0,200,255,.7), 0 8px 24px rgba(0,0,0,.5); }
-
-    /* ─── ANIMATE ON SCROLL ─── */
-    .animate-on-scroll { opacity: 0; transform: translateY(30px); transition: opacity .6s ease, transform .6s ease; }
-    .animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
-    .cards-grid .animate-on-scroll:nth-child(1) { transition-delay: 0s; }
-    .cards-grid .animate-on-scroll:nth-child(2) { transition-delay: .1s; }
-    .cards-grid .animate-on-scroll:nth-child(3) { transition-delay: .2s; }
-    .cards-grid .animate-on-scroll:nth-child(4) { transition-delay: .3s; }
-    .caps-grid .animate-on-scroll:nth-child(1) { transition-delay: 0s; }
-    .caps-grid .animate-on-scroll:nth-child(2) { transition-delay: .15s; }
-    .accordion .animate-on-scroll:nth-child(1) { transition-delay: 0s; }
-    .accordion .animate-on-scroll:nth-child(2) { transition-delay: .08s; }
-    .accordion .animate-on-scroll:nth-child(3) { transition-delay: .16s; }
-    .accordion .animate-on-scroll:nth-child(4) { transition-delay: .24s; }
-    .accordion .animate-on-scroll:nth-child(5) { transition-delay: .32s; }
-    .accordion .animate-on-scroll:nth-child(6) { transition-delay: .40s; }
-    .accordion .animate-on-scroll:nth-child(7) { transition-delay: .48s; }
-    .community-grid .animate-on-scroll:nth-child(1) { transition-delay: 0s; }
-    .community-grid .animate-on-scroll:nth-child(2) { transition-delay: .1s; }
-    .community-grid .animate-on-scroll:nth-child(3) { transition-delay: .2s; }
-    .community-grid .animate-on-scroll:nth-child(4) { transition-delay: .3s; }
-
-    /* ─── TYPING CURSOR ─── */
-    .typing-cursor { display: inline-block; width: 2px; height: .9em; background: var(--cyan); margin-left: 3px; vertical-align: text-bottom; animation: blink-cursor .75s step-end infinite; box-shadow: 0 0 10px var(--cyan); border-radius: 1px; }
-    @keyframes blink-cursor { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
-
-    /* ─── SÉPARATEURS LUMINEUX ─── */
-    .divider { border: none; height: 1px; background: linear-gradient(90deg, transparent 0%, rgba(0,200,255,.06) 8%, rgba(0,200,255,.32) 28%, rgba(0,200,255,.55) 50%, rgba(0,200,255,.32) 72%, rgba(0,200,255,.06) 92%, transparent 100%); margin: 0; position: relative; z-index: 1; }
-    .divider::after { content: ''; display: block; height: 1px; margin-top: 3px; background: linear-gradient(90deg, transparent 0%, rgba(59,130,246,.03) 15%, rgba(59,130,246,.14) 50%, rgba(59,130,246,.03) 85%, transparent 100%); }
-
-    /* ─── CODE BLOCKS — HEADER TERMINAL ─── */
-    .code-block { position: relative; padding-top: 2.6rem !important; background: rgba(3,4,10,.97) !important; border-color: rgba(0,200,255,.18) !important; }
-    .code-block::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2.1rem; background: rgba(255,255,255,.025); border-bottom: 1px solid rgba(0,200,255,.1); border-radius: 8px 8px 0 0; pointer-events: none; }
-    .code-block-dots { position: absolute; top: .46rem; left: .82rem; display: flex; gap: .35rem; pointer-events: none; z-index: 3; }
-    .code-block-dots span { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
-    .code-block-dots span:nth-child(1) { background: #ff5f57; }
-    .code-block-dots span:nth-child(2) { background: #ffbd2e; }
-    .code-block-dots span:nth-child(3) { background: #28c840; }
-    .term-label { position: absolute; top: .42rem; right: .85rem; font-size: .58rem; font-weight: 700; letter-spacing: .12em; color: rgba(0,200,255,.4); font-family: 'JetBrains Mono', monospace; pointer-events: none; z-index: 3; }
-
-    /* ─── ACCORDÉONS AMÉLIORÉS ─── */
-    .acc-item { border-left: 3px solid transparent; transition: border-color .3s ease, border-left-color .35s ease, box-shadow .35s ease; }
-    .acc-item.open { border-left-color: var(--cyan); box-shadow: -4px 0 28px rgba(0,200,255,.14), inset 0 0 50px rgba(0,200,255,.025); }
-    .acc-item.open .acc-header { background: rgba(0,200,255,.04); }
-    .acc-header { position: relative; }
-    .acc-item.open .acc-header::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background: linear-gradient(90deg, var(--cyan), rgba(0,200,255,.1), transparent); }
-
-    /* ─── STATS — SUPPORT COMPTEUR ANIMÉ ─── */
-    .stat-num { font-variant-numeric: tabular-nums; will-change: contents; display: inline-block; }
-
   </style>
 </head>
 <body>
 
-<!-- ─── CANVAS FOND GLOBAL (particules) ─── -->
 <canvas id="canvas-bg"></canvas>
 
-<!-- ─── NAV ─── -->
+<!-- NAV -->
 <nav>
   <div class="nav-inner">
-    <a href="#" class="logo">A.N.T.O.I.N.E</a>
+    <a href="index.html" class="nav-logo">
+      <div class="dot"></div>
+      A.N.T.O.I.N.E
+    </a>
     <ul class="nav-links">
-      <li><a href="#">Accueil</a></li>
-      <li><a href="#step1">Démarrage</a></li>
-      <li><a href="#capabilities">Fonctionnalités</a></li>
-      <li><a href="#api-guides">FAQ / Guides</a></li>
-      <li><a href="#download">Télécharger</a></li>
-      <li><a href="https://discord.gg/JP9yF3VWQ" target="_blank">Discord</a></li>
+      <li><a href="#features">Fonctionnalités</a></li>
+      <li><a href="#demo">Démo</a></li>
+      <li><a href="telecharger.html">Télécharger</a></li>
+      <li><a href="premium.html">Premium</a></li>
     </ul>
+    <a href="telecharger.html" class="nav-cta">↓ Télécharger</a>
   </div>
 </nav>
 
-<!-- ─── HERO ─── -->
-<section class="hero" style="z-index:1;">
-  <div class="hero-left">
-    <div class="hero-badge"><span class="dot"></span> SYSTÈME EN LIGNE</div>
-
-    <p class="hero-title-small">Assistant Vocal IA Personnel · Python</p>
-    <h1 class="hero-name">A.N.T.O.I.N.E</h1>
-    <p class="hero-subtitle-line" id="hero-subtitle">Intelligence Omnisciente à Déclenchement Neural Autonome</p>
-
-    <p class="hero-sub">
-      Votre assistant IA personnel 100% vocal, 100% gratuit — contrôle votre PC, votre maison connectée et bien plus, sans abonnement ni limite.
-    </p>
-
-    <div class="hero-btns">
-      <a href="telecharger.html" class="btn btn-primary">⬇ Télécharger V1.1</a>
-      <a href="https://discord.gg/JP9yF3VWQ" target="_blank" class="btn btn-outline">💬 Discord</a>
-    </div>
-
-    <div class="stats-row">
-      <div class="stat"><span class="stat-num stat-number">40+</span><span class="stat-label">Commandes vocales</span></div>
-      <div class="stat"><span class="stat-num stat-number">3</span><span class="stat-label">Moteurs IA</span></div>
-      <div class="stat"><span class="stat-num stat-number">100%</span><span class="stat-label">Gratuit</span></div>
-      <div class="stat"><span class="stat-num stat-number">V1.1</span><span class="stat-label">Version actuelle</span></div>
-    </div>
+<!-- HERO -->
+<section class="hero">
+  <!-- Arc Reactor SVG animé -->
+  <div class="hero-reactor">
+    <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Ring externe -->
+      <circle cx="80" cy="80" r="75" stroke="rgba(0,212,255,0.15)" stroke-width="1"/>
+      <!-- Ring rotatif 1 -->
+      <circle cx="80" cy="80" r="68" stroke="rgba(0,212,255,0.4)" stroke-width="1.5"
+              stroke-dasharray="40 20" id="ring1"/>
+      <!-- Ring rotatif 2 -->
+      <circle cx="80" cy="80" r="55" stroke="rgba(124,58,237,0.5)" stroke-width="1.5"
+              stroke-dasharray="30 15" id="ring2"/>
+      <!-- Ring rotatif 3 -->
+      <circle cx="80" cy="80" r="42" stroke="rgba(0,212,255,0.6)" stroke-width="2"
+              stroke-dasharray="20 10" id="ring3"/>
+      <!-- Core glow -->
+      <circle cx="80" cy="80" r="25" fill="rgba(0,212,255,0.08)" stroke="rgba(0,212,255,0.5)" stroke-width="1.5"/>
+      <circle cx="80" cy="80" r="15" fill="rgba(0,212,255,0.15)" stroke="rgba(0,212,255,0.8)" stroke-width="1"/>
+      <circle cx="80" cy="80" r="7" fill="rgba(0,212,255,0.9)" id="core-dot"/>
+      <!-- Barres triangulaires inner -->
+      <path d="M80 60 L90 75 L70 75 Z" fill="rgba(0,212,255,0.6)"/>
+    </svg>
   </div>
 
-  <!-- Globe 3D -->
-  <canvas id="canvas-hero"></canvas>
+  <div class="hero-badge">
+    <span style="color:var(--green)">●</span>
+    SYSTÈME OPÉRATIONNEL · V1.1
+  </div>
+
+  <h1 class="hero-title">
+    <span class="glitch" data-text="A.N.T.O.I.N.E">A.N.T.O.I.N.E</span>
+  </h1>
+
+  <p class="hero-sub">
+    Votre assistant IA vocal personnel, <strong>100% gratuit</strong>.<br>
+    Inspiré de JARVIS — conçu pour Windows.
+  </p>
+
+  <div class="hero-actions">
+    <a href="telecharger.html" class="btn-primary">
+      ↓ Télécharger gratuitement
+    </a>
+    <a href="#features" class="btn-secondary">
+      Voir les fonctionnalités →
+    </a>
+  </div>
+
+  <div class="hero-scroll">↓ scroll</div>
 </section>
 
-<hr class="divider" />
-
-<!-- ─── STEP 1 : TÉLÉCHARGEMENT ─── -->
-<section id="step1">
-  <div class="container">
-    <div class="step-label"><span class="step-num">1</span> Téléchargement</div>
-    <h2>Installez A.N.T.O.I.N.E sur votre machine</h2>
-    <p class="section-desc">Choisissez votre système d'exploitation. Python 3.12 requis. L'installation prend moins de 5 minutes.</p>
-
-    <div class="cards-grid">
-      <!-- WINDOWS — PRINCIPAL -->
-      <div class="card animate-on-scroll" style="border-color:rgba(0,200,255,.35); position:relative;">
-        <div style="position:absolute; top:1rem; right:1rem; font-size:.7rem; font-weight:800; background:linear-gradient(135deg,var(--cyan),var(--blue)); color:#000; border-radius:100px; padding:.2rem .65rem;">RECOMMANDÉ</div>
-        <div class="card-icon">🪟</div>
-        <h3>Windows <span class="tag">Compatible</span></h3>
-        <p>Installation principale — optimisée pour Windows 10 et 11. Testé et validé sur toutes les versions récentes.</p>
-        <div class="code-block">pip install -r requirements.txt<br/>python antoine.py</div>
-        <div style="display:flex; flex-direction:column; gap:.5rem; margin-top:.85rem;">
-          <a href="https://github.com/myvidsio01-star/antoine-assistant/releases/download/v1.0/ANTOINE-V1.0.zip" class="btn btn-primary" style="font-size:.78rem; padding:.55rem 1rem; justify-content:center;">⬇ Télécharger A.N.T.O.I.N.E V1.0</a>
-          <a href="https://www.python.org/ftp/python/3.12.0/python-3.12.0-amd64.exe" target="_blank" class="btn btn-outline" style="font-size:.78rem; padding:.5rem 1rem; justify-content:center;">⬇ Télécharger Python 3.12</a>
-        </div>
-      </div>
-      <!-- MACOS -->
-      <div class="card animate-on-scroll" style="opacity:.7;">
-        <div class="card-icon">🍎</div>
-        <h3>macOS <span class="tag" style="border-color:rgba(100,116,139,.4); color:var(--muted); background:rgba(100,116,139,.1);">Bientôt</span></h3>
-        <p>Guide d'installation macOS en cours de rédaction. Compatible Apple Silicon (M1/M2/M3) et Intel. Homebrew recommandé pour les dépendances audio.</p>
-        <div class="code-block" style="opacity:.5;">pip3 install -r requirements.txt<br/>python3 antoine.py</div>
-        <p style="margin-top:.75rem; font-size:.8rem; color:var(--muted);">📖 <strong style="color:var(--text);">Guide manuel disponible sur Discord</strong> — rejoignez le serveur pour obtenir les instructions complètes : <a href="https://discord.gg/JP9yF3VWQ" target="_blank" style="color:var(--cyan);">discord.gg/JP9yF3VWQ</a></p>
-      </div>
-      <!-- LINUX -->
-      <div class="card animate-on-scroll" style="opacity:.7;">
-        <div class="card-icon">🐧</div>
-        <h3>Linux <span class="tag" style="border-color:rgba(100,116,139,.4); color:var(--muted); background:rgba(100,116,139,.1);">Bientôt</span></h3>
-        <p>Guide d'installation Linux en cours de rédaction. Compatibilité testée sur Ubuntu 22.04+ et Debian. Portaudio requis pour le micro.</p>
-        <div class="code-block" style="opacity:.5;">sudo apt install portaudio19-dev<br/>pip install -r requirements.txt<br/>python antoine.py</div>
-        <p style="margin-top:.75rem; font-size:.8rem; color:var(--muted);">📖 <strong style="color:var(--text);">Guide manuel disponible sur Discord</strong> — rejoignez le serveur pour obtenir les instructions complètes : <a href="https://discord.gg/JP9yF3VWQ" target="_blank" style="color:var(--cyan);">discord.gg/JP9yF3VWQ</a></p>
-      </div>
+<!-- BOOT TERMINAL -->
+<section class="boot-section">
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="t-dot r"></div>
+      <div class="t-dot y"></div>
+      <div class="t-dot g"></div>
+      <span class="terminal-title">ANTOINE.exe — Boot Sequence</span>
     </div>
-
-    <div style="margin-top:1.5rem; background:rgba(13,15,26,.75); backdrop-filter:blur(8px); border:1px solid var(--border); border-radius:10px; padding:1.25rem 1.5rem; font-size:.875rem; color:var(--muted);">
-      💡 <strong style="color:var(--text);">Première installation ?</strong> Téléchargez l'archive Windows, extrayez le dossier à l'endroit de votre choix, installez Python 3.12 si ce n'est pas déjà fait, puis suivez l'<strong>Étape 2</strong> pour configurer votre fichier <code style="color:var(--cyan);">.env</code> avec vos clés API. Seule la clé Groq est obligatoire — elle est 100% gratuite.
+    <div class="terminal-body" id="boot-terminal">
+      <div class="t-cursor" id="cursor"></div>
     </div>
   </div>
 </section>
 
-<hr class="divider" />
-
-<!-- ─── STEP 2 : PERSONNALISATION ─── -->
-<section id="step2" class="bg-dark">
-  <div class="container">
-    <div class="step-label"><span class="step-num">2</span> Personnalisation</div>
-    <h2>Configurez votre assistant</h2>
-    <p class="section-desc">Ajoutez vos clés API, personnalisez les préférences et activez les modules dont vous avez besoin.</p>
-
-    <div class="cards-grid">
-      <!-- BLOC .ENV -->
-      <div class="card animate-on-scroll" style="grid-column: 1 / -1;">
-        <div class="card-icon">📁</div>
-        <h3>Contenu du fichier <code style="color:var(--cyan); font-size:.95em;">.env</code></h3>
-        <p style="margin-bottom:1rem;">Dans le dossier A.N.T.O.I.N.E, renommez <code style="color:var(--cyan);">.env.example</code> en <code style="color:var(--cyan);">.env</code>, ouvrez-le avec le Bloc-notes (ou VS Code) et remplissez vos clés. <strong style="color:#f59e0b;">Ne partagez jamais ce fichier</strong> — il contient vos secrets.</p>
-        <div class="code-block" style="line-height:1.9; font-size:.82rem;">
-          <span style="color:#64748b;"># ════════════════════════════════════</span><br/>
-          <span style="color:#64748b;"># MOTEURS IA — GROQ OBLIGATOIRE</span><br/>
-          <span style="color:#64748b;"># ════════════════════════════════════</span><br/>
-          <br/>
-          <span style="color:#64748b;"># Moteur principal — 100% gratuit, ultra-rapide (OBLIGATOIRE)</span><br/>
-          <span style="color:var(--cyan);">GROQ_API_KEY</span>=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>
-          <br/>
-          <span style="color:#64748b;"># Moteur Google Gemini — gratuit, utilisé en fallback (optionnel)</span><br/>
-          <span style="color:var(--cyan);">GEMINI_API_KEY</span>=AIzaSyxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>
-          <br/>
-          <span style="color:#64748b;"># Moteur Claude Anthropic — fallback secondaire, 5$ minimum (optionnel)</span><br/>
-          <span style="color:var(--cyan);">ANTHROPIC_API_KEY</span>=sk-ant-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>
-          <br/>
-          <span style="color:#64748b;"># Moteur Grok (X.ai) — fallback tertiaire (optionnel)</span><br/>
-          <span style="color:var(--cyan);">GROK_API_KEY</span>=xai-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>
-          <br/>
-          <span style="color:#64748b;"># ════════════════════════════════════</span><br/>
-          <span style="color:#64748b;"># INTÉGRATIONS — TOUTES OPTIONNELLES</span><br/>
-          <span style="color:#64748b;"># ════════════════════════════════════</span><br/>
-          <br/>
-          <span style="color:#64748b;"># Recherche web (100 requêtes/mois gratuites)</span><br/>
-          <span style="color:var(--cyan);">SERPAPI_KEY</span>=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>
-          <br/>
-          <span style="color:#64748b;"># YouTube — pour lancer des vidéos par la voix</span><br/>
-          <span style="color:var(--cyan);">YOUTUBE_API_KEY</span>=AIzaSyxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>
-          <br/>
-          <span style="color:#64748b;"># Home Assistant — pour piloter vos appareils domotiques</span><br/>
-          <span style="color:var(--cyan);">HA_TOKEN</span>=votre_token_longue_duree_home_assistant<br/>
-          <span style="color:var(--cyan);">HA_URL</span>=http://homeassistant.local:8123
-        </div>
-      </div>
-
-      <div class="card animate-on-scroll">
-        <div class="card-icon">🔑</div>
-        <h3>Quelle clé obtenir en premier ?</h3>
-        <p>Commencez par <strong style="color:var(--cyan);">Groq</strong> — c'est le moteur principal d'A.N.T.O.I.N.E. Il est ultra-rapide, 100% gratuit et ne nécessite aucune carte bancaire. Créez votre compte sur <a href="https://console.groq.com" target="_blank" style="color:var(--cyan);">console.groq.com</a> en 2 minutes.</p>
-        <p style="margin-top:.75rem; font-size:.82rem; color:var(--muted);">Les autres clés (Gemini, Claude, Grok) sont optionnelles. A.N.T.O.I.N.E bascule automatiquement sur le moteur suivant si le principal est indisponible.</p>
-        <p style="margin-top:.5rem; font-size:.82rem; color:var(--muted);">→ Consultez les guides détaillés en bas de page pour obtenir chaque clé pas-à-pas.</p>
-      </div>
-
-      <div class="card animate-on-scroll">
-        <div class="card-icon">🚀</div>
-        <h3>Lancer A.N.T.O.I.N.E</h3>
-        <p>Une fois le <code style="color:var(--cyan);">.env</code> configuré avec au moins votre clé Groq, ouvrez un terminal dans le dossier A.N.T.O.I.N.E et exécutez la commande ci-dessous. Dites ensuite <em style="color:var(--cyan);">"Antoine"</em> pour activer la reconnaissance vocale.</p>
-        <div class="code-block" style="margin-top:.85rem; line-height:1.8;">
-          <span style="color:#64748b;"># Dans le dossier ANTOINE-V1.0 :</span><br/>
-          pip install -r requirements.txt<br/>
-          <br/>
-          <span style="color:#64748b;"># Puis à chaque démarrage :</span><br/>
-          python antoine.py
-        </div>
-      </div>
+<!-- STATS -->
+<section class="stats-section">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number" data-target="50">0</div>
+      <div class="stat-label">commandes vocales</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" data-target="3">0</div>
+      <div class="stat-label">moteurs IA en fallback</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" style="color:var(--green)">0€</div>
+      <div class="stat-label">pour toujours</div>
     </div>
   </div>
 </section>
 
-<hr class="divider" />
-
-<!-- ─── API CONFIGURATION ─── -->
-<section id="api-config">
-  <div class="container">
-    <div class="section-tag">Configuration</div>
-    <h2>Console de configuration API</h2>
-    <p class="section-desc">Choisissez les moteurs IA et les intégrations que vous souhaitez activer dans A.N.T.O.I.N.E.</p>
-
-    <div class="cards-grid">
-      <div class="card animate-on-scroll" style="border-color:rgba(0,200,255,.3);">
-        <div class="card-icon">⚡</div>
-        <h3>Groq Cloud <span class="tag" style="background:rgba(0,200,255,.15); color:var(--cyan);">MOTEUR PRINCIPAL</span></h3>
-        <p>Le moteur recommandé — ultra-rapide, 100% gratuit, aucune carte bancaire requise. C'est le premier que vous devez configurer. Basé sur Llama 3 et Mixtral.</p>
-        <div class="code-block">GROQ_API_KEY=gsk_xxxxxxxxxxxx</div>
-      </div>
-      <div class="card animate-on-scroll">
-        <div class="card-icon">🤖</div>
-        <h3>Gemini AI <span class="tag">FALLBACK 1</span></h3>
-        <p>Moteur Google Gemini — puissant et gratuit sur le tier standard. Utilisé automatiquement si Groq est indisponible. Supporte aussi la vision (analyse d'image/écran).</p>
-        <div class="code-block">GEMINI_API_KEY=AIzaxxxxxxxxx</div>
-      </div>
-      <div class="card animate-on-scroll">
-        <div class="card-icon">🧠</div>
-        <h3>Claude (Anthropic) <span class="tag">FALLBACK 2</span></h3>
-        <p>Moteur Claude d'Anthropic — le plus raisonnable et précis. Nécessite 5$ de crédit minimum. Activé en dernier recours automatiquement.</p>
-        <div class="code-block">ANTHROPIC_API_KEY=sk-ant-xxxxxx</div>
-      </div>
-      <div class="card animate-on-scroll">
-        <div class="card-icon">🔗</div>
-        <h3>Intégrations</h3>
-        <p>Home Assistant pour la domotique, Spotify pour la musique, YouTube pour les vidéos, SerpAPI pour la recherche web — chaque module s'active indépendamment.</p>
-        <div class="code-block">HA_TOKEN=votre_token<br/>HA_URL=http://homeassistant.local:8123<br/>SERPAPI_KEY=votre_clé</div>
-      </div>
+<!-- FEATURES -->
+<section class="features-section" id="features">
+  <div class="section-header">
+    <div class="section-tag">// CAPACITÉS</div>
+    <h2 class="section-title">Tout ce qu'Antoine sait faire</h2>
+    <p class="section-sub">Commandes locales instantanées. IA pour tout le reste.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🎙️</div>
+      <div class="feature-title">Contrôle vocal total</div>
+      <div class="feature-desc">Parlez directement — Antoine écoute en continu. 50+ patterns de commandes, zéro mot de réveil requis.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🧠</div>
+      <div class="feature-title">Multi-IA avec fallback</div>
+      <div class="feature-desc">Groq (llama-3.1) → Gemini Lite → Gemini Flash. Si un quota est épuisé, le suivant prend le relais automatiquement.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🖥️</div>
+      <div class="feature-title">Contrôle PC complet</div>
+      <div class="feature-desc">Volume, luminosité, applications, dossiers, captures d'écran, veille, redémarrage. JARVIS de votre bureau.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌤️</div>
+      <div class="feature-title">Météo & Actualités</div>
+      <div class="feature-desc">Météo en temps réel par ville. Actualités du Monde via RSS. Tout à la voix.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📝</div>
+      <div class="feature-title">Notes vocales</div>
+      <div class="feature-desc">Dictez vos notes, relisez-les, effacez-les. Minuteurs intelligents avec rappel vocal.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔍</div>
+      <div class="feature-title">Web & Recherche</div>
+      <div class="feature-desc">Recherche DuckDuckGo qui ouvre directement le vrai résultat. Wikipedia à la demande.</div>
     </div>
   </div>
 </section>
 
-<hr class="divider" />
-
-<!-- ─── CAPABILITIES ─── -->
-<section id="capabilities" class="bg-dark">
-  <div class="container">
-    <div class="section-tag">Fonctionnalités</div>
-    <h2>Ce que A.N.T.O.I.N.E sait faire</h2>
-    <p class="section-desc">Commandes locales ultra-rapides et commandes IA puissantes — tout en voix naturelle.</p>
-
-    <div class="caps-grid">
-      <div class="caps-col animate-on-scroll">
-        <h3>⚡ Commandes locales <span class="tag">Instant · Sans Internet</span></h3>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Heure &amp; date en temps réel</div><div class="cap-example">« Quelle heure est-il ? » / « Quel jour on est ? »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Batterie, CPU &amp; RAM</div><div class="cap-example">« Quel est le niveau de batterie ? » / « Usage CPU ? »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Capture d'écran automatique</div><div class="cap-example">« Fais une capture d'écran »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Ouvrir applications &amp; dossiers (~40 apps)</div><div class="cap-example">« Ouvre Chrome » / « Lance VS Code » / « Ouvre Mes Documents »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Mode travail &amp; focus</div><div class="cap-example">« Active le mode travail »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Calculs instantanés</div><div class="cap-example">« Combien font 15% de 340 ? » / « Convertis 50€ en dollars »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Veille, extinction &amp; verrouillage PC</div><div class="cap-example">« Mets le PC en veille » / « Éteins l'ordinateur »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Contrôle Spotify</div><div class="cap-example">« Mets de la musique » / « Pause » / « Musique suivante »</div></div></div>
+<!-- LLM -->
+<section class="llm-section">
+  <div class="llm-inner">
+    <div class="section-header">
+      <div class="section-tag">// MOTEURS IA</div>
+      <h2 class="section-title">Jamais en panne de quota</h2>
+      <p class="section-sub">3 niveaux de fallback automatique. Antoine bascule sans interruption.</p>
+    </div>
+    <div class="llm-grid">
+      <div class="llm-card groq">
+        <div class="llm-badge groq">PRIMAIRE</div>
+        <div class="llm-name">Groq · llama-3.1-8b</div>
+        <div class="llm-desc">131k tokens/min. Ultra rapide. Gratuit sur groq.com.</div>
       </div>
-
-      <div class="caps-col animate-on-scroll">
-        <h3>🧠 Intelligence IA <span class="tag">Cloud · Domotique · Mémoire</span></h3>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Questions libres &amp; conversations</div><div class="cap-example">« Explique-moi le machine learning » / « Raconte une blague »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Météo en temps réel</div><div class="cap-example">« Quel temps fait-il demain à Paris ? »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Recherche web intelligente (SerpAPI)</div><div class="cap-example">« Cherche les dernières news IA » / « Recherche Python »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Mémoire persistante personnalisée</div><div class="cap-example">« Souviens-toi que j'aime le jazz » / « Quel est mon prénom ? »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Home Assistant — domotique complète</div><div class="cap-example">« Allume la lumière du salon » / « Règle le thermostat à 20° »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Calculs complexes &amp; conversions</div><div class="cap-example">« Calcule l'hypoténuse d'un triangle 3/4 »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Lancement de vidéos YouTube</div><div class="cap-example">« Lance une vidéo de Lo-Fi hip hop »</div></div></div>
-        <div class="cap-item"><div class="cap-dot"></div><div><div>Basculement automatique multi-moteurs IA</div><div class="cap-example">Si Groq est indisponible → Gemini → Claude → Grok</div></div></div>
+      <div class="llm-card gemini">
+        <div class="llm-badge gemini">FALLBACK</div>
+        <div class="llm-name">Gemini 2.0 Flash Lite</div>
+        <div class="llm-desc">Quota très généreux. Prend le relais si Groq est saturé.</div>
       </div>
+    </div>
+    <div class="fallback-note">
+      <strong>Fallback automatique</strong> — Si Groq est épuisé → Gemini Lite → Gemini Flash 8B. Vous n'avez rien à configurer, Antoine gère tout seul.
     </div>
   </div>
 </section>
 
-<hr class="divider" />
-
-<!-- ─── COMMUNITY ─── -->
-<section id="community">
-  <div class="container">
-    <div class="section-tag">Communauté</div>
-    <h2>Rejoignez la communauté</h2>
-    <p class="section-desc">Support, tutoriels, code source et actualités — rejoignez des centaines d'utilisateurs d'A.N.T.O.I.N.E.</p>
-
-    <!-- Bandeau Discord mis en avant -->
-    <div class="discord-banner animate-on-scroll">
-      <div class="discord-banner-left">
-        <div class="discord-logo">💬</div>
-        <div class="discord-info">
-          <h3>Serveur Discord A.N.T.O.I.N.E</h3>
-          <p>Le quartier général de la communauté. Aide à l'installation, partage de configs, annonces exclusives et support direct. Le meilleur endroit pour démarrer avec Antoine.</p>
-          <div class="discord-pills">
-            <span class="discord-pill">🛠️ Aide installation</span>
-            <span class="discord-pill">🐛 Support bugs</span>
-            <span class="discord-pill">💡 Suggestions</span>
-            <span class="discord-pill">📢 Annonces</span>
-            <span class="discord-pill">🤖 Changelog</span>
-          </div>
-        </div>
-      </div>
-      <a href="https://discord.gg/JP9yF3VWQ" target="_blank" class="btn-discord">💬 Rejoindre le Discord →</a>
+<!-- DEMO -->
+<section class="demo-section" id="demo">
+  <div class="section-header">
+    <div class="section-tag">// DÉMO</div>
+    <h2 class="section-title">Antoine en action</h2>
+  </div>
+  <div class="demo-terminal">
+    <div class="terminal-bar">
+      <div class="t-dot r"></div>
+      <div class="t-dot y"></div>
+      <div class="t-dot g"></div>
+      <span class="terminal-title">Conversation · Session active</span>
     </div>
-
-    <div class="community-grid">
-      <a href="https://discord.gg/JP9yF3VWQ" target="_blank" class="social-card animate-on-scroll">
-        <div class="social-icon">💬</div>
-        <div class="social-name">Discord</div>
-        <div class="social-desc">Aide directe, partage de configs, annonces et communauté active 24h/24. Le meilleur endroit pour démarrer.</div>
-      </a>
-      <a href="https://github.com/myvidsio01-star/antoine-assistant" target="_blank" class="social-card animate-on-scroll">
-        <div class="social-icon">🐙</div>
-        <div class="social-name">GitHub</div>
-        <div class="social-desc">Code source ouvert, releases officielles, issues et mises à jour. Donnez une étoile pour soutenir le projet ⭐</div>
-      </a>
-      <a href="https://instagram.com/matt_bizz_" target="_blank" class="social-card animate-on-scroll">
-        <div class="social-icon">📸</div>
-        <div class="social-name">Instagram</div>
-        <div class="social-desc">Démonstrations, astuces et coulisses du projet A.N.T.O.I.N.E. Suivez @matt_bizz_ pour ne rien rater.</div>
-      </a>
-      <div class="social-card" style="opacity:0.5; cursor:default;">
-        <div class="social-icon">𝕏</div>
-        <div class="social-name">X (Twitter)</div>
-        <div class="social-desc">Bientôt disponible — actualités, nouvelles fonctionnalités et annonces officielles.</div>
-      </div>
-    </div>
+    <div class="demo-body" id="demo-body"></div>
   </div>
 </section>
 
-<hr class="divider" />
-
-<!-- ─── DOWNLOAD ACCESS ─── -->
-<section id="download" class="bg-dark">
-  <div class="container">
-    <div class="download-box">
-      <div class="section-tag">Téléchargement</div>
-      <h2>Prêt à lancer A.N.T.O.I.N.E ?</h2>
-      <p class="section-desc">Accès 100% gratuit, sans inscription, sans abonnement. Téléchargez l'archive, configurez votre clé Groq et c'est parti.</p>
-
-      <div class="payment-status">
-        <span class="status-dot"></span>
-        V1.1 disponible — Dernière version stable
-      </div>
-
-      <div class="hero-btns" style="justify-content:center; gap:1rem; flex-wrap:wrap;">
-        <a href="telecharger.html" class="btn btn-primary" style="font-size:1rem; padding:1rem 2.5rem;">⬇ Télécharger A.N.T.O.I.N.E V1.1</a>
-        <a href="https://discord.gg/JP9yF3VWQ" target="_blank" class="btn btn-outline" style="font-size:1rem; padding:1rem 2rem;">💬 Rejoindre le Discord</a>
-      </div>
-
-      <p style="font-size:.8rem; color:var(--muted); margin-top:1.75rem;">
-        ❤️ A.N.T.O.I.N.E est et restera 100% gratuit. Si vous souhaitez soutenir le développement, une donation est appréciée mais jamais obligatoire. Sélectionnez <strong>"Paiement entre amis"</strong> pour éviter les frais de transaction. Montant entièrement libre.
-      </p>
-    </div>
+<!-- CTA -->
+<section class="cta-section">
+  <h2 class="cta-title">Prêt à activer votre JARVIS ?</h2>
+  <p class="cta-sub">Téléchargement gratuit · Aucune installation complexe · Open Source</p>
+  <a href="telecharger.html" class="btn-primary" style="display:inline-flex">
+    ↓ Télécharger A.N.T.O.I.N.E V1.1
+  </a>
+  <div class="cta-count">
+    Déjà <span id="dl-count">247</span> téléchargements
   </div>
 </section>
 
-<hr class="divider" />
-
-<!-- ─── UPDATE V1.0 ─── -->
-<section id="update">
-  <div class="container">
-    <div class="update-header" onclick="toggleUpdate()">
-      <div>
-        <div style="font-weight:800; font-size:1.1rem;">Mise à jour majeure — A.N.T.O.I.N.E V1.1</div>
-        <div style="font-size:.85rem; color:var(--muted);">Cliquez pour voir toutes les nouveautés de cette version</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:1rem;">
-        <span class="update-badge">V1.1 — Stable</span>
-        <span id="update-chevron" style="color:var(--cyan);">▼</span>
-      </div>
-    </div>
-
-    <div id="update-body" style="display:none;">
-      <div class="features-grid">
-        <div class="feature-card"><h4>🧠 Mémoire contextuelle persistante</h4><p>30 échanges récents + 200 en historique long terme. A.N.T.O.I.N.E se souvient de vos préférences entre les sessions.</p></div>
-        <div class="feature-card"><h4>📴 Mode 100% local (offline)</h4><p>Fonctionne sans internet grâce aux modèles embarqués. Whisper local pour la reconnaissance vocale, Ollama pour l'IA.</p></div>
-        <div class="feature-card"><h4>🔄 Basculement automatique multi-IA</h4><p>Groq → Gemini → Claude → Grok : si un moteur tombe, A.N.T.O.I.N.E bascule en silence sur le suivant.</p></div>
-        <div class="feature-card"><h4>🎙️ Détection micro intelligente</h4><p>Sélection automatique du meilleur périphérique audio disponible au démarrage. Zéro configuration requise.</p></div>
-        <div class="feature-card"><h4>🗣️ +40 intentions vocales natives</h4><p>Plus de 40 commandes vocales reconnues directement sans passer par un moteur IA — réponse quasi-instantanée.</p></div>
-        <div class="feature-card"><h4>🏠 Intégration Home Assistant complète</h4><p>Pilotez lumières, prises, thermostats, capteurs et scènes domotiques entièrement à la voix via votre réseau local.</p></div>
-        <div class="feature-card"><h4>🖥️ Interface native PyWebView</h4><p>Application graphique native 1280×780 avec globe 3D interactif. Aucun navigateur requis — expérience desktop fluide.</p></div>
-        <div class="feature-card"><h4>🎵 Contrôle Spotify vocal</h4><p>Lecture, pause, musique suivante/précédente, volume — tout se contrôle à la voix sans toucher votre clavier.</p></div>
-        <div class="feature-card"><h4>📦 Catalogue ~40 applications</h4><p>Ouvrez Chrome, Firefox, VS Code, Notepad++, Discord, Steam, Spotify et ~35 autres apps d'une seule phrase vocale.</p></div>
-        <div class="feature-card"><h4>⚡ Moteur refactorisé (+1500 lignes)</h4><p>Architecture interne entièrement repensée pour des performances optimales, une maintenance facilitée et un démarrage plus rapide.</p></div>
-        <div class="feature-card"><h4>🔍 Recherche web intégrée (SerpAPI)</h4><p>Recherche en temps réel dans Google, Bing ou DuckDuckGo directement depuis une commande vocale.</p></div>
-        <div class="feature-card"><h4>📺 Lancement YouTube vocal</h4><p>Lancez une vidéo YouTube par sujet, artiste ou titre sans jamais toucher votre souris.</p></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="divider" />
-
-<!-- ─── API GUIDES ─── -->
-<section id="api-guides" class="bg-dark">
-  <div class="container">
-    <div class="section-tag">Tutoriels</div>
-    <h2>Configurer vos clés API</h2>
-    <p class="section-desc">Guides pas-à-pas pour générer vos clés sur chaque plateforme. Tout est gratuit sauf mention contraire.</p>
-
-    <div class="accordion">
-      <div class="acc-item animate-on-scroll" id="acc-groq">
-        <div class="acc-header" onclick="toggleAcc('acc-groq')">⚡ Groq Cloud — Génération de clé API <span style="font-size:.72rem; background:linear-gradient(135deg,var(--cyan),var(--blue)); color:#000; border-radius:100px; padding:.2rem .65rem; margin-left:.6rem; font-weight:800; letter-spacing:.06em;">RECOMMANDÉ — MOTEUR PRINCIPAL</span> <span class="chevron">▼</span></div>
-        <div class="acc-body"><div class="acc-content">
-          <p style="margin-bottom:.75rem; color:#22c55e;">✅ 100% gratuit, aucune carte bancaire requise. C'est le moteur principal d'A.N.T.O.I.N.E — commencez impérativement par celui-ci.</p>
-          <ol>
-            <li>Allez sur <a href="https://console.groq.com" target="_blank">console.groq.com</a> et cliquez sur <strong>"Sign Up"</strong> pour créer un compte gratuit (vous pouvez aussi vous connecter directement avec Google).</li>
-            <li>Une fois sur le tableau de bord, dans le menu de navigation à gauche, cliquez sur <strong>"API Keys"</strong>.</li>
-            <li>Cliquez sur le bouton <strong>"Create API Key"</strong>, donnez-lui un nom reconnaissable (par exemple : <em>antoine</em>), puis confirmez.</li>
-            <li>Copiez la clé affichée — elle commence par <code>gsk_</code>. <strong>Attention :</strong> elle n'est visible qu'une seule fois, notez-la immédiatement.</li>
-            <li>Ouvrez votre fichier <code>.env</code> dans le dossier A.N.T.O.I.N.E et collez la clé après : <code>GROQ_API_KEY=</code></li>
-            <li>Sauvegardez le fichier et lancez A.N.T.O.I.N.E. Le moteur Groq est opérationnel, aucune autre action n'est requise.</li>
-          </ol>
-        </div></div>
-      </div>
-
-      <div class="acc-item animate-on-scroll" id="acc-gemini">
-        <div class="acc-header" onclick="toggleAcc('acc-gemini')">🤖 Gemini AI — Créer une clé API <span class="chevron">▼</span></div>
-        <div class="acc-body"><div class="acc-content">
-          <p style="margin-bottom:.75rem; color:var(--muted);">Moteur de secours (fallback 1) — gratuit sur le tier standard. Utilisé automatiquement si Groq est indisponible.</p>
-          <ol>
-            <li>Rendez-vous sur <a href="https://aistudio.google.com" target="_blank">aistudio.google.com</a> et connectez-vous avec votre compte Google.</li>
-            <li>Cliquez sur <strong>"Get API key"</strong> en haut à gauche de l'interface.</li>
-            <li>Cliquez sur <strong>"Create API key"</strong> et sélectionnez un projet Google Cloud (ou créez-en un nouveau).</li>
-            <li>Copiez la clé générée et collez-la dans votre <code>.env</code> sous <code>GEMINI_API_KEY=</code></li>
-            <li>Sauvegardez le fichier. A.N.T.O.I.N.E basculera automatiquement sur Gemini si Groq est indisponible.</li>
-          </ol>
-        </div></div>
-      </div>
-
-      <div class="acc-item animate-on-scroll" id="acc-claude">
-        <div class="acc-header" onclick="toggleAcc('acc-claude')">🧠 Claude (Anthropic) — Clé API <span class="chevron">▼</span></div>
-        <div class="acc-body"><div class="acc-content">
-          <p style="margin-bottom:.5rem; color:#f59e0b;">⚠️ Les nouveaux comptes sur <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> reçoivent <strong>5$ de crédits gratuits</strong> à l'inscription — profitez-en pour tester Claude sans payer.</p>
-          <ol>
-            <li>Allez sur <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> et créez un compte. Les nouveaux utilisateurs reçoivent automatiquement <strong>5$ de crédits offerts</strong> pour débuter.</li>
-            <li>Une fois connecté, rendez-vous dans la section <strong>"API Keys"</strong> depuis le menu de navigation.</li>
-            <li>Cliquez sur <strong>"Create Key"</strong>, donnez-lui un nom (ex : <em>antoine</em>) et confirmez la création.</li>
-            <li>Copiez la clé (commence par <code>sk-ant-</code>) et collez-la dans votre fichier <code>.env</code> sous <code>ANTHROPIC_API_KEY=</code></li>
-            <li>Sauvegardez. Claude sera utilisé en fallback secondaire si Groq et Gemini sont indisponibles.</li>
-          </ol>
-        </div></div>
-      </div>
-
-      <div class="acc-item animate-on-scroll" id="acc-youtube">
-        <div class="acc-header" onclick="toggleAcc('acc-youtube')">📺 YouTube Data API — Accès vidéos <span class="chevron">▼</span></div>
-        <div class="acc-body"><div class="acc-content"><ol>
-          <li>Allez sur <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a></li>
-          <li>Créez un nouveau projet Google Cloud</li>
-          <li>Activez l'API <strong>"YouTube Data API v3"</strong> depuis la bibliothèque</li>
-          <li>Dans <strong>"Identifiants"</strong>, créez une clé API</li>
-          <li>Copiez-la dans <code>YOUTUBE_API_KEY=</code></li>
-        </ol></div></div>
-      </div>
-
-      <div class="acc-item animate-on-scroll" id="acc-grok">
-        <div class="acc-header" onclick="toggleAcc('acc-grok')">🤖 Grok (X.ai) — Clé API <span class="chevron">▼</span></div>
-        <div class="acc-body"><div class="acc-content"><ol>
-          <li>Allez sur <a href="https://console.x.ai/" target="_blank">console.x.ai</a></li>
-          <li>Connectez-vous avec votre compte X (Twitter)</li>
-          <li>Dans le menu, cliquez sur <strong>"API Keys"</strong></li>
-          <li>Créez une nouvelle clé et copiez-la dans <code>GROK_API_KEY=</code></li>
-        </ol></div></div>
-      </div>
-
-      <div class="acc-item animate-on-scroll" id="acc-serp">
-        <div class="acc-header" onclick="toggleAcc('acc-serp')">🔍 SerpAPI — Résultats de recherche <span class="chevron">▼</span></div>
-        <div class="acc-body"><div class="acc-content"><ol>
-          <li>Allez sur <a href="https://serpapi.com" target="_blank">serpapi.com</a></li>
-          <li>Créez un compte gratuit (100 requêtes/mois offertes)</li>
-          <li>Dans votre dashboard, copiez votre <strong>API Key</strong></li>
-          <li>Ajoutez-la dans <code>SERPAPI_KEY=</code></li>
-        </ol></div></div>
-      </div>
-
-      <div class="acc-item animate-on-scroll" id="acc-ha">
-        <div class="acc-header" onclick="toggleAcc('acc-ha')">🏠 Home Assistant — Token longue durée <span class="chevron">▼</span></div>
-        <div class="acc-body"><div class="acc-content"><ol>
-          <li>Connectez-vous à votre interface Home Assistant</li>
-          <li>Cliquez sur votre profil (en bas à gauche)</li>
-          <li>Faites défiler jusqu'à <strong>"Jetons d'accès longue durée"</strong></li>
-          <li>Cliquez sur <strong>"Créer un jeton"</strong>, donnez-lui un nom</li>
-          <li>Copiez-le dans <code>HA_TOKEN=</code> et renseignez <code>HA_URL=</code></li>
-        </ol></div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="divider" />
-
-<!-- ─── FOOTER ─── -->
+<!-- FOOTER -->
 <footer>
-  <div style="margin-bottom:.75rem;">
+  <div class="footer-links">
+    <a href="index.html">Accueil</a>
+    <a href="telecharger.html">Télécharger</a>
+    <a href="premium.html">Premium</a>
+    <a href="contact.html">Contact</a>
     <a href="mentions-legales.html">Mentions légales</a>
     <a href="confidentialite.html">Confidentialité</a>
-    <a href="contact.html">Contact</a>
+    <a href="https://github.com/myvidsio01-star/antoine-assistant" target="_blank">GitHub</a>
   </div>
-  <div>© 2026 A.N.T.O.I.N.E V1.1 — Système I.A Autonome 100% Gratuit</div>
+  <p>© 2026 A.N.T.O.I.N.E — Système I.A Autonome · Fait avec ☕ et PyQt6</p>
 </footer>
 
-<!-- ─── THREE.JS ─── -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha512-dLxUelApnYxpLt6K2iomGngnHO83iUvZytA3YjDUCjT0HDOHKXnVYdf3hU4JjfgVyUy6es7b/2+wNVAEuhCbg==" crossorigin="anonymous"></script>
 <script>
-// ════════════════════════════════════════════
-// 1. FOND GLOBAL — particules + grille holographique
-// ════════════════════════════════════════════
-(function() {
-  const COLOR_CYAN     = 0x00c8ff;
-  const COLOR_BLUE     = 0x3b82f6;
-  const PARTICLE_COUNT = 60;
-  const CONNECT_DIST   = 3.2;
+// ── CANVAS PARTICULES ──
+const canvas = document.getElementById('canvas-bg');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
 
-  const canvas = document.getElementById('canvas-bg');
-  const scene  = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.z = 6;
-
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setClearColor(0x000000, 0);
-
-  // ── Grille holographique ──
-  const gridMat = new THREE.LineBasicMaterial({ color: COLOR_CYAN, transparent: true, opacity: 0.032 });
-  const GRID_W = 28, GRID_H = 20, GRID_STEP = 1.6;
-  const hw = GRID_W / 2, hh = GRID_H / 2;
-  for (let row = -hh; row <= hh; row += GRID_STEP) {
-    const pts = [new THREE.Vector3(-hw, row, -1), new THREE.Vector3(hw, row, -1)];
-    scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), gridMat));
-  }
-  for (let col = -hw; col <= hw; col += GRID_STEP) {
-    const pts = [new THREE.Vector3(col, -hh, -1), new THREE.Vector3(col, hh, -1)];
-    scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), gridMat));
-  }
-
-  // ── Particules : 3 groupes de tailles différentes ──
-  const sizeValues  = [0.022, 0.042, 0.075];
-  const sizeWeights = [0.55, 0.35, 0.10];
-  const sizeOpacity = [0.55, 0.72, 0.9];
-  const groups      = [[], [], []];
-
-  for (let i = 0; i < PARTICLE_COUNT; i++) {
-    const roll     = Math.random();
-    const sizeIdx  = roll < sizeWeights[0] ? 0 : roll < sizeWeights[0] + sizeWeights[1] ? 1 : 2;
-    const x  = (Math.random() - 0.5) * 18;
-    const y  = (Math.random() - 0.5) * 16;
-    const z  = (Math.random() - 0.5) * 5;
-    const vx = (Math.random() - 0.5) * 0.004;
-    const vy = (Math.random() - 0.5) * 0.003;
-    groups[sizeIdx].push({ x, y, z, vx, vy });
-  }
-
-  const allParticleData = [];
-  const particleMeshes  = [];
-
-  for (let g = 0; g < 3; g++) {
-    const arr = new Float32Array(groups[g].length * 3);
-    for (let k = 0; k < groups[g].length; k++) {
-      const p = groups[g][k];
-      arr[k * 3] = p.x; arr[k * 3 + 1] = p.y; arr[k * 3 + 2] = p.z;
-      allParticleData.push(p);
-    }
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(arr, 3));
-    const mat = new THREE.PointsMaterial({
-      color: g === 2 ? COLOR_BLUE : COLOR_CYAN,
-      size: sizeValues[g],
-      transparent: true,
-      opacity: sizeOpacity[g],
-    });
-    const mesh = new THREE.Points(geo, mat);
-    scene.add(mesh);
-    particleMeshes.push({ data: groups[g], posAttr: geo.attributes.position });
-  }
-
-  // ── Connexions dynamiques ──
-  const MAX_LINES  = 500;
-  const lineSegGeo = new THREE.BufferGeometry();
-  const linePosArr = new Float32Array(MAX_LINES * 2 * 3);
-  lineSegGeo.setAttribute('position', new THREE.BufferAttribute(linePosArr, 3));
-  lineSegGeo.setDrawRange(0, 0);
-  const lineSegMesh = new THREE.LineSegments(lineSegGeo,
-    new THREE.LineBasicMaterial({ color: COLOR_BLUE, transparent: true, opacity: 0.12 })
-  );
-  scene.add(lineSegMesh);
-
-  // ── Souris ──
-  let mx = 0, my = 0;
-  document.addEventListener('mousemove', e => {
-    mx = (e.clientX / window.innerWidth  - 0.5) * 2;
-    my = (e.clientY / window.innerHeight - 0.5) * 2;
-  });
-
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
-
-  // ── Boucle ──
-  (function animate() {
-    requestAnimationFrame(animate);
-
-    // Déplacement des particules
-    for (let g = 0; g < 3; g++) {
-      const { data, posAttr } = particleMeshes[g];
-      for (let k = 0; k < data.length; k++) {
-        const p = data[k];
-        p.x += p.vx; p.y += p.vy;
-        if (p.x >  9) p.x = -9;
-        if (p.x < -9) p.x =  9;
-        if (p.y >  8) p.y = -8;
-        if (p.y < -8) p.y =  8;
-        posAttr.setXYZ(k, p.x, p.y, p.z);
-      }
-      posAttr.needsUpdate = true;
-    }
-
-    // Lignes de connexion dynamiques
-    let lineCount = 0;
-    for (let i = 0; i < allParticleData.length && lineCount < MAX_LINES; i++) {
-      for (let j = i + 1; j < allParticleData.length && lineCount < MAX_LINES; j++) {
-        const a = allParticleData[i], b = allParticleData[j];
-        const dx = a.x - b.x, dy = a.y - b.y, dz = a.z - b.z;
-        if (Math.sqrt(dx*dx + dy*dy + dz*dz) < CONNECT_DIST) {
-          const base = lineCount * 6;
-          linePosArr[base]     = a.x; linePosArr[base + 1] = a.y; linePosArr[base + 2] = a.z;
-          linePosArr[base + 3] = b.x; linePosArr[base + 4] = b.y; linePosArr[base + 5] = b.z;
-          lineCount++;
-        }
-      }
-    }
-    lineSegGeo.attributes.position.needsUpdate = true;
-    lineSegGeo.setDrawRange(0, lineCount * 2);
-
-    // Dérive caméra souris
-    camera.position.x += (mx * 0.3 - camera.position.x) * 0.025;
-    camera.position.y += (-my * 0.2 - camera.position.y) * 0.025;
-    camera.lookAt(scene.position);
-    renderer.render(scene, camera);
-  })();
-})();
-
-// ════════════════════════════════════════════
-// 2. GLOBE 3D HERO — version ultra futuriste
-// ════════════════════════════════════════════
-(function() {
-  const COLOR_CYAN  = 0x00c8ff;
-  const COLOR_BLUE  = 0x3b82f6;
-  const COLOR_WHITE = 0xffffff;
-
-  const canvas   = document.getElementById('canvas-hero');
-  const scene    = new THREE.Scene();
-  const camera   = new THREE.PerspectiveCamera(55, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
-  camera.position.z = 4.8;
-
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setClearColor(0x000000, 0);
-
-  function resize() {
-    const w = canvas.clientWidth, h = canvas.clientHeight;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  // ── Lumières ──
-  scene.add(new THREE.AmbientLight(0xffffff, 0.15));
-  const pl1 = new THREE.PointLight(COLOR_CYAN, 5, 25);
-  pl1.position.set(4, 3, 4);
-  scene.add(pl1);
-  const pl2 = new THREE.PointLight(COLOR_BLUE, 3, 18);
-  pl2.position.set(-3, -3, 2);
-  scene.add(pl2);
-  const pl3 = new THREE.PointLight(0xffffff, 1.2, 12);
-  pl3.position.set(0, 5, 1);
-  scene.add(pl3);
-
-  // ── Pivot global (réaction souris) ──
-  const globePivot = new THREE.Group();
-  scene.add(globePivot);
-
-  // ── Halo / glow derrière le globe ──
-  const haloGeo = new THREE.CircleGeometry(2.6, 64);
-  const haloMat = new THREE.MeshBasicMaterial({ color: COLOR_CYAN, transparent: true, opacity: 0.045, side: THREE.DoubleSide, depthWrite: false });
-  const halo = new THREE.Mesh(haloGeo, haloMat);
-  halo.position.z = -0.5;
-  globePivot.add(halo);
-
-  const halo2Geo = new THREE.CircleGeometry(1.85, 64);
-  const halo2Mat = new THREE.MeshBasicMaterial({ color: COLOR_CYAN, transparent: true, opacity: 0.07, side: THREE.DoubleSide, depthWrite: false });
-  const halo2 = new THREE.Mesh(halo2Geo, halo2Mat);
-  halo2.position.z = -0.3;
-  globePivot.add(halo2);
-
-  // ── Globe wireframe principal ──
-  const sphereGeo = new THREE.SphereGeometry(1.6, 32, 32);
-  const sphereMat = new THREE.MeshBasicMaterial({ color: COLOR_CYAN, wireframe: true, transparent: true, opacity: 0.18 });
-  const globe = new THREE.Mesh(sphereGeo, sphereMat);
-  globePivot.add(globe);
-
-  // Globe wireframe secondaire (légèrement plus grand, bleu)
-  const sphere2Geo = new THREE.SphereGeometry(1.65, 16, 16);
-  const sphere2Mat = new THREE.MeshBasicMaterial({ color: COLOR_BLUE, wireframe: true, transparent: true, opacity: 0.05 });
-  const globe2 = new THREE.Mesh(sphere2Geo, sphere2Mat);
-  globePivot.add(globe2);
-
-  // Sphère intérieure (volume semi-transparent)
-  const innerGeo = new THREE.SphereGeometry(1.57, 32, 32);
-  const innerMat = new THREE.MeshStandardMaterial({
-    color: 0x001a2e, emissive: COLOR_CYAN, emissiveIntensity: 0.04,
-    roughness: 1, metalness: 0, transparent: true, opacity: 0.18,
-  });
-  globePivot.add(new THREE.Mesh(innerGeo, innerMat));
-
-  // ── Anneaux orbitaux inclinés à 30°, 60°, 90° (chacun dans son propre pivot) ──
-  const ringDefs = [
-    { radius: 2.1,  tube: 0.012, color: COLOR_CYAN, opacity: 0.65, incline: Math.PI / 6,  speed:  0.006  },
-    { radius: 2.35, tube: 0.009, color: COLOR_CYAN, opacity: 0.4,  incline: Math.PI / 3,  speed: -0.004  },
-    { radius: 1.92, tube: 0.007, color: COLOR_BLUE, opacity: 0.55, incline: Math.PI / 2,  speed:  0.008  },
-  ];
-
-  const rings = ringDefs.map(function(def) {
-    const pivot = new THREE.Group();
-    pivot.rotation.x = def.incline;
-    pivot.rotation.z = Math.random() * Math.PI;
-    globePivot.add(pivot);
-    const g = new THREE.TorusGeometry(def.radius, def.tube, 8, 180);
-    const m = new THREE.MeshBasicMaterial({ color: def.color, transparent: true, opacity: def.opacity });
-    pivot.add(new THREE.Mesh(g, m));
-    return { pivot: pivot, speed: def.speed, radius: def.radius };
-  });
-
-  // ── Satellites lumineux sur les anneaux ──
-  const satDefs = [
-    { ringIdx: 0, angle: 0,                   speed:  0.012, size: 0.055, color: COLOR_BLUE  },
-    { ringIdx: 0, angle: Math.PI,              speed:  0.012, size: 0.035, color: COLOR_CYAN  },
-    { ringIdx: 1, angle: Math.PI / 3,          speed: -0.009, size: 0.06,  color: COLOR_CYAN  },
-    { ringIdx: 1, angle: Math.PI,              speed: -0.009, size: 0.04,  color: COLOR_BLUE  },
-    { ringIdx: 2, angle: Math.PI / 2,          speed:  0.015, size: 0.05,  color: COLOR_WHITE },
-    { ringIdx: 2, angle: 3 * Math.PI / 2,      speed:  0.015, size: 0.04,  color: COLOR_CYAN  },
-  ];
-
-  const satellites = satDefs.map(function(sd) {
-    const geo  = new THREE.SphereGeometry(sd.size, 8, 8);
-    const mat  = new THREE.MeshBasicMaterial({ color: sd.color, transparent: true, opacity: 0.95 });
-    const mesh = new THREE.Mesh(geo, mat);
-    rings[sd.ringIdx].pivot.add(mesh);
-    return { mesh: mesh, angle: sd.angle, speed: sd.speed, radius: rings[sd.ringIdx].radius };
-  });
-
-  // ── Nuage de particules orbitales ──
-  const orbCount  = 120;
-  const orbPosArr = new Float32Array(orbCount * 3);
-  for (let i = 0; i < orbCount; i++) {
-    const theta = Math.random() * Math.PI * 2;
-    const phi   = Math.acos(2 * Math.random() - 1);
-    const r     = 1.75 + Math.random() * 1.1;
-    orbPosArr[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
-    orbPosArr[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-    orbPosArr[i * 3 + 2] = r * Math.cos(phi);
-  }
-  const orbGeo = new THREE.BufferGeometry();
-  orbGeo.setAttribute('position', new THREE.BufferAttribute(orbPosArr, 3));
-  const orbMesh = new THREE.Points(orbGeo,
-    new THREE.PointsMaterial({ color: COLOR_BLUE, size: 0.035, transparent: true, opacity: 0.55 })
-  );
-  globePivot.add(orbMesh);
-
-  // ── Arcs de données (lignes courbes entre deux points de la sphère) ──
-  const ARC_COUNT  = 6;
-  const arcLifeMax = 140;
-  const arcs       = [];
-
-  function randomSpherePoint(r) {
-    const theta = Math.random() * Math.PI * 2;
-    const phi   = Math.acos(2 * Math.random() - 1);
-    return new THREE.Vector3(r * Math.sin(phi) * Math.cos(theta), r * Math.sin(phi) * Math.sin(theta), r * Math.cos(phi));
-  }
-
-  function createArc() {
-    var R   = 1.62;
-    var A   = randomSpherePoint(R);
-    var B   = randomSpherePoint(R);
-    var mid = A.clone().add(B).multiplyScalar(0.5);
-    mid.normalize().multiplyScalar(R + 0.35 + Math.random() * 0.45);
-    var curve  = new THREE.QuadraticBezierCurve3(A, mid, B);
-    var geo    = new THREE.BufferGeometry().setFromPoints(curve.getPoints(40));
-    var mat    = new THREE.LineBasicMaterial({
-      color: Math.random() < 0.5 ? COLOR_CYAN : COLOR_BLUE,
-      transparent: true, opacity: 0.0,
-    });
-    var line = new THREE.Line(geo, mat);
-    globePivot.add(line);
-    return { line: line, mat: mat, life: 0, maxLife: arcLifeMax + Math.floor(Math.random() * 80) };
-  }
-
-  for (let i = 0; i < ARC_COUNT; i++) {
-    var arc = createArc();
-    arc.life = Math.floor(Math.random() * arc.maxLife);
-    arcs.push(arc);
-  }
-
-  // ── Souris ──
-  let mx = 0, my = 0;
-  document.addEventListener('mousemove', e => {
-    mx = (e.clientX / window.innerWidth  - 0.5) * 2;
-    my = (e.clientY / window.innerHeight - 0.5) * 2;
-  });
-
-  // ── Boucle d'animation ──
-  let t = 0;
-  (function animate() {
-    requestAnimationFrame(animate);
-    t += 0.01;
-
-    // Rotation du globe
-    globe.rotation.y  += 0.0025;
-    globe.rotation.x  += 0.0008;
-    globe2.rotation.y -= 0.001;
-    globe2.rotation.z += 0.0005;
-
-    // Rotation des pivots d'anneaux
-    rings[0].pivot.rotation.y += rings[0].speed;
-    rings[1].pivot.rotation.y += rings[1].speed;
-    rings[2].pivot.rotation.y += rings[2].speed;
-
-    // Satellites
-    for (var si = 0; si < satellites.length; si++) {
-      var sat = satellites[si];
-      sat.angle += sat.speed;
-      sat.mesh.position.x = sat.radius * Math.cos(sat.angle);
-      sat.mesh.position.z = sat.radius * Math.sin(sat.angle);
-      sat.mesh.position.y = 0;
-      sat.mesh.scale.setScalar(1 + 0.25 * Math.sin(t * 4 + sat.angle));
-    }
-
-    // Rotation du nuage orbital
-    orbMesh.rotation.y += 0.0018;
-    orbMesh.rotation.x += 0.0006;
-
-    // Arcs de données
-    for (var ai = 0; ai < arcs.length; ai++) {
-      var arc = arcs[ai];
-      arc.life++;
-      var fadeIn  = arc.maxLife * 0.25;
-      var hold    = arc.maxLife * 0.6;
-      if (arc.life < fadeIn) {
-        arc.mat.opacity = (arc.life / fadeIn) * 0.7;
-      } else if (arc.life < hold) {
-        arc.mat.opacity = 0.7;
-      } else if (arc.life < arc.maxLife) {
-        arc.mat.opacity = 0.7 * (1 - (arc.life - hold) / (arc.maxLife - hold));
-      } else {
-        globePivot.remove(arc.line);
-        arc.line.geometry.dispose();
-        arc.mat.dispose();
-        arcs[ai] = createArc();
-      }
-    }
-
-    // Halos pulsants
-    halo.scale.setScalar(1 + 0.04 * Math.sin(t * 1.2));
-    halo2.scale.setScalar(1 + 0.06 * Math.sin(t * 1.8 + 1));
-
-    // Lumières pulsantes
-    pl1.intensity = 4.5 + Math.sin(t * 1.1) * 1.8;
-    pl2.intensity = 2.5 + Math.cos(t * 0.9) * 1.0;
-
-    // Réaction souris (inclinaison subtile du pivot)
-    globePivot.rotation.y += (mx * 0.18 - globePivot.rotation.y) * 0.04;
-    globePivot.rotation.x += (-my * 0.12 - globePivot.rotation.x) * 0.04;
-
-    // Dérive caméra douce
-    camera.position.x += (mx * 0.4 - camera.position.x) * 0.04;
-    camera.position.y += (-my * 0.3 - camera.position.y) * 0.04;
-    camera.lookAt(scene.position);
-
-    renderer.render(scene, camera);
-  })();
-})();
-
-// ════════════════════════════════════════════
-// ACCORDION + UPDATE
-// ════════════════════════════════════════════
-function toggleAcc(id) {
-  const item = document.getElementById(id);
-  const isOpen = item.classList.contains('open');
-  document.querySelectorAll('.acc-item.open').forEach(el => el.classList.remove('open'));
-  if (!isOpen) item.classList.add('open');
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
 }
 
-function toggleUpdate() {
-  const body = document.getElementById('update-body');
-  const ch   = document.getElementById('update-chevron');
-  const open = body.style.display === 'none';
-  body.style.display = open ? 'block' : 'none';
-  ch.textContent = open ? '▲' : '▼';
+function Particle() {
+  this.x = Math.random() * W;
+  this.y = Math.random() * H;
+  this.vx = (Math.random() - 0.5) * 0.4;
+  this.vy = (Math.random() - 0.5) * 0.4;
+  this.r = Math.random() * 1.5 + 0.5;
 }
 
-document.querySelectorAll('a[href^="#"]').forEach(a => {
-  a.addEventListener('click', e => {
-    const t = document.querySelector(a.getAttribute('href'));
-    if (!t) return;
-    e.preventDefault();
-    window.scrollTo({ top: t.offsetTop - 70, behavior: 'smooth' });
-  });
-});
-</script>
+function initParticles() {
+  particles = [];
+  const n = Math.min(80, Math.floor(W * H / 18000));
+  for (let i = 0; i < n; i++) particles.push(new Particle());
+}
 
-<!-- ════════════════════════════════════════════════════════
-     ANIMATIONS AVANCÉES — typing, count-up, scroll, terminal
-════════════════════════════════════════════════════════ -->
-<script>
-(function() {
-  'use strict';
-
-  // ══════════════════════════════════════════════
-  // 1. TERMINAL HEADER — injecter dots + label
-  //    dans tous les .code-block du DOM
-  // ══════════════════════════════════════════════
-  document.querySelectorAll('.code-block').forEach(function(block) {
-    // Éviter les doublons si le script est appelé deux fois
-    if (block.querySelector('.code-block-dots')) return;
-
-    var dots = document.createElement('span');
-    dots.className = 'code-block-dots';
-    dots.innerHTML = '<span></span><span></span><span></span>';
-    block.appendChild(dots);
-
-    // Détecter le type de contenu pour le label
-    var text = block.textContent || '';
-    var labelText = 'bash';
-    if (text.indexOf('API_KEY') !== -1 || text.indexOf('.env') !== -1 || text.indexOf('=') !== -1) {
-      labelText = 'env';
-    } else if (text.indexOf('pip') !== -1 || text.indexOf('python') !== -1 || text.indexOf('sudo') !== -1) {
-      labelText = 'bash';
-    }
-
-    var label = document.createElement('span');
-    label.className = 'term-label';
-    label.textContent = labelText;
-    block.appendChild(label);
-  });
-
-  // ══════════════════════════════════════════════
-  // 2. TYPING EFFECT — sous-titre hero
-  // ══════════════════════════════════════════════
-  var subtitleEl = document.getElementById('hero-subtitle');
-  if (subtitleEl) {
-    var fullText  = subtitleEl.textContent.trim();
-    var cursor    = document.createElement('span');
-    cursor.className = 'typing-cursor';
-
-    // Vider le texte et ajouter le curseur
-    subtitleEl.textContent = '';
-    subtitleEl.appendChild(cursor);
-
-    var charIndex = 0;
-    var typingSpeed = 38; // ms par lettre
-
-    function typeNextChar() {
-      if (charIndex < fullText.length) {
-        // Insérer le texte avant le curseur
-        var textNode = document.createTextNode(fullText[charIndex]);
-        subtitleEl.insertBefore(textNode, cursor);
-        charIndex++;
-        setTimeout(typeNextChar, typingSpeed);
-      }
-      // Le curseur reste et clignote indéfiniment après la fin
-    }
-
-    // Démarrer après 800ms (laisse le temps à la page de charger)
-    setTimeout(typeNextChar, 800);
+function drawParticles() {
+  ctx.clearRect(0, 0, W, H);
+  for (let p of particles) {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+    if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0,212,255,0.5)';
+    ctx.fill();
   }
-
-  // ══════════════════════════════════════════════
-  // 3. COUNT-UP — stats hero
-  // ══════════════════════════════════════════════
-  var statDefs = [
-    { el: null, target: 40, prefix: '+', suffix: '' },
-    { el: null, target: 3,  prefix: '',  suffix: '' },
-    { el: null, target: 100, prefix: '', suffix: '%' },
-    { el: null, target: null, prefix: 'V', suffix: '.1' }  // "V1.1" — pas un compteur
-  ];
-
-  var statNums = document.querySelectorAll('.stat-num');
-  statNums.forEach(function(el, i) {
-    if (statDefs[i]) statDefs[i].el = el;
-  });
-
-  function animateCount(def, duration) {
-    if (!def.el || def.target === null) return;
-
-    var startTime = null;
-    var startVal  = 0;
-
-    function step(timestamp) {
-      if (!startTime) startTime = timestamp;
-      var elapsed  = timestamp - startTime;
-      var progress = Math.min(elapsed / duration, 1);
-      // Easing out cubic
-      var ease     = 1 - Math.pow(1 - progress, 3);
-      var current  = Math.round(startVal + (def.target - startVal) * ease);
-      def.el.textContent = def.prefix + current + def.suffix;
-
-      if (progress < 1) {
-        requestAnimationFrame(step);
-      } else {
-        def.el.textContent = def.prefix + def.target + def.suffix;
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const d = Math.sqrt(dx*dx + dy*dy);
+      if (d < 120) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(0,212,255,${0.12 * (1 - d/120)})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
       }
     }
-
-    requestAnimationFrame(step);
   }
+  requestAnimationFrame(drawParticles);
+}
 
-  // Démarrer le count-up 400ms après le chargement
-  window.addEventListener('load', function() {
-    setTimeout(function() {
-      statDefs.forEach(function(def) {
-        animateCount(def, 1400);
-      });
-    }, 400);
+resize(); initParticles(); drawParticles();
+window.addEventListener('resize', () => { resize(); initParticles(); });
+
+// ── ARC REACTOR ──
+let angle = 0;
+function animateReactor() {
+  angle += 0.008;
+  const r1 = document.getElementById('ring1');
+  const r2 = document.getElementById('ring2');
+  const r3 = document.getElementById('ring3');
+  const core = document.getElementById('core-dot');
+  if (r1) r1.style.transform = `rotate(${angle * 50}deg)`;
+  if (r2) r2.style.transform = `rotate(${-angle * 70}deg)`;
+  if (r3) r3.style.transform = `rotate(${angle * 90}deg)`;
+  if (r1) r1.style.transformOrigin = '80px 80px';
+  if (r2) r2.style.transformOrigin = '80px 80px';
+  if (r3) r3.style.transformOrigin = '80px 80px';
+  const glow = 0.7 + Math.sin(angle * 3) * 0.3;
+  if (core) {
+    core.style.opacity = glow;
+    core.style.filter = `blur(${(1-glow)*2}px)`;
+  }
+  requestAnimationFrame(animateReactor);
+}
+animateReactor();
+
+// ── BOOT SEQUENCE ──
+const bootLines = [
+  { text: '> Initialisation A.N.T.O.I.N.E V1.1...', cls: 't-prompt', delay: 400 },
+  { text: '  [OK] Modules PyQt6 chargés', cls: 't-ok', delay: 300 },
+  { text: '  [OK] Moteur TTS Edge Neural activé (fr-FR-HenriNeural)', cls: 't-ok', delay: 250 },
+  { text: '  [OK] Reconnaissance vocale initialisée', cls: 't-ok', delay: 300 },
+  { text: '  [..] Connexion Groq API...', cls: 't-info', delay: 400 },
+  { text: '  [OK] Groq · llama-3.1-8b-instant · 131k TPM', cls: 't-ok', delay: 200 },
+  { text: '  [OK] Fallback Gemini 2.0 Flash Lite prêt', cls: 't-ok', delay: 200 },
+  { text: '  [OK] CPU: 12% · RAM: 4.2GB · Batterie: 87%', cls: 't-ok', delay: 300 },
+  { text: '> Tous les systèmes opérationnels, Monsieur.', cls: 't-prompt', delay: 500 },
+];
+
+let lineIdx = 0;
+const terminal = document.getElementById('boot-terminal');
+const cursorEl = document.getElementById('cursor');
+
+function typeNextLine() {
+  if (lineIdx >= bootLines.length) return;
+  const { text, cls, delay } = bootLines[lineIdx++];
+  const div = document.createElement('div');
+  div.className = 't-line ' + cls;
+  terminal.insertBefore(div, cursorEl);
+  let charIdx = 0;
+  const interval = setInterval(() => {
+    div.textContent = text.slice(0, ++charIdx);
+    if (charIdx >= text.length) {
+      clearInterval(interval);
+      setTimeout(typeNextLine, delay);
+    }
+  }, 18);
+}
+setTimeout(typeNextLine, 600);
+
+// ── STATS COUNT-UP ──
+const statEls = document.querySelectorAll('.stat-number[data-target]');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    const target = parseInt(el.dataset.target);
+    let current = 0;
+    const step = Math.ceil(target / 40);
+    const timer = setInterval(() => {
+      current = Math.min(current + step, target);
+      el.textContent = current + '+';
+      if (current >= target) clearInterval(timer);
+    }, 30);
+    observer.unobserve(el);
   });
+}, { threshold: 0.5 });
+statEls.forEach(el => observer.observe(el));
 
-  // ══════════════════════════════════════════════
-  // 4. INTERSECTION OBSERVER — animate-on-scroll
-  // ══════════════════════════════════════════════
-  var animatedEls = document.querySelectorAll('.animate-on-scroll');
+// ── DEMO CONVERSATION ──
+const demoConvo = [
+  { from: 'Mathis', msg: 'Antoine, quelle heure est-il ?' },
+  { from: 'Antoine', msg: 'Il est actuellement 21h34, Monsieur.' },
+  { from: 'Mathis', msg: 'Cherche les dernières actualités' },
+  { from: 'Antoine', msg: 'Voici les 3 dernières du Monde : "Élections européennes", "Conflit au Moyen-Orient", "Avancées en IA".' },
+  { from: 'Mathis', msg: 'Note que je dois appeler Paul demain' },
+  { from: 'Antoine', msg: 'Note enregistrée : "appeler Paul demain". Bien, Monsieur.' },
+  { from: 'Mathis', msg: 'Quel temps fait-il à Paris ?' },
+  { from: 'Antoine', msg: 'À Paris : 18°C, ciel partiellement nuageux. Aucune précipitation prévue ce soir.' },
+];
+const demoBody = document.getElementById('demo-body');
+let msgIdx = 0;
 
-  if ('IntersectionObserver' in window) {
-    var observer = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          // Ne pas re-animer ce qui est déjà visible
-          observer.unobserve(entry.target);
-        }
-      });
-    }, {
-      threshold: 0.12,
-      rootMargin: '0px 0px -40px 0px'
-    });
+function showNextMsg() {
+  if (msgIdx >= demoConvo.length) { msgIdx = 0; demoBody.innerHTML = ''; }
+  const { from, msg } = demoConvo[msgIdx++];
+  const div = document.createElement('div');
+  div.className = 'demo-msg';
+  div.innerHTML = `<span class="demo-from ${from === 'Antoine' ? 'ai' : 'user'}">${from} ›</span><span class="demo-text"></span>`;
+  demoBody.appendChild(div);
+  const textEl = div.querySelector('.demo-text');
+  let i = 0;
+  const t = setInterval(() => {
+    textEl.textContent = msg.slice(0, ++i);
+    if (i >= msg.length) { clearInterval(t); setTimeout(showNextMsg, from === 'Antoine' ? 1800 : 700); }
+  }, 22);
+  demoBody.scrollTop = demoBody.scrollHeight;
+}
+setTimeout(showNextMsg, 1000);
 
-    animatedEls.forEach(function(el) {
-      observer.observe(el);
-    });
-  } else {
-    // Fallback navigateurs anciens : tout rendre visible immédiatement
-    animatedEls.forEach(function(el) {
-      el.classList.add('visible');
-    });
+// ── DL COUNTER ──
+const dlEl = document.getElementById('dl-count');
+let dlCount = 247;
+setInterval(() => {
+  if (Math.random() < 0.3) {
+    dlCount++;
+    dlEl.textContent = dlCount;
   }
-
-  // ══════════════════════════════════════════════
-  // 5. ACCORDÉONS — amélioration (max-height dynamique)
-  //    Override de toggleAcc pour un rendu plus fluide
-  // ══════════════════════════════════════════════
-  // On attend que le DOM soit prêt, puis on améliore la transition
-  // en recalculant dynamiquement le max-height réel du contenu
-
-  function improveAccordionTransitions() {
-    document.querySelectorAll('.acc-item').forEach(function(item) {
-      var body    = item.querySelector('.acc-body');
-      var content = item.querySelector('.acc-content');
-      if (!body || !content) return;
-
-      // Recalculer max-height à l'ouverture via MutationObserver
-      var mo = new MutationObserver(function() {
-        if (item.classList.contains('open')) {
-          // Mesure la hauteur réelle du contenu
-          var realHeight = content.scrollHeight + 32; // + padding
-          body.style.maxHeight = realHeight + 'px';
-        } else {
-          body.style.maxHeight = '0';
-        }
-      });
-
-      mo.observe(item, { attributes: true, attributeFilter: ['class'] });
-    });
-  }
-
-  // Attendre que le DOM soit complet
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', improveAccordionTransitions);
-  } else {
-    improveAccordionTransitions();
-  }
-
-})();
+}, 8000);
 </script>
-
 </body>
 </html>

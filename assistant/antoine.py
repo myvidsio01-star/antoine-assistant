@@ -227,13 +227,13 @@ def init_stt():
     try:
         import speech_recognition as sr
         recognizer = sr.Recognizer()
-        recognizer.energy_threshold = 300
+        recognizer.energy_threshold = 200
         recognizer.dynamic_energy_threshold = False  # Évite la dérive du seuil
-        recognizer.pause_threshold = 0.5
+        recognizer.pause_threshold = 0.6
         microphone = sr.Microphone()
 
         with microphone as source:
-            recognizer.adjust_for_ambient_noise(source, duration=1.0)
+            recognizer.adjust_for_ambient_noise(source, duration=1.5)
 
         return True
     except ImportError:
@@ -905,13 +905,13 @@ def activate_work_mode() -> str:
 # ─────────────────────────────────────────────
 
 def ask_gemini(prompt: str, context: str) -> str:
-    """Envoie une question à Gemini 2.0 Flash."""
+    """Envoie une question à Gemini 2.0 Flash Lite (quota généreux)."""
     try:
         from google.genai import types
         client = _get_gemini_client()
         full_prompt = f"{context}\n\nUtilisateur: {prompt}" if context else prompt
         response = client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-2.0-flash-lite",
             config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT),
             contents=full_prompt,
         )
@@ -920,6 +920,24 @@ def ask_gemini(prompt: str, context: str) -> str:
         raise RuntimeError("google-genai non installé")
     except Exception as e:
         raise RuntimeError(f"Gemini : {e}")
+
+
+def ask_gemini_flash(prompt: str, context: str) -> str:
+    """Fallback Gemini 1.5 Flash 8B — ultra léger, quota très élevé."""
+    try:
+        from google.genai import types
+        client = _get_gemini_client()
+        full_prompt = f"{context}\n\nUtilisateur: {prompt}" if context else prompt
+        response = client.models.generate_content(
+            model="gemini-1.5-flash-8b",
+            config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT),
+            contents=full_prompt,
+        )
+        return response.text.strip()
+    except ImportError:
+        raise RuntimeError("google-genai non installé")
+    except Exception as e:
+        raise RuntimeError(f"Gemini Flash : {e}")
 
 
 def ask_groq(prompt: str, context: str) -> str:
@@ -963,13 +981,14 @@ def ask_claude(prompt: str, context: str) -> str:
 
 
 def ask_ai(prompt: str, context: str = "") -> str:
-    """Interroge les LLM avec fallback automatique : Groq → Gemini → Claude."""
+    """Interroge les LLM avec fallback : Groq → Gemini Lite → Gemini Flash → Claude."""
     engines = []
 
     if GROQ_API_KEY:
         engines.append(("Groq", ask_groq))
     if GEMINI_API_KEY:
         engines.append(("Gemini", ask_gemini))
+        engines.append(("Gemini Flash", ask_gemini_flash))
     if ANTHROPIC_API_KEY:
         engines.append(("Claude", ask_claude))
 
@@ -1252,6 +1271,30 @@ def get_notes() -> str:
         return "Vos dernières notes : " + " — ".join(recent[-3:]) + "."
     except Exception as e:
         return f"Je n'ai pas pu lire les notes, Monsieur : {e}"
+
+
+def clear_notes() -> str:
+    """Efface toutes les notes."""
+    try:
+        _NOTES_FILE.write_text("", encoding="utf-8")
+        return "Toutes vos notes ont été effacées, Monsieur."
+    except Exception as e:
+        return f"Impossible d'effacer les notes : {e}"
+
+
+def check_network() -> str:
+    """Vérifie la connexion internet via ping."""
+    try:
+        import subprocess
+        result = subprocess.run(
+            ["ping", "-n", "1", "-w", "1000", "8.8.8.8"],
+            capture_output=True, timeout=4
+        )
+        if result.returncode == 0:
+            return "Connexion internet active, Monsieur. Tous les systèmes sont en ligne."
+        return "Connexion internet indisponible, Monsieur. Vérifiez votre réseau."
+    except Exception:
+        return "Impossible de vérifier la connexion réseau, Monsieur."
 
 
 # ─────────────────────────────────────────────
@@ -1551,6 +1594,41 @@ def route_command(text: str, memory: dict) -> tuple[str, bool]:
                 topic = t.split(trigger, 1)[1].strip(" ?!.")
                 if topic:
                     return open_wikipedia(topic), False
+
+    # ── Réseau ──
+    if any(kw in t for kw in ["connexion internet", "internet fonctionne", "suis-je connecté",
+                                "ping", "réseau", "hors ligne"]):
+        return check_network(), False
+
+    # ── Effacer notes ──
+    if any(kw in t for kw in ["efface mes notes", "supprime mes notes", "vide mes notes",
+                                "efface toutes les notes"]):
+        return clear_notes(), False
+
+    # ── Blague ──
+    if any(kw in t for kw in ["raconte une blague", "fais-moi rire", "blague", "humour"]):
+        context = build_context(memory)
+        return ask_ai("Raconte une courte blague geek ou d'informatique. Sois drôle et concis.", context), False
+
+    # ── Poème ──
+    if any(kw in t for kw in ["écris un poème", "fais-moi un poème", "poème", "poesie"]):
+        context = build_context(memory)
+        return ask_ai("Écris un très court poème (4 lignes max) sur la technologie ou l'IA.", context), False
+
+    # ── Citation ──
+    if any(kw in t for kw in ["citation", "citation du jour", "inspire-moi", "dis-moi quelque chose d'inspirant"]):
+        context = build_context(memory)
+        return ask_ai("Donne une citation inspirante courte d'un scientifique ou inventeur célèbre.", context), False
+
+    # ── Compliment ──
+    if any(kw in t for kw in ["fais-moi un compliment", "dis-moi quelque chose de gentil", "compliment"]):
+        context = build_context(memory)
+        return ask_ai("Fais un compliment sincère et élégant à Mathis, style JARVIS, en une phrase.", context), False
+
+    # ── Traduction ──
+    if any(kw in t for kw in ["traduis", "traduire en", "comment dit-on", "comment dire"]):
+        context = build_context(memory)
+        return ask_ai(f"Traduction demandée : {t}", context), False
 
     # ── Fallback : IA ──
     context = build_context(memory)
