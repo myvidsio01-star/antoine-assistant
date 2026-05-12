@@ -33,7 +33,6 @@ import re
 import math
 import time
 import random
-from pathlib import Path
 
 # Chargement des variables d'environnement
 try:
@@ -94,7 +93,8 @@ MAX_TOTAL_HISTORY  = 200
 
 SYSTEM_PROMPT = (
     "Tu es A.N.T.O.I.N.E, un assistant IA personnel de style J.A.R.V.I.S. "
-    "Appelle TOUJOURS l'utilisateur 'Monsieur'. "
+    "L'utilisateur s'appelle Mathis. Appelle-le 'Monsieur' dans la majorité des cas, "
+    "mais utilise 'Mathis' de temps en temps pour personnaliser. "
     "Adopte la personnalité d'un majordome britannique cultivé : formel, élégant, précis. "
     "Humour sec et subtil : légère ironie bienveillante, jamais vulgaire. "
     "Réponds en 1-3 phrases maximum, naturelles et parlées. "
@@ -1174,7 +1174,7 @@ def build_startup_briefing() -> str:
     """Message de démarrage style J.A.R.V.I.S avec heure et météo."""
     now = datetime.datetime.now()
     h, m = now.hour, now.minute
-    greeting = "Bonjour" if h < 12 else ("Bon après-midi" if h < 18 else "Bonsoir")
+    greeting = "Bonjour Mathis" if h < 12 else ("Bon après-midi Mathis" if h < 18 else "Bonsoir Mathis")
     time_str = f"Il est {h} heure{'s' if h != 1 else ''} {m:02d}"
 
     weather_str = ""
@@ -1199,12 +1199,133 @@ def build_startup_briefing() -> str:
         pass
 
     parts = [
-        f"{greeting} Monsieur.",
+        f"{greeting}.",
         f"{time_str}.",
         weather_str,
         "Tous mes systèmes sont opérationnels. Comment puis-je vous assister ?",
     ]
     return " ".join(p for p in parts if p)
+
+
+# ─────────────────────────────────────────────
+#   NOTES VOCALES
+# ─────────────────────────────────────────────
+
+_NOTES_FILE = _BASE_DIR / "antoine_notes.txt"
+
+
+def save_note(text: str) -> str:
+    """Enregistre une note horodatée dans le fichier de notes."""
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    line = f"[{timestamp}] {text}\n"
+    try:
+        with open(_NOTES_FILE, "a", encoding="utf-8") as f:
+            f.write(line)
+        return f"Note enregistrée, Monsieur. J'ai noté : {text}."
+    except Exception as e:
+        return f"Je n'ai pas pu enregistrer la note, Monsieur : {e}"
+
+
+def get_notes() -> str:
+    """Lit les dernières notes enregistrées."""
+    if not _NOTES_FILE.exists():
+        return "Vous n'avez aucune note enregistrée pour l'instant, Monsieur."
+    try:
+        lines = _NOTES_FILE.read_text(encoding="utf-8").strip().splitlines()
+        recent = [l for l in lines if l.strip()][-5:]
+        if not recent:
+            return "Aucune note enregistrée, Monsieur."
+        return "Vos dernières notes : " + " — ".join(recent[-3:]) + "."
+    except Exception as e:
+        return f"Je n'ai pas pu lire les notes, Monsieur : {e}"
+
+
+# ─────────────────────────────────────────────
+#   ACTUALITÉS
+# ─────────────────────────────────────────────
+
+def get_news() -> str:
+    """Récupère les 3 derniers titres du Monde via RSS."""
+    try:
+        import requests
+        import xml.etree.ElementTree as ET
+
+        resp = requests.get(
+            "https://www.lemonde.fr/rss/une.xml",
+            timeout=6,
+            headers={"User-Agent": "Mozilla/5.0"},
+        )
+        root   = ET.fromstring(resp.content)
+        items  = root.findall(".//item")[:3]
+        titles = [
+            item.find("title").text
+            for item in items
+            if item.find("title") is not None and item.find("title").text
+        ]
+        if not titles:
+            return "Je n'ai pas pu récupérer les actualités pour le moment, Monsieur."
+
+        result = "Voici les dernières nouvelles, Monsieur. "
+        for i, title in enumerate(titles, 1):
+            result += f"{i} : {title}. "
+        return result.strip()
+    except Exception as e:
+        return f"Je n'ai pas pu récupérer les actualités, Monsieur : {e}"
+
+
+# ─────────────────────────────────────────────
+#   LUMINOSITÉ ÉCRAN
+# ─────────────────────────────────────────────
+
+def set_brightness(level: int) -> str:
+    """Règle la luminosité de l'écran via PowerShell WMI (PC portable uniquement)."""
+    level = max(0, min(100, level))
+    try:
+        ps_cmd = (
+            f"$m = Get-WmiObject -Namespace root/WMI -Class WmiMonitorBrightnessMethods -ErrorAction Stop; "
+            f"$m.WmiSetBrightness(1, {level})"
+        )
+        result = subprocess.run(
+            ["powershell", "-Command", ps_cmd],
+            capture_output=True, timeout=5
+        )
+        if result.returncode == 0:
+            return f"Luminosité réglée à {level} pourcent, Monsieur."
+        return (
+            "Je n'ai pas pu modifier la luminosité, Monsieur. "
+            "Cette fonctionnalité n'est disponible que sur les PC portables."
+        )
+    except Exception as e:
+        return f"Erreur luminosité, Monsieur : {e}"
+
+
+# ─────────────────────────────────────────────
+#   GROQ STREAMING
+# ─────────────────────────────────────────────
+
+def ask_groq_stream(prompt: str, context: str):
+    """Génère la réponse Groq mot par mot (générateur de tokens)."""
+    try:
+        client = _get_groq_client()
+        messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+        if context:
+            messages.append({"role": "user", "content": f"[Historique]\n{context}"})
+            messages.append({"role": "assistant", "content": "Compris, je prends en compte notre historique."})
+        messages.append({"role": "user", "content": prompt})
+
+        stream = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=messages,
+            max_tokens=256,
+            temperature=0.7,
+            stream=True,
+        )
+        for chunk in stream:
+            delta = chunk.choices[0].delta.content
+            if delta:
+                yield delta
+    except Exception as e:
+        yield f"Erreur streaming, Monsieur : {e}"
 
 
 # ─────────────────────────────────────────────
@@ -1377,6 +1498,34 @@ def route_command(text: str, memory: dict) -> tuple[str, bool]:
     if any(kw in t for kw in ["presse-papiers", "presse papiers", "clipboard",
                                 "qu'est-ce que j'ai copié", "lis le presse", "contenu copié"]):
         return get_clipboard(), False
+
+    # ── Notes vocales : enregistrer ──
+    for trigger in ["note que", "note :", "prends note de", "écris que", "écris :", "mémorise que je dois", "n'oublie pas que je dois"]:
+        if trigger in t:
+            content = t.split(trigger, 1)[1].strip(" ?!.")
+            if content:
+                return save_note(content), False
+    if any(kw in t for kw in ["prends note", "je veux noter"]):
+        return "Que souhaitez-vous que je note, Monsieur ?", False
+
+    # ── Notes vocales : consulter ──
+    if any(kw in t for kw in ["mes notes", "lis mes notes", "quelles sont mes notes", "dernières notes", "montre mes notes"]):
+        return get_notes(), False
+
+    # ── Actualités ──
+    if any(kw in t for kw in ["actualités", "actualites", "nouvelles du jour", "news", "infos du jour", "quoi de neuf dans le monde", "dernières nouvelles"]):
+        return get_news(), False
+
+    # ── Luminosité ──
+    if any(kw in t for kw in ["luminosité", "luminosite", "lumineux", "éclaircis", "assombris"]):
+        if any(kw in t for kw in ["monte", "augmente", "plus lumineux", "plus clair", "maximum"]):
+            return set_brightness(90), False
+        if any(kw in t for kw in ["baisse", "diminue", "moins lumineux", "sombre", "minimum"]):
+            return set_brightness(20), False
+        _lum = re.search(r"luminosit[eé]\s+[àa]\s+(\d+)", t)
+        if _lum:
+            return set_brightness(int(_lum.group(1))), False
+        return set_brightness(60), False
 
     # ── Fallback : IA ──
     context = build_context(memory)

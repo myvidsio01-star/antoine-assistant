@@ -13,13 +13,14 @@ import threading
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QPushButton, QScrollArea, QFrame, QSizePolicy,
-    QLineEdit, QSpacerItem, QProgressBar,
+    QLineEdit, QSpacerItem, QProgressBar, QSystemTrayIcon,
 )
 from PyQt6.QtCore import (
     Qt, QThread, pyqtSignal, QTimer, QDateTime, QSize,
 )
 from PyQt6.QtGui import (
     QColor, QFont, QPalette, QPainter, QPen, QBrush, QCursor,
+    QIcon, QPixmap,
 )
 
 # ─────────────────────────────────────────────
@@ -186,6 +187,9 @@ class AssistantThread(QThread):
     message_from_antoine = pyqtSignal(str)
     status_changed       = pyqtSignal(str)
     command_done         = pyqtSignal()
+    stream_start         = pyqtSignal()
+    stream_token         = pyqtSignal(str)
+    stream_end           = pyqtSignal(str)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -220,7 +224,15 @@ class AssistantThread(QThread):
 
         def speak_and_emit(text: str):
             self._stop_speech = False
-            self.message_from_antoine.emit(text)
+            # Affichage mot par mot
+            self.stream_start.emit()
+            words = text.split()
+            for word in words:
+                if self._stop_speech:
+                    break
+                self.stream_token.emit(word)
+                time.sleep(0.038)
+            self.stream_end.emit(text)
             self.status_changed.emit("Je parle...")
             if not self._stop_speech:
                 original_speak(text)
@@ -308,6 +320,8 @@ class AssistantThread(QThread):
 # ─────────────────────────────────────────────
 
 class TopBar(QWidget):
+    mini_toggled = pyqtSignal()
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setFixedHeight(45)
@@ -334,12 +348,16 @@ class TopBar(QWidget):
         center.addWidget(_lbl(" | ", MUTED, 9))
         center.addWidget(self._date_lbl)
 
-        # Droite — météo
+        # Droite — météo + mini-mode
         right = QHBoxLayout(); right.setSpacing(8)
         right.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
         self._temp_lbl = _lbl("● —°C", CYAN, 9)
+        self._mini_btn = _icon_btn("⊙", "Mode compact (masque les panneaux)")
+        self._mini_btn.clicked.connect(self.mini_toggled)
         right.addStretch()
         right.addWidget(self._temp_lbl)
+        right.addSpacing(8)
+        right.addWidget(self._mini_btn)
 
         layout.addLayout(left, stretch=1)
         layout.addLayout(center, stretch=1)
@@ -610,11 +628,11 @@ class ChatBubble(QFrame):
         v = QVBoxLayout(self); v.setContentsMargins(10, 8, 10, 8); v.setSpacing(0)
         name = _lbl("A.N.T.O.I.N.E" if is_a else "Vous",
                      CYAN if is_a else MUTED, 8, bold=True)
-        msg  = QLabel(text); msg.setWordWrap(True)
-        msg.setFont(QFont(FONT_MAIN, 10))
-        msg.setStyleSheet(f"color:{TEXT};background:transparent;")
-        msg.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
-        v.addWidget(name); v.addSpacing(3); v.addWidget(msg)
+        self._msg = QLabel(text); self._msg.setWordWrap(True)
+        self._msg.setFont(QFont(FONT_MAIN, 10))
+        self._msg.setStyleSheet(f"color:{TEXT};background:transparent;")
+        self._msg.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
+        v.addWidget(name); v.addSpacing(3); v.addWidget(self._msg)
         if is_a:
             self.setStyleSheet(
                 f"QFrame{{background:{BG_CARD};border-left:3px solid {CYAN};border-radius:8px;}}")
@@ -629,6 +647,15 @@ class ChatBubble(QFrame):
     @property
     def text(self): return self._text
 
+    def set_text(self, text: str) -> None:
+        self._text = text
+        self._msg.setText(text)
+
+    def append_word(self, word: str) -> None:
+        sep = "" if not self._text else " "
+        self._text += sep + word
+        self._msg.setText(self._text)
+
 
 class RightPanel(QWidget):
     text_submitted = pyqtSignal(str)
@@ -636,6 +663,7 @@ class RightPanel(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._bubbles: list[ChatBubble] = []
+        self._streaming_bubble: ChatBubble | None = None
         self.setFixedWidth(285)
         self.setStyleSheet(f"background:{BG_CARD};border-left:1px solid {BORDER};")
 
@@ -715,6 +743,23 @@ class RightPanel(QWidget):
         QTimer.singleShot(0, lambda: self._scroll.verticalScrollBar().setValue(
             self._scroll.verticalScrollBar().maximum()))
 
+    def start_stream(self) -> None:
+        """Crée une bulle Antoine vide pour le streaming."""
+        self._streaming_bubble = ChatBubble("", "antoine")
+        self._chat_v.insertWidget(self._chat_v.count() - 1, self._streaming_bubble)
+        self._bubbles.append(self._streaming_bubble)
+
+    def append_token(self, word: str) -> None:
+        """Ajoute un mot à la bulle de streaming."""
+        if self._streaming_bubble:
+            self._streaming_bubble.append_word(word)
+            QTimer.singleShot(0, lambda: self._scroll.verticalScrollBar().setValue(
+                self._scroll.verticalScrollBar().maximum()))
+
+    def end_stream(self) -> None:
+        """Finalise la bulle de streaming."""
+        self._streaming_bubble = None
+
     def clear_messages(self):
         for b in self._bubbles:
             self._chat_v.removeWidget(b); b.deleteLater()
@@ -735,6 +780,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self._command_count = 0
+        self._mini_mode = False
         self.setWindowTitle("A.N.T.O.I.N.E — Assistant Vocal IA")
         self.resize(1100, 680)
         self.setMinimumSize(800, 500)
@@ -743,6 +789,7 @@ class MainWindow(QMainWindow):
         self._start_thread()
         self._start_timers()
         self._load_weather_async()
+        self._setup_tray()
 
     def _build_ui(self):
         central = QWidget(); central.setStyleSheet(f"background:{BG_MAIN};")
@@ -753,6 +800,7 @@ class MainWindow(QMainWindow):
         self._left   = LeftPanel()
         self._center = CenterPanel()
         self._right  = RightPanel()
+        self._top.mini_toggled.connect(self._toggle_mini)
 
         body = QHBoxLayout(); body.setContentsMargins(0,0,0,0); body.setSpacing(0)
         body.addWidget(self._left)
@@ -774,10 +822,11 @@ class MainWindow(QMainWindow):
         self._thread = AssistantThread(self)
         self._thread.message_from_user.connect(
             lambda t: self._right.add_message(t, "user"))
-        self._thread.message_from_antoine.connect(
-            lambda t: self._right.add_message(t, "antoine"))
         self._thread.status_changed.connect(self._on_status)
         self._thread.command_done.connect(self._on_command_done)
+        self._thread.stream_start.connect(self._right.start_stream)
+        self._thread.stream_token.connect(self._right.append_token)
+        self._thread.stream_end.connect(self._on_stream_end)
         self._thread.start()
 
     def _start_timers(self):
@@ -870,6 +919,54 @@ class MainWindow(QMainWindow):
 
     def _on_text_input(self, text: str):
         self._thread.submit_text(text)
+
+    def _setup_tray(self):
+        """Configure l'icône dans la barre des tâches système."""
+        self._tray = QSystemTrayIcon(self)
+        pix = QPixmap(32, 32)
+        pix.fill(QColor(0, 0, 0, 0))
+        p = QPainter(pix)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
+        p.setBrush(QBrush(QColor(CYAN)))
+        p.setPen(Qt.PenStyle.NoPen)
+        p.drawEllipse(2, 2, 28, 28)
+        p.end()
+        self._tray.setIcon(QIcon(pix))
+        self._tray.setToolTip("A.N.T.O.I.N.E — En ligne")
+        self._tray.show()
+
+    def _on_stream_end(self, text: str):
+        """Finalise le streaming et affiche une notification si la fenêtre est en arrière-plan."""
+        self._right.end_stream()
+        if not self.isActiveWindow() and text:
+            self._tray.showMessage(
+                "A.N.T.O.I.N.E",
+                text[:120],
+                QSystemTrayIcon.MessageIcon.Information,
+                4000,
+            )
+
+    def _toggle_mini(self):
+        """Bascule entre le mode normal et le mode compact."""
+        self._mini_mode = not self._mini_mode
+        if self._mini_mode:
+            self._left.hide()
+            self._right.hide()
+            self.setMinimumSize(280, 360)
+            self.setMaximumSize(280, 360)
+            self.resize(280, 360)
+            self._top._mini_btn.setStyleSheet(
+                f"QPushButton{{background:transparent;color:{CYAN};border:none;font-size:13px;}}"
+                f"QPushButton:hover{{color:white;}}")
+        else:
+            self._left.show()
+            self._right.show()
+            self.setMinimumSize(800, 500)
+            self.setMaximumSize(16777215, 16777215)
+            self.resize(1100, 680)
+            self._top._mini_btn.setStyleSheet(
+                f"QPushButton{{background:transparent;color:{MUTED};border:none;font-size:13px;}}"
+                f"QPushButton:hover{{color:{CYAN};}}")
 
     def closeEvent(self, event):
         self._thread.stop()
