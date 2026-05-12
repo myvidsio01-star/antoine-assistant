@@ -298,6 +298,13 @@ class AssistantThread(QThread):
                     core.speak("Je n'ai pas saisi, Monsieur. Pourriez-vous répéter ?")
                     continue
 
+                if any(kw in user_text.lower() for kw in ["stop", "tais-toi", "silence", "chut", "arrête"]):
+                    self.stop_speech()
+                    self.message_from_user.emit(user_text)
+                    core.speak("Bien, Monsieur. Je repasse en veille.")
+                    active = False
+                    continue
+
                 self.message_from_user.emit(user_text)
                 active_since = time.time()
                 self.status_changed.emit("Je réfléchis...")

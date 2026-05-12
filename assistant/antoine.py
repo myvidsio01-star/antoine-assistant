@@ -861,13 +861,25 @@ def ha_get_temperature(entity_id: str = "climate.thermostat") -> str:
 # ─────────────────────────────────────────────
 
 def web_search(query: str) -> str:
-    """Ouvre une recherche Google dans le navigateur par défaut."""
+    """Ouvre directement le premier résultat de recherche via DuckDuckGo."""
     try:
-        url = f"https://www.google.com/search?q={query.replace(' ', '+')}"
+        encoded = query.replace(' ', '+')
+        url = f"https://duckduckgo.com/?q=!ducky+{encoded}"
         webbrowser.open(url)
-        return f"J'ai ouvert une recherche Google pour : {query}."
+        return f"J'ouvre la page la plus pertinente pour : {query}, Monsieur."
     except Exception as e:
-        return f"Je n'ai pas pu ouvrir le navigateur : {e}"
+        return f"Je n'ai pas pu ouvrir le navigateur, Monsieur : {e}"
+
+
+def open_wikipedia(topic: str) -> str:
+    """Ouvre la page Wikipedia française du sujet."""
+    try:
+        encoded = topic.strip().replace(' ', '_')
+        url = f"https://fr.wikipedia.org/wiki/{encoded}"
+        webbrowser.open(url)
+        return f"J'ouvre la page Wikipedia sur {topic}, Monsieur."
+    except Exception as e:
+        return f"Je n'ai pas pu ouvrir Wikipedia, Monsieur : {e}"
 
 
 # ─────────────────────────────────────────────
@@ -909,7 +921,7 @@ def ask_gemini(prompt: str, context: str) -> str:
 
 
 def ask_groq(prompt: str, context: str) -> str:
-    """Envoie une question à Groq llama-3.3-70b-versatile."""
+    """Envoie une question à Groq llama-3.1-8b-instant (haut débit, 131k TPM)."""
     try:
         client = _get_groq_client()
 
@@ -920,7 +932,7 @@ def ask_groq(prompt: str, context: str) -> str:
         messages.append({"role": "user", "content": prompt})
 
         completion = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="llama-3.1-8b-instant",
             messages=messages,
             max_tokens=256,
             temperature=0.7,
@@ -1314,7 +1326,7 @@ def ask_groq_stream(prompt: str, context: str):
         messages.append({"role": "user", "content": prompt})
 
         stream = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="llama-3.1-8b-instant",
             messages=messages,
             max_tokens=256,
             temperature=0.7,
@@ -1339,8 +1351,9 @@ def route_command(text: str, memory: dict) -> tuple[str, bool]:
     """
     t = text.lower().strip()
 
-    # ── Stop / Quitter ──
-    if any(kw in t for kw in ["stop", "au revoir", "quitte", "quitter", "bye", "ferme-toi", "arrête-toi"]):
+    # ── Quitter ──
+    if any(kw in t for kw in ["au revoir", "quitte", "quitter", "bye", "ferme-toi",
+                                "arrête-toi", "éteins-toi", "eteins-toi", "tu peux partir"]):
         return "Au revoir, Monsieur. Ce fut un plaisir de vous assister. À bientôt.", True
 
     # ── Heure ──
@@ -1526,6 +1539,16 @@ def route_command(text: str, memory: dict) -> tuple[str, bool]:
         if _lum:
             return set_brightness(int(_lum.group(1))), False
         return set_brightness(60), False
+
+    # ── Wikipedia ──
+    if any(kw in t for kw in ["montre-moi", "montre moi", "ouvre wikipedia", "wikipedia sur",
+                                "qu'est-ce que", "qui est", "c'est quoi"]):
+        for trigger in ["montre-moi", "montre moi", "ouvre wikipedia sur", "wikipedia sur",
+                        "qu'est-ce que", "qu'est ce que", "qui est", "c'est quoi"]:
+            if trigger in t:
+                topic = t.split(trigger, 1)[1].strip(" ?!.")
+                if topic:
+                    return open_wikipedia(topic), False
 
     # ── Fallback : IA ──
     context = build_context(memory)
