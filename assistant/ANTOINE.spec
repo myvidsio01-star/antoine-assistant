@@ -1,12 +1,20 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-
 a = Analysis(
-    ['antoine.py'],
+    ['antoine_gui.py'],
     pathex=[],
     binaries=[],
-    datas=[],
-    hiddenimports=['speech_recognition', 'pygame', 'edge_tts', 'groq', 'anthropic', 'google.genai', 'pyaudio', 'pyttsx3', 'psutil', 'PIL', 'dotenv'],
+    datas=[
+        ('antoine.py', '.'),
+    ],
+    hiddenimports=[
+        'speech_recognition', 'pygame', 'edge_tts',
+        'groq', 'anthropic', 'google.genai',
+        'pyaudio', 'pyttsx3', 'psutil', 'PIL', 'dotenv',
+        'PyQt6', 'PyQt6.QtWidgets', 'PyQt6.QtCore', 'PyQt6.QtGui',
+        'pycaw', 'pycaw.pycaw', 'comtypes', 'comtypes.client',
+        'tkinter',
+    ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -32,6 +40,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon=None,
 )
 coll = COLLECT(
     exe,

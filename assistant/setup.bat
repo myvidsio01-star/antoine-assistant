@@ -1,6 +1,6 @@
 @echo off
 echo ============================================
-echo    A.N.T.O.I.N.E V1.0 - Installation
+echo    A.N.T.O.I.N.E V1.1 - Installation
 echo ============================================
 echo.
 
